@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using MyProject;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,13 +12,21 @@ public class PlayerHealth : MonoBehaviour
     private int m_Health;
     public int Health => m_Health;
 
+    private List<HealthModifier> m_DamageList = new List<HealthModifier>();
+    public ReadOnlyCollection<HealthModifier> damageList => m_DamageList.AsReadOnly();
+
     public UnityEvent onHealthIsZero = new UnityEvent();
     public UnityEvent<int> onHealthChanged = new UnityEvent<int>();
 
-    public void AddHealth(int _amount)
+    public void ApplyModifier(HealthModifier _healthModifier)
     {
-        m_Health = m_Health + _amount;
-        onHealthChanged.Invoke(_amount);
+        if (_healthModifier.magnitude < 0)
+        {
+            m_DamageList.Add(_healthModifier);
+        }
+
+        m_Health = m_Health + _healthModifier.magnitude;
+        onHealthChanged.Invoke(_healthModifier.magnitude);
 
         if (m_Health <= 0)
         {
