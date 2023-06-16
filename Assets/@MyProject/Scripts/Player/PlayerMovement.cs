@@ -17,6 +17,10 @@ namespace MyProject
         private void Update()
         {
             m_Movement = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            if (m_Movement.magnitude >= 1.0f)
+            {
+                m_Movement.Normalize();
+            }
         }
 
         private void FixedUpdate()
