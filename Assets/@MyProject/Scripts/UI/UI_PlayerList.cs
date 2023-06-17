@@ -20,6 +20,7 @@ public class UI_PlayerList : MonoBehaviour
             InitializePlayerUI(_player);
 
         m_GameScene.onPlayerKill.AddListener((killer, target) => RefreshPlayerUI(killer));
+        m_GameScene.onPlayerRankRefreshed.AddListener(() => RefreshPlayerRankUI());
     }
 
     private void InitializePlayerUI(Player _player)
@@ -43,9 +44,22 @@ public class UI_PlayerList : MonoBehaviour
         Label _playerKillLabel = _playerElement.Q<Label>("player-kill");
         Label _playerPowerLabel = _playerElement.Q<Label>("player-power");
 
-        _playerRankLabel.text = "# 1";
+        _playerRankLabel.text =
+            m_GameScene.playerRankDict.ContainsKey(_player)
+                ? $"# {m_GameScene.playerRankDict[_player]}"
+                : $"# ";
         _playerNameLabel.text = _player.gameObject.name;
         _playerKillLabel.text = _player.killCount.ToString();
         _playerPowerLabel.text = _player.power.ToString();
+    }
+
+    private void RefreshPlayerRankUI()
+    {
+        foreach (var _player in m_GameScene.playerRankDict.Keys)
+        {
+            UI_PlayerElement _playerElement = m_PlayerUIDict[_player];
+            Label _playerRankLabel = _playerElement.Q<Label>("player-rank");
+            _playerRankLabel.text = $"# {m_GameScene.playerRankDict[_player]}";
+        }
     }
 }
