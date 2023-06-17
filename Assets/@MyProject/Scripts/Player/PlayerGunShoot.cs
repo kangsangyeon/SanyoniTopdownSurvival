@@ -80,8 +80,7 @@ namespace MyProject
                 Projectile _projectile = m_ProjectilePool.Get();
                 _projectile.transform.position = m_FirePoint.position;
                 _projectile.gameObject.layer = gameObject.layer;
-                _projectile.Direction = m_Direction;
-                _projectile.StartTime = Time.time;
+                _projectile.Reset(m_Direction, Time.time);
             }
         }
     }

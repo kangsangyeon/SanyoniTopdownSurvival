@@ -136,10 +136,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd59e8ccdb72b54e8fec3a74366ec46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Collider: {fileID: 8248581483534487020}
   m_Speed: 8
   m_LiveDuration: 1
   Direction: {x: 0, y: 0, z: 0}
   StartTime: 0
   onLifeEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  onHit:
     m_PersistentCalls:
       m_Calls: []
