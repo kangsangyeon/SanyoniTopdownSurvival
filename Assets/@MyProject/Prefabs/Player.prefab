@@ -60,6 +60,7 @@ GameObject:
   - component: {fileID: 6160352144729706871}
   - component: {fileID: 1803661713}
   - component: {fileID: -4672223292897117122}
+  - component: {fileID: 4006065847730283847}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -243,12 +244,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Health: {fileID: 6160352144729706871}
   m_Collider: {fileID: 6160352144729706868}
-  onKillCountChanged:
+  m_SpriteRenderers:
+  - {fileID: 6160352144729706869}
+  m_HealthBar: {fileID: 7569331135973187221}
+  onKill:
+    m_PersistentCalls:
+      m_Calls: []
+  onDead:
     m_PersistentCalls:
       m_Calls: []
   onPowerChanged:
     m_PersistentCalls:
       m_Calls: []
+  onRespawn:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4006065847730283847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6160352144729706865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c979e77bf0729bf48afdc98d4a61c4e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Prefab_DeadFX: {fileID: 139366, guid: 713e7003ca09843438f1c390d19b5d61, type: 3}
 --- !u!1001 &4453912776996653530
 PrefabInstance:
   m_ObjectHideFlags: 0

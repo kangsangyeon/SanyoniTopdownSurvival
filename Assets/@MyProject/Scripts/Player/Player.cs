@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,6 +12,11 @@ namespace MyProject
         public PlayerHealth health => m_Health;
 
         [SerializeField] private Collider2D m_Collider;
+
+        [SerializeField] private List<SpriteRenderer> m_SpriteRenderers;
+        public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
+
+        [SerializeField] private HealthBar m_HealthBar;
 
         private int m_KillCount = 0;
         public int killCount => m_KillCount;
@@ -24,7 +31,14 @@ namespace MyProject
 
         private void Start()
         {
-            health.onHealthIsZero.AddListener(() => m_Collider.enabled = false);
+            health.onHealthIsZero.AddListener(() =>
+            {
+                m_Collider.enabled = false;
+                foreach (SpriteRenderer _renderer in m_SpriteRenderers)
+                    _renderer.enabled = false;
+                if (m_HealthBar)
+                    m_HealthBar.enabled = false;
+            });
 
             health.onHealthIsZero.AddListener(() =>
             {
@@ -65,6 +79,11 @@ namespace MyProject
             onRespawn.AddListener(() =>
             {
                 m_Collider.enabled = true;
+                foreach (SpriteRenderer _renderer in m_SpriteRenderers)
+                    _renderer.enabled = true;
+                if (m_HealthBar)
+                    m_HealthBar.enabled = true;
+
                 health.ApplyModifier(new HealthModifier()
                     { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
             });
