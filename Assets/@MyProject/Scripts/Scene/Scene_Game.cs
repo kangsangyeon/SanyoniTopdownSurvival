@@ -7,8 +7,10 @@ namespace MyProject
 {
     public class Scene_Game : MonoBehaviour
     {
+        [SerializeField] private Transform m_RespawnPoint;
         [SerializeField] private int m_MaxTime = 60 * 5;
         [SerializeField] private int m_MaxKillCount = 30;
+        [SerializeField] private int m_RespawnTime = 5;
 
         private List<Player> m_PlayerList = new List<Player>();
         public ReadOnlyCollection<Player> playerList => m_PlayerList.AsReadOnly();
@@ -30,6 +32,11 @@ namespace MyProject
             onPlayerAdded.Invoke(_player);
 
             _player.onKill.AddListener(target => onPlayerKill.Invoke(_player, target));
+            _player.onDead.AddListener(source => this.Invoke(() =>
+            {
+                _player.transform.position = m_RespawnPoint.position;
+                _player.onRespawn.Invoke();
+            }, m_RespawnTime));
         }
 
         private void RemovePlayer(Player _player)

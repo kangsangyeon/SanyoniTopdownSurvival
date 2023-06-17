@@ -20,6 +20,7 @@ namespace MyProject
         public UnityEvent<Player> onKill = new UnityEvent<Player>(); // param: target(=죽인 대상)
         public UnityEvent<object> onDead = new UnityEvent<object>(); // param: source(=죽은 원인)
         public UnityEvent onPowerChanged = new UnityEvent();
+        public UnityEvent onRespawn = new UnityEvent();
 
         private void Start()
         {
@@ -58,9 +59,14 @@ namespace MyProject
                 // 플레이어로부터 죽은 것이 아닐 때 실행됩니다.
                 _healthModifier = health.damageList.Last();
 
-                // TODO
-
                 onDead.Invoke(_healthModifier.source);
+            });
+
+            onRespawn.AddListener(() =>
+            {
+                m_Collider.enabled = true;
+                health.ApplyModifier(new HealthModifier()
+                    { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
             });
         }
     }

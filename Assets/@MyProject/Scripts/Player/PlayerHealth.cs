@@ -26,6 +26,9 @@ public class PlayerHealth : MonoBehaviour
         }
 
         m_Health = m_Health + _healthModifier.magnitude;
+        if (m_Health > m_MaxHealth)
+            m_Health = m_MaxHealth;
+
         onHealthChanged.Invoke(_healthModifier.magnitude);
 
         if (m_Health <= 0)
