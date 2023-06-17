@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-direction: row; flex-wrap: nowrap; flex-grow: 0; flex-basis: auto; justify-content: space-around; visibility: visible; overflow: visible; display: flex;">
+        <ui:Label text="# 1" display-tooltip-when-elided="true" name="player-rank" style="flex-shrink: 0; font-size: 16px;" />
+        <ui:Label text="{{player-name}}" display-tooltip-when-elided="true" name="player-name" style="font-size: 16px;" />
+        <ui:Label text="99" display-tooltip-when-elided="true" name="player-kill" style="color: rgb(255, 42, 42); font-size: 16px;" />
+        <ui:Label text="99" display-tooltip-when-elided="true" name="player-power" style="color: rgb(30, 245, 255); font-size: 16px;" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -242,6 +242,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Health: {fileID: 6160352144729706871}
+  m_Collider: {fileID: 6160352144729706868}
+  onKillCountChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onPowerChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &4453912776996653530
 PrefabInstance:
   m_ObjectHideFlags: 0

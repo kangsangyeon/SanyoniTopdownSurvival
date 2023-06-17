@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="background-color: rgba(24, 24, 24, 0.17); visibility: visible; display: flex; position: absolute; left: auto; bottom: auto; height: 500px; width: 400px; right: 10px; top: 10px;">
+        <ui:Label text="Players" display-tooltip-when-elided="true" style="-unity-text-align: upper-center; -unity-font-style: bold; font-size: 26px;" />
+        <ui:VisualElement style="height: 10px;" />
+        <ui:VisualElement style="justify-content: space-around; flex-direction: row;">
+            <ui:Label text="Rank" display-tooltip-when-elided="true" style="font-size: 20px;" />
+            <ui:Label text="Name" display-tooltip-when-elided="true" style="font-size: 20px;" />
+            <ui:Label text="Kill" display-tooltip-when-elided="true" style="font-size: 20px;" />
+            <ui:Label text="Power" display-tooltip-when-elided="true" style="font-size: 20px;" />
+        </ui:VisualElement>
+        <ui:ListView focusable="true" name="player-list" />
+    </ui:VisualElement>
+</ui:UXML>
