@@ -14,10 +14,10 @@ namespace MyProject
         [SerializeField] private int m_MaxKillCount = 30;
         [SerializeField] private int m_RespawnTime = 5;
 
-        private List<Player> m_PlayerList = new List<Player>();
+        private readonly List<Player> m_PlayerList = new List<Player>();
         public ReadOnlyCollection<Player> playerList => m_PlayerList.AsReadOnly();
 
-        private Dictionary<Player, int> m_PlayerRankDict = new Dictionary<Player, int>();
+        private readonly Dictionary<Player, int> m_PlayerRankDict = new Dictionary<Player, int>();
         public IReadOnlyDictionary<Player, int> playerRankDict => m_PlayerRankDict;
 
         public UnityEvent<Player> onPlayerAdded = new UnityEvent<Player>();

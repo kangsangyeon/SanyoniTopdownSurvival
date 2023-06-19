@@ -18,6 +18,21 @@ namespace MyProject
 
         [SerializeField] private HealthBar m_HealthBar;
 
+        private IWeapon m_Weapon;
+
+        public IWeapon weapon
+        {
+            get => m_Weapon;
+            set
+            {
+                if (m_Weapon != value)
+                {
+                    m_Weapon = value;
+                    onWeaponChanged.Invoke();
+                }
+            }
+        }
+
         private int m_KillCount = 0;
         public int killCount => m_KillCount;
 
@@ -28,9 +43,12 @@ namespace MyProject
         public UnityEvent<object> onDead = new UnityEvent<object>(); // param: source(=죽은 원인)
         public UnityEvent onPowerChanged = new UnityEvent();
         public UnityEvent onRespawn = new UnityEvent();
+        public UnityEvent onWeaponChanged = new UnityEvent();
 
         private void Start()
         {
+            m_Weapon = GetComponentInChildren<IWeapon>();
+
             health.onHealthIsZero.AddListener(() =>
             {
                 m_Collider.enabled = false;

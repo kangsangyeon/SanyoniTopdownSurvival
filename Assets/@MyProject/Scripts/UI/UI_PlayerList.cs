@@ -9,7 +9,7 @@ public class UI_PlayerList : MonoBehaviour
     [SerializeField] private UIDocument m_Document;
 
     private VisualElement m_Parent;
-    private Dictionary<Player, UI_PlayerElement> m_PlayerUIDict = new Dictionary<Player, UI_PlayerElement>();
+    private readonly Dictionary<Player, UI_PlayerElement> m_PlayerUIDict = new Dictionary<Player, UI_PlayerElement>();
 
     private void Start()
     {

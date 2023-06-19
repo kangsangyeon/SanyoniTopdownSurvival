@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
     public UnityEvent onLifeEnd = new UnityEvent();
     public UnityEvent<Collider2D> onHit = new UnityEvent<Collider2D>();
 
-    public void Reset(Vector3 _direction, float _startTime)
+    public void Refresh(Vector3 _direction, float _startTime)
     {
         m_Direction = _direction;
         m_StartTime = _startTime;

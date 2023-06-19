@@ -1,14 +1,17 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Pool;
 
 namespace MyProject
 {
-    public class PlayerGunShoot : MonoBehaviour, IWeapon
+    public class PlayerGunShoot : MonoBehaviour, IGunWeapon
     {
         [SerializeField] private Projectile m_Prefab_Projectile;
         [SerializeField] private Transform m_FirePoint;
         [SerializeField] private int m_Damage = -10;
+        [SerializeField] private int m_MaxMagazineCount = 20;
+        [SerializeField] private float m_ReloadDuration = 1.5f;
 
         private Player m_Player;
 
@@ -20,11 +23,42 @@ namespace MyProject
 
         private ObjectPool<Projectile> m_ProjectilePool;
         private Vector2 m_Direction;
+        private float m_LastReloadStartTime;
+        private int m_CurrentMagazineCount;
 
-        #region IWeapon
+        #region IGunWeapon
 
         public int damageMagnitude => m_Damage;
         public object owner => player;
+
+        public int currentMagazineCount
+        {
+            get => m_CurrentMagazineCount;
+            private set
+            {
+                if (m_CurrentMagazineCount != value)
+                {
+                    m_CurrentMagazineCount = value;
+                    onCurrentMagazineCountChanged.Invoke();
+                }
+            }
+        }
+
+        public int maxMagazineCount
+        {
+            get => m_MaxMagazineCount;
+            set
+            {
+                if (m_MaxMagazineCount != value)
+                {
+                    m_MaxMagazineCount = value;
+                    onMaxMagazineCountChanged.Invoke();
+                }
+            }
+        }
+
+        public UnityEvent onCurrentMagazineCountChanged { get; } = new UnityEvent();
+        public UnityEvent onMaxMagazineCountChanged { get; } = new UnityEvent();
 
         #endregion
 
@@ -33,6 +67,8 @@ namespace MyProject
             m_ProjectilePool = new ObjectPool<Projectile>(
                 OnCreateProjectile, OnGetProjectile, OnReleaseProjectile, null,
                 true, 20);
+
+            currentMagazineCount = m_MaxMagazineCount;
         }
 
         private void Start()
@@ -72,15 +108,33 @@ namespace MyProject
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Vector2 _position = transform.position;
-                Vector2 _mousePositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                m_Direction = _mousePositionWorld - _position;
-                m_Direction.Normalize();
+                float _elapsedTimeSinceLastReloadStart = Time.time - m_LastReloadStartTime;
 
-                Projectile _projectile = m_ProjectilePool.Get();
-                _projectile.transform.position = m_FirePoint.position;
-                _projectile.gameObject.layer = gameObject.layer;
-                _projectile.Reset(m_Direction, Time.time);
+                // 재장전 중에 총알을 발사할 수 없습니다.
+                bool _canShoot = _elapsedTimeSinceLastReloadStart >= m_ReloadDuration;
+
+                // 총알이 탄창에 없을 때 발사할 수 없습니다.
+                _canShoot = _canShoot && currentMagazineCount > 0;
+
+                if (_canShoot)
+                {
+                    Vector2 _position = transform.position;
+                    Vector2 _mousePositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    m_Direction = _mousePositionWorld - _position;
+                    m_Direction.Normalize();
+
+                    Projectile _projectile = m_ProjectilePool.Get();
+                    _projectile.transform.position = m_FirePoint.position;
+                    _projectile.gameObject.layer = gameObject.layer;
+                    _projectile.Refresh(m_Direction, Time.time);
+
+                    --currentMagazineCount;
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                currentMagazineCount = maxMagazineCount;
             }
         }
     }
