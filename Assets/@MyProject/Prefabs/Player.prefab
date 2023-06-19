@@ -183,7 +183,7 @@ Rigidbody2D:
   m_Interpolate: 2
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &6160352144729706856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +257,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onRespawn:
+    m_PersistentCalls:
+      m_Calls: []
+  onWeaponChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &4006065847730283847
