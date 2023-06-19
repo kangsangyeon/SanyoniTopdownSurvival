@@ -59,8 +59,17 @@ namespace MyProject
             }
         }
 
+        public float reloadDuration
+        {
+            get => m_ReloadDuration;
+            private set => m_ReloadDuration = value;
+        }
+
         public UnityEvent onCurrentMagazineCountChanged { get; } = new UnityEvent();
         public UnityEvent onMaxMagazineCountChanged { get; } = new UnityEvent();
+        public UnityEvent onFire { get; } = new UnityEvent();
+        public UnityEvent onReloadStart { get; } = new UnityEvent();
+        public UnityEvent onReloadFinished { get; } = new UnityEvent();
 
         #endregion
 
@@ -139,13 +148,20 @@ namespace MyProject
 
                     m_LastFireTime = Time.time;
                     --currentMagazineCount;
+                    onFire.Invoke();
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.R))
             {
                 m_LastReloadStartTime = Time.time;
-                this.Invoke(() => currentMagazineCount = maxMagazineCount, m_ReloadDuration);
+                onReloadStart.Invoke();
+
+                this.Invoke(() =>
+                {
+                    currentMagazineCount = maxMagazineCount;
+                    onReloadFinished.Invoke();
+                }, m_ReloadDuration);
             }
         }
     }
