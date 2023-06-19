@@ -47,7 +47,7 @@ namespace MyProject
 
         private void Start()
         {
-            m_Weapon = GetComponentInChildren<IWeapon>();
+            weapon = GetComponentInChildren<IWeapon>();
 
             health.onHealthIsZero.AddListener(() =>
             {
