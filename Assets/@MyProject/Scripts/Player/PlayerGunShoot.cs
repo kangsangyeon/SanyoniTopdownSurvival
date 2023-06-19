@@ -136,7 +136,7 @@ namespace MyProject
 
                 if (_canShoot)
                 {
-                    Vector2 _position = transform.position;
+                    Vector2 _position = m_Player.transform.position;
                     Vector2 _mousePositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     m_Direction = _mousePositionWorld - _position;
                     m_Direction.Normalize();
