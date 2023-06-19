@@ -12,6 +12,7 @@ namespace MyProject
         [SerializeField] private int m_Damage = -10;
         [SerializeField] private int m_MaxMagazineCount = 20;
         [SerializeField] private float m_ReloadDuration = 1.5f;
+        [SerializeField] private float m_FireDelay = 0.2f;
 
         private Player m_Player;
 
@@ -24,6 +25,7 @@ namespace MyProject
         private ObjectPool<Projectile> m_ProjectilePool;
         private Vector2 m_Direction;
         private float m_LastReloadStartTime;
+        private float m_LastFireTime;
         private int m_CurrentMagazineCount;
 
         #region IGunWeapon
@@ -74,6 +76,9 @@ namespace MyProject
         private void Start()
         {
             player = GetComponentInParent<Player>();
+
+            m_LastFireTime = -9999;
+            m_LastReloadStartTime = -9999;
         }
 
         private Projectile OnCreateProjectile()
@@ -106,12 +111,16 @@ namespace MyProject
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButton(0))
             {
                 float _elapsedTimeSinceLastReloadStart = Time.time - m_LastReloadStartTime;
+                float _elapsedTimeSinceLastFire = Time.time - m_LastFireTime;
 
                 // 재장전 중에 총알을 발사할 수 없습니다.
                 bool _canShoot = _elapsedTimeSinceLastReloadStart >= m_ReloadDuration;
+
+                // 가장 마지막으로 발사한 뒤 일정 시간 뒤에 다시 발사할 수 있습니다.
+                _canShoot = _canShoot && _elapsedTimeSinceLastFire >= m_FireDelay;
 
                 // 총알이 탄창에 없을 때 발사할 수 없습니다.
                 _canShoot = _canShoot && currentMagazineCount > 0;
@@ -128,13 +137,15 @@ namespace MyProject
                     _projectile.gameObject.layer = gameObject.layer;
                     _projectile.Refresh(m_Direction, Time.time);
 
+                    m_LastFireTime = Time.time;
                     --currentMagazineCount;
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.R))
             {
-                currentMagazineCount = maxMagazineCount;
+                m_LastReloadStartTime = Time.time;
+                this.Invoke(() => currentMagazineCount = maxMagazineCount, m_ReloadDuration);
             }
         }
     }
