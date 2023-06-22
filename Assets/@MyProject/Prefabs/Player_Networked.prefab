@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4259799755676705844
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6160352144729706865, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_Name
+      value: Player_Networked
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160352144729706870, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7569331135992054942, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7569331135992054942, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+--- !u!1 &7953408533327377733 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6160352144729706865, guid: 84b5e7766b8ab0c47bef2c5a3d2269b5, type: 3}
+  m_PrefabInstance: {fileID: 4259799755676705844}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-6906237990575893919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7953408533327377733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours: []
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 0}
+    LocalScale: {x: 0, y: 0, z: 0}
+  _isNetworked: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 12962677506768540879
+  _sceneNetworkObjects: []
