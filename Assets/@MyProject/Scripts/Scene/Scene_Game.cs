@@ -48,7 +48,7 @@ namespace MyProject
             _player.onDead.AddListener(source => this.Invoke(() =>
             {
                 _player.transform.position = m_RespawnPoint.position;
-                _player.onRespawn.Invoke();
+                _player.Server_OnRespawn();
             }, m_RespawnTime));
         }
 

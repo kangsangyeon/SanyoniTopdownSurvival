@@ -116,8 +116,8 @@ namespace MyProject
 
         public override void DrawShapes(Camera _cam)
         {
-            if (_cam != this.m_Cam) // only draw in the player camera
-                return;
+            // if (_cam != this.m_Cam) // only draw in the player camera
+            //     return;
 
             if (m_GunWeapon == null)
                 return;

@@ -1,15 +1,19 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using FishNet.Object;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace MyProject
 {
-    public class Player : MonoBehaviour
+    public class Player : NetworkBehaviour
     {
         [SerializeField] private PlayerHealth m_Health;
         public PlayerHealth health => m_Health;
+
+        [SerializeField] private PlayerMovement m_Movement;
+        public PlayerMovement movement => m_Movement;
 
         [SerializeField] private Collider2D m_Collider;
 
@@ -45,18 +49,59 @@ namespace MyProject
         public UnityEvent onRespawn = new UnityEvent();
         public UnityEvent onWeaponChanged = new UnityEvent();
 
-        private void Start()
+        [Server]
+        public void Server_OnKill(Player _target)
         {
-            weapon = GetComponentInChildren<IWeapon>();
+            onKill.Invoke(_target);
+            Observers_OnKill(_target);
+        }
 
-            health.onHealthIsZero.AddListener(() =>
-            {
-                m_Collider.enabled = false;
-                foreach (SpriteRenderer _renderer in m_SpriteRenderers)
-                    _renderer.enabled = false;
-                if (m_HealthBar)
-                    m_HealthBar.enabled = false;
-            });
+        [Server]
+        public void Server_OnDead(object _source)
+        {
+            onDead.Invoke(_source);
+            Observers_OnDead(_source);
+        }
+
+        [Server]
+        public void Server_OnPowerChanged()
+        {
+            onPowerChanged.Invoke();
+            Observers_OnPowerChanged();
+        }
+
+        [Server]
+        public void Server_OnRespawn()
+        {
+            onRespawn.Invoke();
+            Observers_OnRespawn();
+        }
+
+        [Server]
+        public void Server_OnWeaponChanged()
+        {
+            onWeaponChanged.Invoke();
+            Observers_OnWeaponChanged();
+        }
+
+        [ObserversRpc(ExcludeServer = true)]
+        public void Observers_OnKill(Player _target) => onKill.Invoke(_target);
+
+        [ObserversRpc(ExcludeServer = true)]
+        public void Observers_OnDead(object _source) => onDead.Invoke(_source);
+
+        [ObserversRpc(ExcludeServer = true)]
+        public void Observers_OnPowerChanged() => onPowerChanged.Invoke();
+
+        [ObserversRpc(ExcludeServer = true)]
+        public void Observers_OnRespawn() => onRespawn.Invoke();
+
+        [ObserversRpc(ExcludeServer = true)]
+        public void Observers_OnWeaponChanged() => onWeaponChanged.Invoke();
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
 
             health.onHealthIsZero.AddListener(() =>
             {
@@ -84,14 +129,38 @@ namespace MyProject
                         var _killer = _weapon.owner as Player;
 
                         ++_killer.m_KillCount;
-                        _killer.onKill.Invoke(this);
+                        _killer.Server_OnKill(this);
                     }
                 }
 
                 // 플레이어로부터 죽은 것이 아닐 때 실행됩니다.
                 _healthModifier = health.damageList.Last();
 
-                onDead.Invoke(_healthModifier.source);
+                Server_OnDead(_healthModifier.source);
+            });
+
+            onRespawn.AddListener(() =>
+            {
+                health.ApplyModifier(new HealthModifier()
+                    { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
+            });
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            weapon = GetComponentInChildren<IWeapon>();
+
+            m_Movement.enabled = base.IsOwner;
+
+            health.onHealthIsZero.AddListener(() =>
+            {
+                m_Collider.enabled = false;
+                foreach (SpriteRenderer _renderer in m_SpriteRenderers)
+                    _renderer.enabled = false;
+                if (m_HealthBar)
+                    m_HealthBar.enabled = false;
             });
 
             onRespawn.AddListener(() =>
@@ -101,9 +170,6 @@ namespace MyProject
                     _renderer.enabled = true;
                 if (m_HealthBar)
                     m_HealthBar.enabled = true;
-
-                health.ApplyModifier(new HealthModifier()
-                    { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
             });
         }
     }
