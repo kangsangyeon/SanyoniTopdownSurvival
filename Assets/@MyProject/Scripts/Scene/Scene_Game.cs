@@ -60,6 +60,9 @@ namespace MyProject
 
         private void RefreshPlayerRankList()
         {
+            if (m_PlayerList.Count == 0)
+                return;
+
             var _playerListOrderByKillCount = m_PlayerList.OrderBy(p => p.killCount).Reverse().ToList();
 
             m_PlayerRankDict.Clear();
