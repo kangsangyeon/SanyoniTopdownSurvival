@@ -1,11 +1,11 @@
-using System;
+using FishNet.Object;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
 
 namespace MyProject
 {
-    public class PlayerGunShoot : MonoBehaviour, IGunWeapon
+    public class PlayerGunShoot : NetworkBehaviour, IGunWeapon
     {
         [SerializeField] private Projectile m_Prefab_Projectile;
         [SerializeField] private Transform m_FirePoint;
@@ -75,17 +75,12 @@ namespace MyProject
 
         private void Awake()
         {
+            player = GetComponentInParent<Player>();
             m_ProjectilePool = new ObjectPool<Projectile>(
                 OnCreateProjectile, OnGetProjectile, OnReleaseProjectile, null,
                 true, 20);
 
             currentMagazineCount = m_MaxMagazineCount;
-        }
-
-        private void Start()
-        {
-            player = GetComponentInParent<Player>();
-
             m_LastFireTime = -9999;
             m_LastReloadStartTime = -9999;
         }
@@ -120,6 +115,9 @@ namespace MyProject
 
         private void Update()
         {
+            if (base.IsOwner == false)
+                return;
+
             if (Input.GetMouseButton(0))
             {
                 float _elapsedTimeSinceLastReloadStart = Time.time - m_LastReloadStartTime;

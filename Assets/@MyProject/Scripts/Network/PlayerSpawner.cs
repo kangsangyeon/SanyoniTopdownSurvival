@@ -1,5 +1,4 @@
 using FishNet.Connection;
-using FishNet.Managing.Logging;
 using FishNet.Object;
 using UnityEngine;
 using UnityEngine.Events;
@@ -27,12 +26,12 @@ namespace MyProject
         /// <summary>
         /// 캐릭터가 변경될 때 디스패치됩니다.
         /// </summary>
-        public static UnityEvent<GameObject> onCharacterUpdated;
+        public static UnityEvent<GameObject> onCharacterUpdated = new UnityEvent<GameObject>();
 
         /// <summary>
         /// 리스폰을 시도합니다.
         /// </summary>
-        [Client(Logging = LoggingType.Off)]
+        [Client]
         public void TryRespawn()
         {
             CmdRespawn();
