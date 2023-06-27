@@ -152,8 +152,6 @@ namespace MyProject
 
             weapon = GetComponentInChildren<IWeapon>();
 
-            m_Movement.enabled = base.IsOwner;
-
             health.onHealthIsZero.AddListener(() =>
             {
                 m_Collider.enabled = false;
