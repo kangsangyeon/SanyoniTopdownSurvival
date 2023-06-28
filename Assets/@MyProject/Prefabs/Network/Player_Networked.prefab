@@ -158,8 +158,8 @@ MonoBehaviour:
   m_Movement: {fileID: 7953408533327377756}
   m_Collider: {fileID: 7953408533327377728}
   m_SpriteRenderers:
-  - {fileID: 0}
-  m_HealthBar: {fileID: 0}
+  - {fileID: 6985391522037102447}
+  m_HealthBar: {fileID: 2366015180899774990}
   onKill:
     m_PersistentCalls:
       m_Calls: []
@@ -210,6 +210,7 @@ MonoBehaviour:
   - {fileID: 2108804425394123387}
   - {fileID: 7953408534171895954}
   - {fileID: 7362423346603092481}
+  - {fileID: 8188622899265703181}
   - {fileID: 3374353260740798258}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
@@ -589,7 +590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6892a430973f8f43803d6782eeecd73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 6
+  _componentIndexCache: 7
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
   m_Prefab_Projectile: {fileID: 8248581483534487021, guid: 539009f3fd6a8ac479105d2381986482, type: 3}
@@ -704,9 +705,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 402926ef33e0a894d9fec352693988ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 6898481489028741344}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6898481489028741344}
   _implementsPredictionMethods: 1
   _graphicalObject: {fileID: 201945191388042715}
   _enableTeleport: 0
