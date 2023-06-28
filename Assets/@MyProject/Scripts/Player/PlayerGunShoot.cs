@@ -203,7 +203,7 @@ namespace MyProject
                     var _health = col.GetComponent<PlayerHealth>();
                     _health.ApplyModifier(new HealthModifier() { magnitude = m_Damage, source = this, time = Time.time });
                     Debug.Log(
-                        $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.Health}/{_health.MaxHealth}.");
+                        $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.health}/{_health.MaxHealth}.");
                 }
             });
 
