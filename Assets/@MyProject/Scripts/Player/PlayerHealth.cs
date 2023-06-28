@@ -11,7 +11,9 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] private int m_MaxHealth = 100;
     public int MaxHealth => m_MaxHealth;
 
-    [SyncVar] private int m_Health;
+    [SyncVar(OnChange = nameof(SyncVar_OnHealthChanged))]
+    private int m_Health;
+
     public int health => m_Health;
 
     private List<HealthModifier> m_DamageList = new List<HealthModifier>();
@@ -19,6 +21,12 @@ public class PlayerHealth : NetworkBehaviour
 
     public UnityEvent onHealthIsZero = new UnityEvent();
     public UnityEvent<int> onHealthChanged = new UnityEvent<int>();
+
+    public void SyncVar_OnHealthChanged(int _prev, int _next, bool _asServer)
+    {
+        int _amount = _next - _prev;
+        onHealthChanged.Invoke(_amount);
+    }
 
     [Server]
     public void Server_OnHealthIsZero()
