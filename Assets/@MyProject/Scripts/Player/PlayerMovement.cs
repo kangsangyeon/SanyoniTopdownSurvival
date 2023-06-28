@@ -131,12 +131,6 @@ namespace MyProject
                 // 두 번째 매개변수로 true를 건네주며 Move를 호출해야 합니다.
                 // 첫 번째 매개변수는 fishnet에 의해 클라이언트에서 받아온 값이 자동으로 대체되어 건네주어질 것이기 때문에 default로 작성합니다.
                 Move(default, true);
-
-                // 서버는 reconcile 메소드를 호출함으로써 메소드 내 어떤 로직도 실행하지 않습니다.
-                // 두 번째 매개변수로 true를 건네주며 reconcile을 호출하면,
-                // 첫 번째 매개변수로 넘겨준 reconcile data를 클라이언트로 전달할 뿐입니다.
-                ReconcileData _reconcileData = new ReconcileData() { position = transform.position };
-                Reconcile(_reconcileData, true);
             }
         }
 
