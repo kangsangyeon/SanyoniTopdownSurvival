@@ -196,10 +196,15 @@ namespace MyProject
             {
                 m_ProjectilePool.Release(_projectile);
 
-                var _health = col.GetComponent<PlayerHealth>();
-                _health.ApplyModifier(new HealthModifier() { magnitude = m_Damage, source = this, time = Time.time });
-                Debug.Log(
-                    $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.Health}/{_health.MaxHealth}.");
+                if (base.IsServer)
+                {
+                    // 서버에서 생성된 총알만 게임에 영향을 끼치는 동작을 합니다.
+
+                    var _health = col.GetComponent<PlayerHealth>();
+                    _health.ApplyModifier(new HealthModifier() { magnitude = m_Damage, source = this, time = Time.time });
+                    Debug.Log(
+                        $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.Health}/{_health.MaxHealth}.");
+                }
             });
 
             return _projectile;
