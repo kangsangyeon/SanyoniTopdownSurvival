@@ -21,6 +21,7 @@ namespace MyProject
         public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
 
         [SerializeField] private HealthBar m_HealthBar;
+        [SerializeField] private UI_PlayerAmmo m_UI_PlayerAmmo;
 
         private IWeapon m_Weapon;
 
@@ -99,6 +100,11 @@ namespace MyProject
         [ObserversRpc(ExcludeServer = true)]
         public void Observers_OnWeaponChanged() => onWeaponChanged.Invoke();
 
+        public override void OnStartNetwork()
+        {
+            base.OnStartNetwork();
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();
@@ -151,6 +157,11 @@ namespace MyProject
             base.OnStartClient();
 
             weapon = GetComponentInChildren<IWeapon>();
+
+            if (base.IsOwner == false)
+            {
+                m_UI_PlayerAmmo.enabled = false;
+            }
 
             health.onHealthIsZero.AddListener(() =>
             {

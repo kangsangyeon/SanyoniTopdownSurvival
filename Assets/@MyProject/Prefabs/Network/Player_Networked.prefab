@@ -160,6 +160,7 @@ MonoBehaviour:
   m_SpriteRenderers:
   - {fileID: 6985391522037102447}
   m_HealthBar: {fileID: 2366015180899774990}
+  m_UI_PlayerAmmo: {fileID: 4112100880092855492}
   onKill:
     m_PersistentCalls:
       m_Calls: []
@@ -924,6 +925,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1501169325739678700, guid: eda479acff6722f439e35356ade60ebb, type: 3}
   m_PrefabInstance: {fileID: 3297800937689343831}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4112100880092855492 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1501169325739678611, guid: eda479acff6722f439e35356ade60ebb, type: 3}
+  m_PrefabInstance: {fileID: 3297800937689343831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ddb28736812ba44dab0d178137da8b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8363491030065980737
 PrefabInstance:
   m_ObjectHideFlags: 0
