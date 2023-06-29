@@ -11,7 +11,7 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] private int m_MaxHealth = 100;
     public int MaxHealth => m_MaxHealth;
 
-    [SyncVar(OnChange = nameof(SyncVar_OnHealthChanged))]
+    [SyncVar(OnChange = nameof(SyncVar_OnHealthChanged), WritePermissions = WritePermission.ServerOnly)]
     private int m_Health;
 
     public int health => m_Health;
@@ -20,33 +20,18 @@ public class PlayerHealth : NetworkBehaviour
     public ReadOnlyCollection<HealthModifier> damageList => m_DamageList.AsReadOnly();
 
     public UnityEvent onHealthIsZero = new UnityEvent();
-    public UnityEvent<int> onHealthChanged = new UnityEvent<int>();
+    public UnityEvent<int> onHealthChanged_OnServer = new UnityEvent<int>();
+    public UnityEvent<int> onHealthChanged_OnSync = new UnityEvent<int>();
 
     public void SyncVar_OnHealthChanged(int _prev, int _next, bool _asServer)
     {
         int _amount = _next - _prev;
-        onHealthChanged.Invoke(_amount);
+        onHealthChanged_OnSync.Invoke(_amount);
+        if (_next <= 0)
+        {
+            onHealthIsZero.Invoke();
+        }
     }
-
-    [Server]
-    public void Server_OnHealthIsZero()
-    {
-        onHealthIsZero.Invoke();
-        Observers_OnHealthIsZero();
-    }
-
-    [Server]
-    public void Server_OnHealthChanged(int _amount)
-    {
-        onHealthChanged.Invoke(_amount);
-        Observers_OnHealthChanged(_amount);
-    }
-
-    [ObserversRpc(ExcludeServer = true)]
-    public void Observers_OnHealthIsZero() => onHealthIsZero.Invoke();
-
-    [ObserversRpc(ExcludeServer = true)]
-    public void Observers_OnHealthChanged(int _amount) => onHealthChanged.Invoke(_amount);
 
     [Server]
     public void ApplyModifier(HealthModifier _healthModifier)
@@ -60,12 +45,12 @@ public class PlayerHealth : NetworkBehaviour
         if (m_Health > m_MaxHealth)
             m_Health = m_MaxHealth;
 
-        Server_OnHealthChanged(_healthModifier.magnitude);
+        onHealthChanged_OnServer.Invoke(_healthModifier.magnitude);
 
         if (m_Health <= 0)
         {
             m_Health = 0;
-            Server_OnHealthIsZero();
+            onHealthIsZero.Invoke();
         }
     }
 
