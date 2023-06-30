@@ -103,6 +103,13 @@ namespace MyProject
         public override void OnStartNetwork()
         {
             base.OnStartNetwork();
+            Scene_Game.Instance.Server_AddPlayer(this);
+        }
+
+        public override void OnStopNetwork()
+        {
+            base.OnStopNetwork();
+            Scene_Game.Instance.Server_RemovePlayer(this);
         }
 
         public override void OnStartServer()

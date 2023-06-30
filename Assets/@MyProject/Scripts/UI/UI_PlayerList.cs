@@ -15,12 +15,28 @@ public class UI_PlayerList : MonoBehaviour
     {
         m_Parent = m_Document.rootVisualElement.Q("player-list");
 
-        m_GameScene.onPlayerAdded.AddListener(InitializePlayerUI);
+        m_GameScene.onPlayerAdded_OnClient.AddListener(TryInitializePlayerUI);
         foreach (var _player in m_GameScene.playerList)
-            InitializePlayerUI(_player);
+            TryInitializePlayerUI(_player);
 
-        m_GameScene.onPlayerKill.AddListener((killer, target) => RefreshPlayerUI(killer));
+        m_GameScene.onPlayerKill_OnClient.AddListener((killer, target) => RefreshPlayerUI(killer));
         m_GameScene.onPlayerRankRefreshed.AddListener(() => RefreshPlayerRankUI());
+    }
+
+    private UI_PlayerElement TryGetUIPlayerElement(Player _player)
+    {
+        if (m_PlayerUIDict.ContainsKey(_player) == false)
+            TryInitializePlayerUI(_player);
+
+        return m_PlayerUIDict[_player];
+    }
+
+    private void TryInitializePlayerUI(Player _player)
+    {
+        if (m_PlayerUIDict.ContainsKey(_player))
+            return;
+
+        InitializePlayerUI(_player);
     }
 
     private void InitializePlayerUI(Player _player)
@@ -57,7 +73,7 @@ public class UI_PlayerList : MonoBehaviour
     {
         foreach (var _player in m_GameScene.playerRankDict.Keys)
         {
-            UI_PlayerElement _playerElement = m_PlayerUIDict[_player];
+            UI_PlayerElement _playerElement = TryGetUIPlayerElement(_player);
             Label _playerRankLabel = _playerElement.Q<Label>("player-rank");
             _playerRankLabel.text = $"# {m_GameScene.playerRankDict[_player]}";
         }
