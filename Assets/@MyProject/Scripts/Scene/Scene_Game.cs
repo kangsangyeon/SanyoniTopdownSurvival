@@ -69,6 +69,11 @@ namespace MyProject
 
         #endregion
 
+        private UnityAction<Player> m_OnPlayerAdded_OnServer;
+        private UnityAction<Player> m_OnPlayerRemoved_OnServer;
+        private UnityAction<PlayerAddedEventParam> m_OnPlayerAdded_OnClient;
+        private UnityAction<PlayerRemovedEventParam> m_OnPlayerRemoved_OnClient;
+
         [ObserversRpc]
         private void ObserversRpc_RefreshPlayerRankList() => RefreshPlayerRankList();
 
@@ -142,22 +147,34 @@ namespace MyProject
         public override void OnStartServer()
         {
             base.OnStartServer();
-            onPlayerAdded_OnServer.AddListener(p => RefreshPlayerRankList());
-            onPlayerRemoved_OnServer.AddListener(p => RefreshPlayerRankList());
+
+            m_OnPlayerAdded_OnServer = p => RefreshPlayerRankList();
+            onPlayerAdded_OnServer.AddListener(m_OnPlayerAdded_OnServer);
+
+            m_OnPlayerRemoved_OnServer = p => RefreshPlayerRankList();
+            onPlayerRemoved_OnServer.AddListener(m_OnPlayerRemoved_OnServer);
         }
 
         public override void OnStopServer()
         {
             base.OnStopServer();
-            onPlayerAdded_OnServer.RemoveAllListeners();
-            onPlayerRemoved_OnServer.RemoveAllListeners();
+
+            onPlayerAdded_OnServer.RemoveListener(m_OnPlayerAdded_OnServer);
+            m_OnPlayerAdded_OnServer = null;
+
+            onPlayerRemoved_OnServer.RemoveListener(m_OnPlayerRemoved_OnServer);
+            m_OnPlayerRemoved_OnServer = null;
         }
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            onPlayerAdded_OnClient.AddListener(p => RefreshPlayerRankList());
-            onPlayerRemoved_OnClient.AddListener(p => RefreshPlayerRankList());
+
+            m_OnPlayerAdded_OnClient = p => RefreshPlayerRankList();
+            onPlayerAdded_OnClient.AddListener(m_OnPlayerAdded_OnClient);
+
+            m_OnPlayerRemoved_OnClient = p => RefreshPlayerRankList();
+            onPlayerRemoved_OnClient.AddListener(m_OnPlayerRemoved_OnClient);
 
             m_UI_PlayerList.Initialize();
         }
@@ -165,8 +182,14 @@ namespace MyProject
         public override void OnStopClient()
         {
             base.OnStopClient();
-            onPlayerAdded_OnClient.RemoveAllListeners();
-            onPlayerRemoved_OnClient.RemoveAllListeners();
+
+            onPlayerAdded_OnClient.RemoveListener(m_OnPlayerAdded_OnClient);
+            m_OnPlayerAdded_OnClient = null;
+
+            onPlayerRemoved_OnClient.RemoveListener(m_OnPlayerRemoved_OnClient);
+            m_OnPlayerRemoved_OnClient = null;
+
+            m_UI_PlayerList.Uninitialize();
         }
     }
 }

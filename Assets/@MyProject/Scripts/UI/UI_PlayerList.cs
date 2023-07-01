@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using MyProject;
+using MyProject.Event;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UIElements;
 
 public class UI_PlayerList : MonoBehaviour
@@ -11,18 +13,65 @@ public class UI_PlayerList : MonoBehaviour
     private VisualElement m_Parent;
     private readonly Dictionary<int, UI_PlayerElement> m_PlayerUIDict = new Dictionary<int, UI_PlayerElement>();
 
+    private UnityAction<PlayerAddedEventParam> m_OnPlayerAdded;
+    private UnityAction<PlayerRemovedEventParam> m_OnPlayerRemoved;
+    private UnityAction<PlayerKillEventParam> m_OnPlayerKill;
+    private UnityAction m_OnPlayerRankRefreshed;
+
     public void Initialize()
     {
         m_Parent = m_Document.rootVisualElement.Q("player-list");
 
-        m_GameScene.onPlayerAdded_OnClient.AddListener(_param =>
-            TryInitializePlayerUI(_param.player.connectionId));
+        m_OnPlayerAdded = _param => TryInitializePlayerUI(_param.player.connectionId);
+        m_GameScene.onPlayerAdded_OnClient.AddListener(m_OnPlayerAdded);
 
-        m_GameScene.onPlayerRemoved_OnClient.AddListener(_param =>
-            m_PlayerUIDict.Remove(_param.player.connectionId));
+        m_OnPlayerRemoved = _param => RemovePlayerUI(_param.player.connectionId);
+        m_GameScene.onPlayerRemoved_OnClient.AddListener(m_OnPlayerRemoved);
 
-        m_GameScene.onPlayerKill_OnClient.AddListener(param => RefreshPlayerUI(param.killer.connectionId));
-        m_GameScene.onPlayerRankRefreshed.AddListener(() => RefreshPlayerRankUI());
+        m_OnPlayerKill = param => RefreshPlayerUI(param.killer.connectionId);
+        m_GameScene.onPlayerKill_OnClient.AddListener(m_OnPlayerKill);
+
+        m_OnPlayerRankRefreshed = () => RefreshPlayerRankUI();
+        m_GameScene.onPlayerRankRefreshed.AddListener(m_OnPlayerRankRefreshed);
+    }
+
+    public void Uninitialize()
+    {
+        m_GameScene.onPlayerAdded_OnClient.RemoveListener(m_OnPlayerAdded);
+        m_OnPlayerAdded = null;
+
+        m_GameScene.onPlayerRemoved_OnClient.RemoveListener(m_OnPlayerRemoved);
+        m_OnPlayerRemoved = null;
+
+        m_GameScene.onPlayerKill_OnClient.RemoveListener(m_OnPlayerKill);
+        m_OnPlayerKill = null;
+
+        m_GameScene.onPlayerRankRefreshed.RemoveListener(m_OnPlayerRankRefreshed);
+        m_OnPlayerRankRefreshed = null;
+
+        RemoveAllPlayerUI();
+    }
+
+    private void RemovePlayerUI(int _connectionId)
+    {
+        m_PlayerUIDict[_connectionId].RemoveFromHierarchy();
+        m_PlayerUIDict.Remove(_connectionId);
+    }
+
+    private void RemoveAllPlayerUI()
+    {
+        foreach (var _playerElem in m_PlayerUIDict.Values)
+            _playerElem.RemoveFromHierarchy();
+
+        m_PlayerUIDict.Clear();
+    }
+
+    private UI_PlayerElement GetPlayerElemUI(int _connectionId)
+    {
+        if (m_PlayerUIDict.ContainsKey(_connectionId) == false)
+            InitializePlayerUI(_connectionId);
+
+        return m_PlayerUIDict[_connectionId];
     }
 
     private void TryInitializePlayerUI(int _connectionId)
@@ -68,10 +117,7 @@ public class UI_PlayerList : MonoBehaviour
     {
         foreach (var _connectionId in m_GameScene.playerInfoDict.Keys)
         {
-            if (m_PlayerUIDict.ContainsKey(_connectionId) == false)
-                continue;
-
-            UI_PlayerElement _playerElement = m_PlayerUIDict[_connectionId];
+            UI_PlayerElement _playerElement = GetPlayerElemUI(_connectionId);
             Label _playerRankLabel = _playerElement.Q<Label>("player-rank");
             _playerRankLabel.text = $"# {m_GameScene.playerRankDict[_connectionId]}";
         }
