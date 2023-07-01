@@ -100,21 +100,10 @@ namespace MyProject
         [ObserversRpc(ExcludeServer = true)]
         public void Observers_OnWeaponChanged() => onWeaponChanged.Invoke();
 
-        public override void OnStartNetwork()
-        {
-            base.OnStartNetwork();
-            Scene_Game.Instance.Server_AddPlayer(this);
-        }
-
-        public override void OnStopNetwork()
-        {
-            base.OnStopNetwork();
-            Scene_Game.Instance.Server_RemovePlayer(this);
-        }
-
         public override void OnStartServer()
         {
             base.OnStartServer();
+            Scene_Game.Instance.Server_AddPlayer(this);
 
             health.onHealthIsZero.AddListener(() =>
             {
@@ -159,9 +148,17 @@ namespace MyProject
             });
         }
 
+        public override void OnStopServer()
+        {
+            base.OnStopServer();
+            Scene_Game.Instance.Server_RemovePlayer(this);
+        }
+
         public override void OnStartClient()
         {
             base.OnStartClient();
+
+            Debug.Log(base.Owner.ClientId);
 
             weapon = GetComponentInChildren<IWeapon>();
 

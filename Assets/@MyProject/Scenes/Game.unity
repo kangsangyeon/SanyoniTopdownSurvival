@@ -224,17 +224,27 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 21494057}
   _networkObjectCache: {fileID: 21494057}
+  m_UI_PlayerList: {fileID: 1821753345}
   m_RespawnPoint: {fileID: 243843589}
   m_MaxTime: 300
   m_MaxKillCount: 30
   m_RespawnTime: 5
-  onPlayerAdded:
+  onPlayerAdded_OnServer:
     m_PersistentCalls:
       m_Calls: []
-  onPlayerRemoved:
+  onPlayerAdded_OnClient:
     m_PersistentCalls:
       m_Calls: []
-  onPlayerKill:
+  onPlayerRemoved_OnServer:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerRemoved_OnClient:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerKill_OnServer:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerKill_OnClient:
     m_PersistentCalls:
       m_Calls: []
   onPlayerRankRefreshed:

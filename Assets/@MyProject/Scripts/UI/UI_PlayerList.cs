@@ -9,51 +9,46 @@ public class UI_PlayerList : MonoBehaviour
     [SerializeField] private UIDocument m_Document;
 
     private VisualElement m_Parent;
-    private readonly Dictionary<Player, UI_PlayerElement> m_PlayerUIDict = new Dictionary<Player, UI_PlayerElement>();
+    private readonly Dictionary<int, UI_PlayerElement> m_PlayerUIDict = new Dictionary<int, UI_PlayerElement>();
 
-    private void Start()
+    public void Initialize()
     {
         m_Parent = m_Document.rootVisualElement.Q("player-list");
 
-        m_GameScene.onPlayerAdded_OnClient.AddListener(TryInitializePlayerUI);
-        foreach (var _player in m_GameScene.playerList)
-            TryInitializePlayerUI(_player);
+        m_GameScene.onPlayerAdded_OnClient.AddListener(_param =>
+            TryInitializePlayerUI(_param.player.connectionId));
 
-        m_GameScene.onPlayerKill_OnClient.AddListener((killer, target) => RefreshPlayerUI(killer));
+        m_GameScene.onPlayerRemoved_OnClient.AddListener(_param =>
+            m_PlayerUIDict.Remove(_param.player.connectionId));
+
+        m_GameScene.onPlayerKill_OnClient.AddListener(param => RefreshPlayerUI(param.killer.connectionId));
         m_GameScene.onPlayerRankRefreshed.AddListener(() => RefreshPlayerRankUI());
     }
 
-    private UI_PlayerElement TryGetUIPlayerElement(Player _player)
+    private void TryInitializePlayerUI(int _connectionId)
     {
-        if (m_PlayerUIDict.ContainsKey(_player) == false)
-            TryInitializePlayerUI(_player);
-
-        return m_PlayerUIDict[_player];
-    }
-
-    private void TryInitializePlayerUI(Player _player)
-    {
-        if (m_PlayerUIDict.ContainsKey(_player))
+        if (m_PlayerUIDict.ContainsKey(_connectionId))
             return;
 
-        InitializePlayerUI(_player);
+        InitializePlayerUI(_connectionId);
     }
 
-    private void InitializePlayerUI(Player _player)
+    private void InitializePlayerUI(int _connectionId)
     {
-        UI_PlayerElement _playerElement = new UI_PlayerElement() { name = _player.gameObject.name };
+        UI_PlayerElement _playerElement = new UI_PlayerElement()
+            { name = $"player-elem [connectionId: {_connectionId}]" };
         m_Parent.hierarchy.Add(_playerElement);
-        m_PlayerUIDict.Add(_player, _playerElement);
+        m_PlayerUIDict.Add(_connectionId, _playerElement);
 
-        _player.onPowerChanged.AddListener(() => RefreshPlayerUI(_player));
-        _player.onKill.AddListener(target => RefreshPlayerUI(_player));
+        // _player.onPowerChanged.AddListener(() => RefreshPlayerUI(_player));
+        // _player.onKill.AddListener(target => RefreshPlayerUI(_player));
 
-        RefreshPlayerUI(_player);
+        RefreshPlayerUI(_connectionId);
     }
 
-    private void RefreshPlayerUI(Player _player)
+    private void RefreshPlayerUI(int _connectionId)
     {
-        UI_PlayerElement _playerElement = m_PlayerUIDict[_player];
+        UI_PlayerElement _playerElement = m_PlayerUIDict[_connectionId];
 
         Label _playerRankLabel = _playerElement.Q<Label>("player-rank");
         Label _playerNameLabel = _playerElement.Q<Label>("player-name");
@@ -61,21 +56,24 @@ public class UI_PlayerList : MonoBehaviour
         Label _playerPowerLabel = _playerElement.Q<Label>("player-power");
 
         _playerRankLabel.text =
-            m_GameScene.playerRankDict.ContainsKey(_player)
-                ? $"# {m_GameScene.playerRankDict[_player]}"
+            m_GameScene.playerRankDict.ContainsKey(_connectionId)
+                ? $"# {m_GameScene.playerRankDict[_connectionId]}"
                 : $"# ";
-        _playerNameLabel.text = _player.gameObject.name;
-        _playerKillLabel.text = _player.killCount.ToString();
-        _playerPowerLabel.text = _player.power.ToString();
+        _playerNameLabel.text = m_GameScene.playerInfoDict[_connectionId].name;
+        _playerKillLabel.text = m_GameScene.playerInfoDict[_connectionId].killCount.ToString();
+        _playerPowerLabel.text = m_GameScene.playerInfoDict[_connectionId].power.ToString();
     }
 
     private void RefreshPlayerRankUI()
     {
-        foreach (var _player in m_GameScene.playerRankDict.Keys)
+        foreach (var _connectionId in m_GameScene.playerInfoDict.Keys)
         {
-            UI_PlayerElement _playerElement = TryGetUIPlayerElement(_player);
+            if (m_PlayerUIDict.ContainsKey(_connectionId) == false)
+                continue;
+
+            UI_PlayerElement _playerElement = m_PlayerUIDict[_connectionId];
             Label _playerRankLabel = _playerElement.Q<Label>("player-rank");
-            _playerRankLabel.text = $"# {m_GameScene.playerRankDict[_player]}";
+            _playerRankLabel.text = $"# {m_GameScene.playerRankDict[_connectionId]}";
         }
     }
 }
