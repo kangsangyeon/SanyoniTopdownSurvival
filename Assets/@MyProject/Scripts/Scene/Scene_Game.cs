@@ -68,7 +68,7 @@ namespace MyProject
         public event System.Action<PlayerKillEventParam> onPlayerKill_OnClient;
 
         [ObserversRpc]
-        public void ObserversRpc_OnPlayerKill(PlayerKillEventParam _param)
+        private void ObserversRpc_OnPlayerKill(PlayerKillEventParam _param)
         {
             if (base.IsServer == false)
             {
@@ -188,6 +188,8 @@ namespace MyProject
 
             m_OnPlayerRemoved_OnServer = p => RefreshPlayerRankList();
             onPlayerRemoved_OnServer += m_OnPlayerRemoved_OnServer;
+
+            m_UI_PlayerList.Initialize();
         }
 
         public override void OnStopServer()
@@ -199,6 +201,8 @@ namespace MyProject
 
             onPlayerRemoved_OnServer -= m_OnPlayerRemoved_OnServer;
             m_OnPlayerRemoved_OnServer = null;
+
+            m_UI_PlayerList.Uninitialize();
         }
 
         public override void OnStartClient()
@@ -211,7 +215,8 @@ namespace MyProject
             m_OnPlayerRemoved_OnClient = p => RefreshPlayerRankList();
             onPlayerRemoved_OnClient += m_OnPlayerRemoved_OnClient;
 
-            m_UI_PlayerList.Initialize();
+            if (base.IsServer == false)
+                m_UI_PlayerList.Initialize();
         }
 
         public override void OnStopClient()
@@ -224,11 +229,14 @@ namespace MyProject
             onPlayerRemoved_OnClient -= m_OnPlayerRemoved_OnClient;
             m_OnPlayerRemoved_OnClient = null;
 
-            m_UI_PlayerList.Uninitialize();
+            if (base.IsServer == false)
+            {
+                m_UI_PlayerList.Uninitialize();
 
-            m_PlayerList.Clear();
-            m_PlayerInfoDict.Clear();
-            m_PlayerRankDict.Clear();
+                m_PlayerList.Clear();
+                m_PlayerInfoDict.Clear();
+                m_PlayerRankDict.Clear();
+            }
         }
     }
 }
