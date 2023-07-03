@@ -25,7 +25,7 @@ namespace MyProject.Event
     [System.Serializable]
     public struct GameJoinedEventParam
     {
-        public List<PlayerInfo> playerList;
+        public List<PlayerInfo> playerInfoList;
     }
 
     [System.Serializable]

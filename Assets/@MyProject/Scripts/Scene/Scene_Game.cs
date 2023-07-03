@@ -3,6 +3,7 @@ using System.Linq;
 using FishNet.Connection;
 using FishNet.Object;
 using MyProject.Event;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace MyProject
@@ -41,8 +42,8 @@ namespace MyProject
             if (base.IsServer == false)
             {
                 // 서버에서는 동일한 로직이 실행되었으므로, 중복해서 실행하지 않습니다.
-                m_PlayerInfoDict[_param.player.connectionId] = _param.player;
-                m_PlayerRankDict[_param.player.connectionId] = m_PlayerInfoDict.Count;
+                m_PlayerInfoDict.Add(_param.player.connectionId, _param.player);
+                m_PlayerRankDict.Add(_param.player.connectionId, m_PlayerInfoDict.Count);
             }
 
             onPlayerAdded_OnClient?.Invoke(_param);
@@ -92,11 +93,10 @@ namespace MyProject
         [TargetRpc]
         public void TargetRpc_JoinGame(NetworkConnection _conn, GameJoinedEventParam _param)
         {
-            m_PlayerInfoDict.Clear();
-            _param.playerList.ForEach(p =>
+            _param.playerInfoList.ForEach(p =>
             {
                 m_PlayerInfoDict.Add(p.connectionId, p);
-                Debug.Log($"player already join: {p.connectionId}");
+                Debug.Log($"player already joined: {p.connectionId}");
             });
         }
 
@@ -128,8 +128,8 @@ namespace MyProject
             });
 
             m_PlayerList.Add(_player);
-            m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(_player);
-            m_PlayerRankDict[_player.OwnerId] = m_PlayerInfoDict.Count;
+            m_PlayerInfoDict.Add(_player.OwnerId, new PlayerInfo(_player));
+            m_PlayerRankDict.Add(_player.OwnerId, m_PlayerInfoDict.Count);
 
             onPlayerAdded_OnServer?.Invoke(_player);
             ObserversRpc_OnPlayerAdded(new PlayerAddedEventParam() { player = new PlayerInfo(_player) });
@@ -227,7 +227,7 @@ namespace MyProject
                 m_PlayerInfoDict.Clear();
                 m_PlayerRankDict.Clear();
             }
-            
+
             m_UI_PlayerList.Uninitialize();
         }
     }
