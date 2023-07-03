@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using FishNet.Connection;
 using FishNet.Object;
 using MyProject.Event;
 using UnityEngine;
@@ -16,6 +17,8 @@ namespace MyProject
         [SerializeField] private int m_MaxTime = 60 * 5;
         [SerializeField] private int m_MaxKillCount = 30;
         [SerializeField] private int m_RespawnTime = 5;
+
+        private event System.Action a;
 
         #region Server Only
 
@@ -38,8 +41,13 @@ namespace MyProject
         [ObserversRpc]
         public void ObserversRpc_OnPlayerAdded(PlayerAddedEventParam _param)
         {
-            m_PlayerInfoDict[_param.player.connectionId] = _param.player;
-            m_PlayerRankDict[_param.player.connectionId] = m_PlayerInfoDict.Count;
+            if (base.IsServer == false)
+            {
+                // 서버에서는 동일한 로직이 실행되었으므로, 중복해서 실행하지 않습니다.
+                m_PlayerInfoDict[_param.player.connectionId] = _param.player;
+                m_PlayerRankDict[_param.player.connectionId] = m_PlayerInfoDict.Count;
+            }
+
             onPlayerAdded_OnClient.Invoke(_param);
         }
 
@@ -49,8 +57,13 @@ namespace MyProject
         [ObserversRpc]
         public void ObserversRpc_OnPlayerRemoved(PlayerRemovedEventParam _param)
         {
-            m_PlayerInfoDict.Remove(_param.player.connectionId);
-            m_PlayerRankDict.Remove(_param.player.connectionId);
+            if (base.IsServer == false)
+            {
+                // 서버에서는 동일한 로직이 실행되었으므로, 중복해서 실행하지 않습니다.
+                m_PlayerInfoDict.Remove(_param.player.connectionId);
+                m_PlayerRankDict.Remove(_param.player.connectionId);
+            }
+
             onPlayerRemoved_OnClient.Invoke(_param);
         }
 
@@ -60,8 +73,13 @@ namespace MyProject
         [ObserversRpc]
         public void ObserversRpc_OnPlayerKill(PlayerKillEventParam _param)
         {
-            m_PlayerInfoDict[_param.killer.connectionId] = _param.killer;
-            m_PlayerInfoDict[_param.target.connectionId] = _param.target;
+            if (base.IsServer == false)
+            {
+                // 서버에서는 동일한 로직이 실행되었으므로, 중복해서 실행하지 않습니다.
+                m_PlayerInfoDict[_param.killer.connectionId] = _param.killer;
+                m_PlayerInfoDict[_param.target.connectionId] = _param.target;
+            }
+
             onPlayerKill_OnClient.Invoke(_param);
         }
 
@@ -73,6 +91,17 @@ namespace MyProject
         private UnityAction<Player> m_OnPlayerRemoved_OnServer;
         private UnityAction<PlayerAddedEventParam> m_OnPlayerAdded_OnClient;
         private UnityAction<PlayerRemovedEventParam> m_OnPlayerRemoved_OnClient;
+
+        [TargetRpc]
+        public void TargetRpc_JoinGame(NetworkConnection _conn, GameJoinedEventParam _param)
+        {
+            m_PlayerInfoDict.Clear();
+            _param.playerList.ForEach(p =>
+            {
+                m_PlayerInfoDict.Add(p.connectionId, p);
+                Debug.Log($"player already join: {p.connectionId}");
+            });
+        }
 
         [ObserversRpc]
         private void ObserversRpc_RefreshPlayerRankList() => RefreshPlayerRankList();
@@ -90,6 +119,9 @@ namespace MyProject
 
             _player.onKill.AddListener(target =>
             {
+                m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(_player);
+                m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(target);
+
                 onPlayerKill_OnServer.Invoke(_player, target);
                 ObserversRpc_OnPlayerKill(new PlayerKillEventParam()
                 {
@@ -99,6 +131,9 @@ namespace MyProject
             });
 
             m_PlayerList.Add(_player);
+            m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(_player);
+            m_PlayerRankDict[_player.OwnerId] = m_PlayerInfoDict.Count;
+
             onPlayerAdded_OnServer.Invoke(_player);
             ObserversRpc_OnPlayerAdded(new PlayerAddedEventParam() { player = new PlayerInfo(_player) });
         }
@@ -107,6 +142,9 @@ namespace MyProject
         public void Server_RemovePlayer(Player _player)
         {
             m_PlayerList.Remove(_player);
+            m_PlayerInfoDict.Remove(_player.OwnerId);
+            m_PlayerRankDict.Remove(_player.OwnerId);
+
             onPlayerRemoved_OnServer.Invoke(_player);
             ObserversRpc_OnPlayerRemoved(new PlayerRemovedEventParam() { player = new PlayerInfo(_player) });
         }

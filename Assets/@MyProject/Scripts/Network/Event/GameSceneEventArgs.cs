@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Numerics;
 
 namespace MyProject.Event
 {
@@ -19,6 +20,12 @@ namespace MyProject.Event
             killCount = _player.killCount;
             power = _player.power;
         }
+    }
+
+    [System.Serializable]
+    public struct GameJoinedEventParam
+    {
+        public List<PlayerInfo> playerList;
     }
 
     [System.Serializable]

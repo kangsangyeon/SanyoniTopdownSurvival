@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FishNet;
 using MyProject;
 using MyProject.Event;
 using UnityEngine;
@@ -13,38 +14,71 @@ public class UI_PlayerList : MonoBehaviour
     private VisualElement m_Parent;
     private readonly Dictionary<int, UI_PlayerElement> m_PlayerUIDict = new Dictionary<int, UI_PlayerElement>();
 
-    private UnityAction<PlayerAddedEventParam> m_OnPlayerAdded;
-    private UnityAction<PlayerRemovedEventParam> m_OnPlayerRemoved;
-    private UnityAction<PlayerKillEventParam> m_OnPlayerKill;
+    private UnityAction<PlayerAddedEventParam> m_OnPlayerAdded_OnClient;
+    private UnityAction<PlayerRemovedEventParam> m_OnPlayerRemoved_OnClient;
+    private UnityAction<PlayerKillEventParam> m_OnPlayerKill_OnClient;
+
+    private UnityAction<Player> m_OnPlayerAdded_OnServer;
+    private UnityAction<Player> m_OnPlayerRemoved_OnServer;
+    private UnityAction<Player, Player> m_OnPlayerKill_OnServer;
+
     private UnityAction m_OnPlayerRankRefreshed;
 
     public void Initialize()
     {
         m_Parent = m_Document.rootVisualElement.Q("player-list");
 
-        m_OnPlayerAdded = _param => TryInitializePlayerUI(_param.player.connectionId);
-        m_GameScene.onPlayerAdded_OnClient.AddListener(m_OnPlayerAdded);
-
-        m_OnPlayerRemoved = _param => RemovePlayerUI(_param.player.connectionId);
-        m_GameScene.onPlayerRemoved_OnClient.AddListener(m_OnPlayerRemoved);
-
-        m_OnPlayerKill = param => RefreshPlayerUI(param.killer.connectionId);
-        m_GameScene.onPlayerKill_OnClient.AddListener(m_OnPlayerKill);
+        m_OnPlayerAdded_OnClient = _param => TryInitializePlayerUI(_param.player.connectionId);
+        m_OnPlayerRemoved_OnClient = _param => RemovePlayerUI(_param.player.connectionId);
+        m_OnPlayerKill_OnClient = param => RefreshPlayerUI(param.killer.connectionId);
 
         m_OnPlayerRankRefreshed = () => RefreshPlayerRankUI();
         m_GameScene.onPlayerRankRefreshed.AddListener(m_OnPlayerRankRefreshed);
+
+
+        if (InstanceFinder.IsServer)
+        {
+            m_OnPlayerAdded_OnServer = p =>
+                m_OnPlayerAdded_OnClient(new PlayerAddedEventParam() { player = new PlayerInfo(p) });
+            m_OnPlayerRemoved_OnServer = p =>
+                m_OnPlayerRemoved_OnClient(new PlayerRemovedEventParam() { player = new PlayerInfo(p) });
+            m_OnPlayerKill_OnServer = (killer, target) =>
+                m_OnPlayerKill_OnClient(new PlayerKillEventParam() { killer = new PlayerInfo(killer), target = new PlayerInfo(target) });
+
+            m_GameScene.onPlayerAdded_OnServer.AddListener(m_OnPlayerAdded_OnServer);
+            m_GameScene.onPlayerRemoved_OnServer.AddListener(m_OnPlayerRemoved_OnServer);
+            m_GameScene.onPlayerKill_OnServer.AddListener(m_OnPlayerKill_OnServer);
+        }
+        else
+        {
+            m_GameScene.onPlayerAdded_OnClient.AddListener(m_OnPlayerAdded_OnClient);
+            m_GameScene.onPlayerRemoved_OnClient.AddListener(m_OnPlayerRemoved_OnClient);
+            m_GameScene.onPlayerKill_OnClient.AddListener(m_OnPlayerKill_OnClient);
+        }
     }
 
     public void Uninitialize()
     {
-        m_GameScene.onPlayerAdded_OnClient.RemoveListener(m_OnPlayerAdded);
-        m_OnPlayerAdded = null;
+        if (InstanceFinder.IsServer)
+        {
+            m_GameScene.onPlayerAdded_OnServer.RemoveListener(m_OnPlayerAdded_OnServer);
+            m_GameScene.onPlayerRemoved_OnServer.RemoveListener(m_OnPlayerRemoved_OnServer);
+            m_GameScene.onPlayerKill_OnServer.RemoveListener(m_OnPlayerKill_OnServer);
 
-        m_GameScene.onPlayerRemoved_OnClient.RemoveListener(m_OnPlayerRemoved);
-        m_OnPlayerRemoved = null;
+            m_OnPlayerAdded_OnServer = null;
+            m_OnPlayerRemoved_OnServer = null;
+            m_OnPlayerKill_OnServer = null;
+        }
+        else
+        {
+            m_GameScene.onPlayerAdded_OnClient.RemoveListener(m_OnPlayerAdded_OnClient);
+            m_GameScene.onPlayerRemoved_OnClient.RemoveListener(m_OnPlayerRemoved_OnClient);
+            m_GameScene.onPlayerKill_OnClient.RemoveListener(m_OnPlayerKill_OnClient);
+        }
 
-        m_GameScene.onPlayerKill_OnClient.RemoveListener(m_OnPlayerKill);
-        m_OnPlayerKill = null;
+        m_OnPlayerAdded_OnClient = null;
+        m_OnPlayerRemoved_OnClient = null;
+        m_OnPlayerKill_OnClient = null;
 
         m_GameScene.onPlayerRankRefreshed.RemoveListener(m_OnPlayerRankRefreshed);
         m_OnPlayerRankRefreshed = null;

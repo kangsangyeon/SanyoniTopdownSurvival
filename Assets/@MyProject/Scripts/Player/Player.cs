@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using FishNet.Object;
+using MyProject.Event;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -103,6 +104,7 @@ namespace MyProject
         public override void OnStartServer()
         {
             base.OnStartServer();
+            Scene_Game.Instance.TargetRpc_JoinGame(base.Owner, new GameJoinedEventParam() { playerList = Scene_Game.Instance.playerInfoDict.Values.ToList() });
             Scene_Game.Instance.Server_AddPlayer(this);
 
             health.onHealthIsZero.AddListener(() =>
@@ -189,7 +191,6 @@ namespace MyProject
         public override void OnStopClient()
         {
             base.OnStopClient();
-            
         }
     }
 }
