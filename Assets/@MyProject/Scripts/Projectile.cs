@@ -13,8 +13,8 @@ public class Projectile : MonoBehaviour
     private float m_PassedTime;
 
     public float m_StartTime;
-    public UnityEvent onLifeEnd = new UnityEvent();
-    public UnityEvent<Collider2D> onHit = new UnityEvent<Collider2D>();
+    public event System.Action onLifeEnd;
+    public event System.Action<Collider2D> onHit;
 
     public void Initialize(Vector3 _position, Vector3 _direction, float _passedTime)
     {
@@ -51,7 +51,7 @@ public class Projectile : MonoBehaviour
         {
             if (Time.time - m_StartTime >= m_LiveDuration)
             {
-                onLifeEnd.Invoke();
+                onLifeEnd?.Invoke();
             }
         }
     }
@@ -64,7 +64,7 @@ public class Projectile : MonoBehaviour
         if (col.gameObject.CompareTag("Player"))
         {
             m_AlreadyHit = true;
-            onHit.Invoke(col);
+            onHit?.Invoke(col);
         }
     }
 }

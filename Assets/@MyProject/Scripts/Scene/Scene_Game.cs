@@ -4,7 +4,6 @@ using FishNet.Connection;
 using FishNet.Object;
 using MyProject.Event;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace MyProject
 {
@@ -17,8 +16,6 @@ namespace MyProject
         [SerializeField] private int m_MaxTime = 60 * 5;
         [SerializeField] private int m_MaxKillCount = 30;
         [SerializeField] private int m_RespawnTime = 5;
-
-        private event System.Action a;
 
         #region Server Only
 
@@ -35,11 +32,11 @@ namespace MyProject
 
         #region Events
 
-        public UnityEvent<Player> onPlayerAdded_OnServer = new UnityEvent<Player>();
-        public UnityEvent<PlayerAddedEventParam> onPlayerAdded_OnClient = new UnityEvent<PlayerAddedEventParam>();
+        public event System.Action<Player> onPlayerAdded_OnServer;
+        public event System.Action<PlayerAddedEventParam> onPlayerAdded_OnClient;
 
         [ObserversRpc]
-        public void ObserversRpc_OnPlayerAdded(PlayerAddedEventParam _param)
+        private void ObserversRpc_OnPlayerAdded(PlayerAddedEventParam _param)
         {
             if (base.IsServer == false)
             {
@@ -48,14 +45,14 @@ namespace MyProject
                 m_PlayerRankDict[_param.player.connectionId] = m_PlayerInfoDict.Count;
             }
 
-            onPlayerAdded_OnClient.Invoke(_param);
+            onPlayerAdded_OnClient?.Invoke(_param);
         }
 
-        public UnityEvent<Player> onPlayerRemoved_OnServer = new UnityEvent<Player>();
-        public UnityEvent<PlayerRemovedEventParam> onPlayerRemoved_OnClient = new UnityEvent<PlayerRemovedEventParam>();
+        public event System.Action<Player> onPlayerRemoved_OnServer;
+        public event System.Action<PlayerRemovedEventParam> onPlayerRemoved_OnClient;
 
         [ObserversRpc]
-        public void ObserversRpc_OnPlayerRemoved(PlayerRemovedEventParam _param)
+        private void ObserversRpc_OnPlayerRemoved(PlayerRemovedEventParam _param)
         {
             if (base.IsServer == false)
             {
@@ -64,11 +61,11 @@ namespace MyProject
                 m_PlayerRankDict.Remove(_param.player.connectionId);
             }
 
-            onPlayerRemoved_OnClient.Invoke(_param);
+            onPlayerRemoved_OnClient?.Invoke(_param);
         }
 
-        public UnityEvent<Player, Player> onPlayerKill_OnServer = new UnityEvent<Player, Player>();
-        public UnityEvent<PlayerKillEventParam> onPlayerKill_OnClient = new UnityEvent<PlayerKillEventParam>();
+        public event System.Action<Player, Player> onPlayerKill_OnServer;
+        public event System.Action<PlayerKillEventParam> onPlayerKill_OnClient;
 
         [ObserversRpc]
         public void ObserversRpc_OnPlayerKill(PlayerKillEventParam _param)
@@ -80,17 +77,17 @@ namespace MyProject
                 m_PlayerInfoDict[_param.target.connectionId] = _param.target;
             }
 
-            onPlayerKill_OnClient.Invoke(_param);
+            onPlayerKill_OnClient?.Invoke(_param);
         }
 
-        public UnityEvent onPlayerRankRefreshed = new UnityEvent(); // client event
+        public event System.Action onPlayerRankRefreshed; // client event
 
         #endregion
 
-        private UnityAction<Player> m_OnPlayerAdded_OnServer;
-        private UnityAction<Player> m_OnPlayerRemoved_OnServer;
-        private UnityAction<PlayerAddedEventParam> m_OnPlayerAdded_OnClient;
-        private UnityAction<PlayerRemovedEventParam> m_OnPlayerRemoved_OnClient;
+        private System.Action<Player> m_OnPlayerAdded_OnServer;
+        private System.Action<Player> m_OnPlayerRemoved_OnServer;
+        private System.Action<PlayerAddedEventParam> m_OnPlayerAdded_OnClient;
+        private System.Action<PlayerRemovedEventParam> m_OnPlayerRemoved_OnClient;
 
         [TargetRpc]
         public void TargetRpc_JoinGame(NetworkConnection _conn, GameJoinedEventParam _param)
@@ -109,20 +106,20 @@ namespace MyProject
         [Server]
         public void Server_AddPlayer(Player _player)
         {
-            _player.onKill.AddListener(target => ObserversRpc_RefreshPlayerRankList());
+            _player.onKill += (target => ObserversRpc_RefreshPlayerRankList());
 
-            _player.onDead.AddListener(source => this.Invoke(() =>
+            _player.onDead += (source => this.Invoke(() =>
             {
                 _player.transform.position = m_RespawnPoint.position;
                 _player.Server_OnRespawn();
             }, m_RespawnTime));
 
-            _player.onKill.AddListener(target =>
+            _player.onKill += (target =>
             {
                 m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(_player);
                 m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(target);
 
-                onPlayerKill_OnServer.Invoke(_player, target);
+                onPlayerKill_OnServer?.Invoke(_player, target);
                 ObserversRpc_OnPlayerKill(new PlayerKillEventParam()
                 {
                     killer = new PlayerInfo(_player),
@@ -134,7 +131,7 @@ namespace MyProject
             m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(_player);
             m_PlayerRankDict[_player.OwnerId] = m_PlayerInfoDict.Count;
 
-            onPlayerAdded_OnServer.Invoke(_player);
+            onPlayerAdded_OnServer?.Invoke(_player);
             ObserversRpc_OnPlayerAdded(new PlayerAddedEventParam() { player = new PlayerInfo(_player) });
         }
 
@@ -145,7 +142,7 @@ namespace MyProject
             m_PlayerInfoDict.Remove(_player.OwnerId);
             m_PlayerRankDict.Remove(_player.OwnerId);
 
-            onPlayerRemoved_OnServer.Invoke(_player);
+            onPlayerRemoved_OnServer?.Invoke(_player);
             ObserversRpc_OnPlayerRemoved(new PlayerRemovedEventParam() { player = new PlayerInfo(_player) });
         }
 
@@ -174,7 +171,7 @@ namespace MyProject
                 m_PlayerRankDict.Add(_player.connectionId, _lastRank);
             }
 
-            onPlayerRankRefreshed.Invoke();
+            onPlayerRankRefreshed?.Invoke();
         }
 
         private void Awake()
@@ -187,20 +184,20 @@ namespace MyProject
             base.OnStartServer();
 
             m_OnPlayerAdded_OnServer = p => RefreshPlayerRankList();
-            onPlayerAdded_OnServer.AddListener(m_OnPlayerAdded_OnServer);
+            onPlayerAdded_OnServer += m_OnPlayerAdded_OnServer;
 
             m_OnPlayerRemoved_OnServer = p => RefreshPlayerRankList();
-            onPlayerRemoved_OnServer.AddListener(m_OnPlayerRemoved_OnServer);
+            onPlayerRemoved_OnServer += m_OnPlayerRemoved_OnServer;
         }
 
         public override void OnStopServer()
         {
             base.OnStopServer();
 
-            onPlayerAdded_OnServer.RemoveListener(m_OnPlayerAdded_OnServer);
+            onPlayerAdded_OnServer -= m_OnPlayerAdded_OnServer;
             m_OnPlayerAdded_OnServer = null;
 
-            onPlayerRemoved_OnServer.RemoveListener(m_OnPlayerRemoved_OnServer);
+            onPlayerRemoved_OnServer -= m_OnPlayerRemoved_OnServer;
             m_OnPlayerRemoved_OnServer = null;
         }
 
@@ -209,10 +206,10 @@ namespace MyProject
             base.OnStartClient();
 
             m_OnPlayerAdded_OnClient = p => RefreshPlayerRankList();
-            onPlayerAdded_OnClient.AddListener(m_OnPlayerAdded_OnClient);
+            onPlayerAdded_OnClient += m_OnPlayerAdded_OnClient;
 
             m_OnPlayerRemoved_OnClient = p => RefreshPlayerRankList();
-            onPlayerRemoved_OnClient.AddListener(m_OnPlayerRemoved_OnClient);
+            onPlayerRemoved_OnClient += m_OnPlayerRemoved_OnClient;
 
             m_UI_PlayerList.Initialize();
         }
@@ -221,10 +218,10 @@ namespace MyProject
         {
             base.OnStopClient();
 
-            onPlayerAdded_OnClient.RemoveListener(m_OnPlayerAdded_OnClient);
+            onPlayerAdded_OnClient -= m_OnPlayerAdded_OnClient;
             m_OnPlayerAdded_OnClient = null;
 
-            onPlayerRemoved_OnClient.RemoveListener(m_OnPlayerRemoved_OnClient);
+            onPlayerRemoved_OnClient -= m_OnPlayerRemoved_OnClient;
             m_OnPlayerRemoved_OnClient = null;
 
             m_UI_PlayerList.Uninitialize();

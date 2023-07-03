@@ -47,7 +47,7 @@ namespace MyProject
                 if (m_CurrentMagazineCount != value)
                 {
                     m_CurrentMagazineCount = value;
-                    onCurrentMagazineCountChanged.Invoke();
+                    onCurrentMagazineCountChanged?.Invoke();
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace MyProject
                 if (m_MaxMagazineCount != value)
                 {
                     m_MaxMagazineCount = value;
-                    onMaxMagazineCountChanged.Invoke();
+                    onMaxMagazineCountChanged?.Invoke();
                 }
             }
         }
@@ -71,11 +71,11 @@ namespace MyProject
             private set => m_ReloadDuration = value;
         }
 
-        public UnityEvent onCurrentMagazineCountChanged { get; } = new UnityEvent();
-        public UnityEvent onMaxMagazineCountChanged { get; } = new UnityEvent();
-        public UnityEvent onFire { get; } = new UnityEvent();
-        public UnityEvent onReloadStart { get; } = new UnityEvent();
-        public UnityEvent onReloadFinished { get; } = new UnityEvent();
+        public event System.Action onCurrentMagazineCountChanged;
+        public event System.Action onMaxMagazineCountChanged;
+        public event System.Action onFire;
+        public event System.Action onReloadStart;
+        public event System.Action onReloadFinished;
 
         #endregion
 
@@ -122,7 +122,7 @@ namespace MyProject
 
                 m_LastFireTime = Time.time;
                 --currentMagazineCount;
-                onFire.Invoke();
+                onFire?.Invoke();
             }
         }
 
@@ -191,8 +191,8 @@ namespace MyProject
         {
             Projectile _projectile = Instantiate(m_Prefab_Projectile);
             _projectile.gameObject.SetActive(false);
-            _projectile.onLifeEnd.AddListener(() => { m_ProjectilePool.Release(_projectile); });
-            _projectile.onHit.AddListener((col) =>
+            _projectile.onLifeEnd += () => { m_ProjectilePool.Release(_projectile); };
+            _projectile.onHit += (col) =>
             {
                 m_ProjectilePool.Release(_projectile);
 
@@ -205,7 +205,7 @@ namespace MyProject
                     Debug.Log(
                         $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.health}/{_health.MaxHealth}.");
                 }
-            });
+            };
 
             return _projectile;
         }
@@ -233,12 +233,12 @@ namespace MyProject
             if (Input.GetKeyDown(KeyCode.R))
             {
                 m_LastReloadStartTime = Time.time;
-                onReloadStart.Invoke();
+                onReloadStart?.Invoke();
 
                 this.Invoke(() =>
                 {
                     currentMagazineCount = maxMagazineCount;
-                    onReloadFinished.Invoke();
+                    onReloadFinished?.Invoke();
                 }, m_ReloadDuration);
             }
         }

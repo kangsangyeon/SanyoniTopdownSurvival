@@ -26,7 +26,7 @@ namespace MyProject
         /// <summary>
         /// 캐릭터가 변경될 때 디스패치됩니다.
         /// </summary>
-        public static UnityEvent<GameObject> onCharacterUpdated = new UnityEvent<GameObject>();
+        public static event System.Action<GameObject> onCharacterUpdated;
 
         /// <summary>
         /// 리스폰을 시도합니다.

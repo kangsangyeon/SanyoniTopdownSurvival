@@ -8,9 +8,9 @@ public class PlayerUI : MonoBehaviour
     private void Start()
     {
         m_HealthBar.fillRatio = (float)m_PlayerHealth.health / (float)m_PlayerHealth.MaxHealth;
-        m_PlayerHealth.onHealthChanged_OnSync.AddListener(
-            amount => m_HealthBar.fillRatio = (float)m_PlayerHealth.health / (float)m_PlayerHealth.MaxHealth);
-        m_PlayerHealth.onHealthIsZero.AddListener(
-            () => m_HealthBar.fillRatio = 0f);
+        m_PlayerHealth.onHealthChanged_OnSync += amount =>
+            m_HealthBar.fillRatio = (float)m_PlayerHealth.health / (float)m_PlayerHealth.MaxHealth;
+        m_PlayerHealth.onHealthIsZero += () => 
+            m_HealthBar.fillRatio = 0f;
     }
 }

@@ -13,10 +13,10 @@ namespace MyProject
         {
             if (InstanceFinder.IsServer)
             {
-                m_Scene.onPlayerKill_OnServer.AddListener((_killer, _target) =>
-                    Debug.Log($"player killed: {_killer.gameObject.name} kill {_target.gameObject.name}."));
-                m_Scene.onPlayerAdded_OnServer.AddListener(_player =>
-                    Debug.Log($"player added: {_player.gameObject.name}"));
+                m_Scene.onPlayerKill_OnServer += (_killer, _target) =>
+                    Debug.Log($"player killed: {_killer.gameObject.name} kill {_target.gameObject.name}.");
+                m_Scene.onPlayerAdded_OnServer += _player =>
+                    Debug.Log($"player added: {_player.gameObject.name}");
             }
         }
     }

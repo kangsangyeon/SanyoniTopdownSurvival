@@ -8,10 +8,10 @@ namespace MyProject
         int maxMagazineCount { get; }
         float reloadDuration { get; }
 
-        UnityEvent onCurrentMagazineCountChanged { get; }
-        UnityEvent onMaxMagazineCountChanged { get; }
-        UnityEvent onFire { get; }
-        UnityEvent onReloadStart { get; }
-        UnityEvent onReloadFinished { get; }
+        event System.Action onCurrentMagazineCountChanged;
+        event System.Action onMaxMagazineCountChanged;
+        event System.Action onFire;
+        event System.Action onReloadStart;
+        event System.Action onReloadFinished;
     }
 }

@@ -45,61 +45,61 @@ namespace MyProject
         private int m_Power = 0;
         public int power => m_Power;
 
-        public UnityEvent<Player> onKill = new UnityEvent<Player>(); // param: target(=죽인 대상)
-        public UnityEvent<object> onDead = new UnityEvent<object>(); // param: source(=죽은 원인)
-        public UnityEvent onPowerChanged = new UnityEvent();
-        public UnityEvent onRespawn = new UnityEvent();
-        public UnityEvent onWeaponChanged = new UnityEvent();
+        public event System.Action<Player> onKill; // param: target(=죽인 대상)
+        public event System.Action<object> onDead; // param: source(=죽은 원인)
+        public event System.Action onPowerChanged;
+        public event System.Action onRespawn;
+        public event System.Action onWeaponChanged;
 
         [Server]
         public void Server_OnKill(Player _target)
         {
-            onKill.Invoke(_target);
+            onKill?.Invoke(_target);
             Observers_OnKill(_target);
         }
 
         [Server]
         public void Server_OnDead(object _source)
         {
-            onDead.Invoke(_source);
+            onDead?.Invoke(_source);
             Observers_OnDead(_source);
         }
 
         [Server]
         public void Server_OnPowerChanged()
         {
-            onPowerChanged.Invoke();
+            onPowerChanged?.Invoke();
             Observers_OnPowerChanged();
         }
 
         [Server]
         public void Server_OnRespawn()
         {
-            onRespawn.Invoke();
+            onRespawn?.Invoke();
             Observers_OnRespawn();
         }
 
         [Server]
         public void Server_OnWeaponChanged()
         {
-            onWeaponChanged.Invoke();
+            onWeaponChanged?.Invoke();
             Observers_OnWeaponChanged();
         }
 
         [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnKill(Player _target) => onKill.Invoke(_target);
+        public void Observers_OnKill(Player _target) => onKill?.Invoke(_target);
 
         [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnDead(object _source) => onDead.Invoke(_source);
+        public void Observers_OnDead(object _source) => onDead?.Invoke(_source);
 
         [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnPowerChanged() => onPowerChanged.Invoke();
+        public void Observers_OnPowerChanged() => onPowerChanged?.Invoke();
 
         [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnRespawn() => onRespawn.Invoke();
+        public void Observers_OnRespawn() => onRespawn?.Invoke();
 
         [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnWeaponChanged() => onWeaponChanged.Invoke();
+        public void Observers_OnWeaponChanged() => onWeaponChanged?.Invoke();
 
         public override void OnStartServer()
         {
@@ -107,7 +107,7 @@ namespace MyProject
             Scene_Game.Instance.TargetRpc_JoinGame(base.Owner, new GameJoinedEventParam() { playerList = Scene_Game.Instance.playerInfoDict.Values.ToList() });
             Scene_Game.Instance.Server_AddPlayer(this);
 
-            health.onHealthIsZero.AddListener(() =>
+            health.onHealthIsZero += () =>
             {
                 HealthModifier _healthModifier;
 
@@ -141,13 +141,13 @@ namespace MyProject
                 _healthModifier = health.damageList.Last();
 
                 Server_OnDead(_healthModifier.source);
-            });
+            };
 
-            onRespawn.AddListener(() =>
+            onRespawn += () =>
             {
                 health.ApplyModifier(new HealthModifier()
                     { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
-            });
+            };
         }
 
         public override void OnStopServer()
@@ -169,23 +169,23 @@ namespace MyProject
                 m_UI_PlayerAmmo.enabled = false;
             }
 
-            health.onHealthIsZero.AddListener(() =>
+            health.onHealthIsZero += () =>
             {
                 m_Collider.enabled = false;
                 foreach (SpriteRenderer _renderer in m_SpriteRenderers)
                     _renderer.enabled = false;
                 if (m_HealthBar)
                     m_HealthBar.enabled = false;
-            });
+            };
 
-            onRespawn.AddListener(() =>
+            onRespawn += () =>
             {
                 m_Collider.enabled = true;
                 foreach (SpriteRenderer _renderer in m_SpriteRenderers)
                     _renderer.enabled = true;
                 if (m_HealthBar)
                     m_HealthBar.enabled = true;
-            });
+            };
         }
 
         public override void OnStopClient()

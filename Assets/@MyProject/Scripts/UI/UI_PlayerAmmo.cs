@@ -137,11 +137,11 @@ namespace MyProject
             if (m_Player.weapon is IGunWeapon _weapon)
                 InitializeGunWeapon(_weapon);
 
-            m_Player.onWeaponChanged.AddListener(() =>
+            m_Player.onWeaponChanged += () =>
             {
                 if (m_Player.weapon is IGunWeapon _weapon)
                     InitializeGunWeapon(_weapon);
-            });
+            };
         }
 
         private void InitializeGunWeapon(IGunWeapon _gunWeapon)
@@ -149,14 +149,15 @@ namespace MyProject
             m_GunWeapon = _gunWeapon;
 
             m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1];
-            m_GunWeapon.onMaxMagazineCountChanged.AddListener(() => m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1]);
+            m_GunWeapon.onMaxMagazineCountChanged += () =>
+                m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1];
 
             m_LastFiredBulletIndex = m_GunWeapon.currentMagazineCount;
-            m_GunWeapon.onCurrentMagazineCountChanged.AddListener(() =>
+            m_GunWeapon.onCurrentMagazineCountChanged += () =>
             {
                 m_LastFiredBulletIndex = m_GunWeapon.currentMagazineCount;
                 m_BulletFireTimes[m_LastFiredBulletIndex] = Time.time;
-            });
+            };
         }
     }
 }

@@ -10,11 +10,11 @@ namespace MyProject
         {
             Player _player = GetComponent<Player>();
 
-            _player.onDead.AddListener(killer =>
+            _player.onDead += killer =>
             {
                 GameObject _fx = Instantiate(m_Prefab_DeadFX, transform.position, Quaternion.identity);
                 Destroy(_fx, 1.0f);
-            });
+            };
         }
     }
 }
