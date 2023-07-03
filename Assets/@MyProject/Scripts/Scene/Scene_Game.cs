@@ -190,6 +190,10 @@ namespace MyProject
             m_OnPlayerRemoved_OnClient = null;
 
             m_UI_PlayerList.Uninitialize();
+
+            m_PlayerList.Clear();
+            m_PlayerInfoDict.Clear();
+            m_PlayerRankDict.Clear();
         }
     }
 }

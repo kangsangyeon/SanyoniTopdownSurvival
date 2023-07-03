@@ -185,5 +185,11 @@ namespace MyProject
                     m_HealthBar.enabled = true;
             });
         }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+            
+        }
     }
 }
