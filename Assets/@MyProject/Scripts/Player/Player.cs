@@ -34,7 +34,7 @@ namespace MyProject
                 if (m_Weapon != value)
                 {
                     m_Weapon = value;
-                    onWeaponChanged.Invoke();
+                    onWeaponChanged?.Invoke();
                 }
             }
         }
