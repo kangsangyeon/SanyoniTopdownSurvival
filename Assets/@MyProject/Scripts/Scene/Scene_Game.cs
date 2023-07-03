@@ -179,64 +179,56 @@ namespace MyProject
             Instance = this;
         }
 
-        public override void OnStartServer()
+        public override void OnStartNetwork()
         {
-            base.OnStartServer();
+            base.OnStartNetwork();
 
-            m_OnPlayerAdded_OnServer = p => RefreshPlayerRankList();
-            onPlayerAdded_OnServer += m_OnPlayerAdded_OnServer;
+            if (base.IsServer)
+            {
+                m_OnPlayerAdded_OnServer = p => RefreshPlayerRankList();
+                onPlayerAdded_OnServer += m_OnPlayerAdded_OnServer;
 
-            m_OnPlayerRemoved_OnServer = p => RefreshPlayerRankList();
-            onPlayerRemoved_OnServer += m_OnPlayerRemoved_OnServer;
+                m_OnPlayerRemoved_OnServer = p => RefreshPlayerRankList();
+                onPlayerRemoved_OnServer += m_OnPlayerRemoved_OnServer;
+            }
+            else
+            {
+                m_OnPlayerAdded_OnClient = p => RefreshPlayerRankList();
+                onPlayerAdded_OnClient += m_OnPlayerAdded_OnClient;
+
+                m_OnPlayerRemoved_OnClient = p => RefreshPlayerRankList();
+                onPlayerRemoved_OnClient += m_OnPlayerRemoved_OnClient;
+            }
 
             m_UI_PlayerList.Initialize();
         }
 
-        public override void OnStopServer()
+        public override void OnStopNetwork()
         {
-            base.OnStopServer();
+            base.OnStopNetwork();
 
-            onPlayerAdded_OnServer -= m_OnPlayerAdded_OnServer;
-            m_OnPlayerAdded_OnServer = null;
-
-            onPlayerRemoved_OnServer -= m_OnPlayerRemoved_OnServer;
-            m_OnPlayerRemoved_OnServer = null;
-
-            m_UI_PlayerList.Uninitialize();
-        }
-
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-
-            m_OnPlayerAdded_OnClient = p => RefreshPlayerRankList();
-            onPlayerAdded_OnClient += m_OnPlayerAdded_OnClient;
-
-            m_OnPlayerRemoved_OnClient = p => RefreshPlayerRankList();
-            onPlayerRemoved_OnClient += m_OnPlayerRemoved_OnClient;
-
-            if (base.IsServer == false)
-                m_UI_PlayerList.Initialize();
-        }
-
-        public override void OnStopClient()
-        {
-            base.OnStopClient();
-
-            onPlayerAdded_OnClient -= m_OnPlayerAdded_OnClient;
-            m_OnPlayerAdded_OnClient = null;
-
-            onPlayerRemoved_OnClient -= m_OnPlayerRemoved_OnClient;
-            m_OnPlayerRemoved_OnClient = null;
-
-            if (base.IsServer == false)
+            if (base.IsServer)
             {
-                m_UI_PlayerList.Uninitialize();
+                onPlayerAdded_OnServer -= m_OnPlayerAdded_OnServer;
+                m_OnPlayerAdded_OnServer = null;
+
+                onPlayerRemoved_OnServer -= m_OnPlayerRemoved_OnServer;
+                m_OnPlayerRemoved_OnServer = null;
+            }
+            else
+            {
+                onPlayerAdded_OnClient -= m_OnPlayerAdded_OnClient;
+                m_OnPlayerAdded_OnClient = null;
+
+                onPlayerRemoved_OnClient -= m_OnPlayerRemoved_OnClient;
+                m_OnPlayerRemoved_OnClient = null;
 
                 m_PlayerList.Clear();
                 m_PlayerInfoDict.Clear();
                 m_PlayerRankDict.Clear();
             }
+            
+            m_UI_PlayerList.Uninitialize();
         }
     }
 }
