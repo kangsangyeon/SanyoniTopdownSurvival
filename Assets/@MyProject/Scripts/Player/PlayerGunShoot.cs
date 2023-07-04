@@ -1,3 +1,4 @@
+using System;
 using FishNet.Object;
 using UnityEngine;
 using UnityEngine.Events;
@@ -33,6 +34,7 @@ namespace MyProject
         private float m_LastFireTime;
         private int m_CurrentMagazineCount;
         private bool m_ShootQueue;
+        private bool m_CanShoot;
 
         #region IGunWeapon
 
@@ -162,10 +164,22 @@ namespace MyProject
             m_ProjectilePool = new ObjectPool<Projectile>(
                 OnCreateProjectile, OnGetProjectile, OnReleaseProjectile, null,
                 true, 20);
+        }
 
+        private void Start()
+        {
             currentMagazineCount = m_MaxMagazineCount;
             m_LastFireTime = -9999;
             m_LastReloadStartTime = -9999;
+            m_CanShoot = true;
+
+            player.health.onHealthIsZero_OnSync += () => { m_CanShoot = false; };
+
+            player.health.onHealthChanged_OnSync += _amount =>
+            {
+                if (player.health.health > 0)
+                    m_CanShoot = true;
+            };
         }
 
         public override void OnStartNetwork()
@@ -184,7 +198,7 @@ namespace MyProject
         {
             if (base.IsOwner)
             {
-                if (m_ShootQueue)
+                if (m_ShootQueue && m_CanShoot)
                     ClientFire();
             }
         }
@@ -237,7 +251,7 @@ namespace MyProject
             if (base.IsOwner == false)
                 return;
 
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0) && m_CanShoot)
             {
                 m_ShootQueue = true;
             }

@@ -105,7 +105,8 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
-  moveSpeed: 4
+  m_MoveSpeed: 4
+  m_Player: {fileID: 303206710634895370}
 --- !u!114 &7953408533327377731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,13 +119,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 069a0d7ab69a1b2408d21c5a84c73dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 6898481489028741344}
+  _networkObjectCache: {fileID: 6898481489028741344}
   m_MaxHealth: 100
-  onHealthIsZero:
-    m_PersistentCalls:
-      m_Calls: []
-  onHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
+  m_Health: 0
 --- !u!114 &4259799754158265765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b69dcf4cf7fbb745abf1dc018c2fc21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 1
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
   m_Health: {fileID: 7953408533327377731}
@@ -161,21 +160,6 @@ MonoBehaviour:
   - {fileID: 6985391522037102447}
   m_HealthBar: {fileID: 2366015180899774990}
   m_UI_PlayerAmmo: {fileID: 4112100880092855492}
-  onKill:
-    m_PersistentCalls:
-      m_Calls: []
-  onDead:
-    m_PersistentCalls:
-      m_Calls: []
-  onPowerChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  onRespawn:
-    m_PersistentCalls:
-      m_Calls: []
-  onWeaponChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &902337200437215603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +190,7 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 7953408533327377756}
+  - {fileID: 7953408533327377731}
   - {fileID: 303206710634895370}
   - {fileID: 7502745620064650950}
   - {fileID: 2108804425394123387}
@@ -242,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 2
+  _componentIndexCache: 3
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
   _componentConfiguration: 0
@@ -286,7 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 402926ef33e0a894d9fec352693988ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 3
+  _componentIndexCache: 4
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
   _implementsPredictionMethods: 1
@@ -591,7 +576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6892a430973f8f43803d6782eeecd73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 7
+  _componentIndexCache: 8
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
   m_Prefab_Projectile: {fileID: 8248581483534487021, guid: 539009f3fd6a8ac479105d2381986482, type: 3}
@@ -647,7 +632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94b66d4e04872af478ae590d73eb9616, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 4
+  _componentIndexCache: 5
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
 --- !u!114 &7362423346603092481
@@ -662,7 +647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 5
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
   _componentConfiguration: 0
@@ -706,7 +691,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 402926ef33e0a894d9fec352693988ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 6
+  _componentIndexCache: 7
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
   _implementsPredictionMethods: 1

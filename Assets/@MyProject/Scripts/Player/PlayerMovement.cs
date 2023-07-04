@@ -1,3 +1,4 @@
+using System;
 using FishNet.Object;
 using FishNet.Object.Prediction;
 using FishNet.Transporting;
@@ -43,10 +44,12 @@ namespace MyProject
             public void SetTick(uint value) => tick = value;
         }
 
-        [SerializeField] private float moveSpeed = 4f;
+        [SerializeField] private float m_MoveSpeed = 4f;
+        [SerializeField] private Player m_Player;
 
         private Rigidbody2D m_Rigidbody;
         private Vector2 m_Movement;
+        private bool m_CanMove = true;
 
         private void BuildData(out MoveData _moveData)
         {
@@ -70,7 +73,7 @@ namespace MyProject
             // 이것이 클라이언트 액션이 클라이언트에서 거의 확실하게 여러 번 수행되는 이유입니다.
             // 로컬에서 처리될 때 한 번, 그리고 replay 될 때마다 다시 한 번 수행됩니다.
 
-            var _positionDelta = _moveData.movement * moveSpeed * (float)base.TimeManager.TickDelta;
+            var _positionDelta = _moveData.movement * m_MoveSpeed * (float)base.TimeManager.TickDelta;
             transform.position = new Vector3(transform.position.x + _positionDelta.x, transform.position.y + _positionDelta.y, transform.position.z);
         }
 
@@ -85,6 +88,19 @@ namespace MyProject
         private void Awake()
         {
             m_Rigidbody = GetComponent<Rigidbody2D>();
+        }
+
+        private void Start()
+        {
+            m_CanMove = true;
+
+            m_Player.health.onHealthIsZero_OnSync += () => m_CanMove = false;
+
+            m_Player.health.onHealthChanged_OnSync += _amount =>
+            {
+                if (m_Player.health.health > 0)
+                    m_CanMove = true;
+            };
         }
 
         public override void OnStartNetwork()
@@ -142,17 +158,23 @@ namespace MyProject
                 Reconcile(_reconcileData, true);
             }
         }
-        
-        
+
 
         private void Update()
         {
             if (base.IsOwner == false)
                 return;
 
-            m_Movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-            if (m_Movement.magnitude >= 1.0f)
-                m_Movement.Normalize();
+            if (m_CanMove)
+            {
+                m_Movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+                if (m_Movement.magnitude >= 1.0f)
+                    m_Movement.Normalize();
+            }
+            else
+            {
+                m_Movement = Vector2.zero;
+            }
         }
     }
 }
