@@ -42,6 +42,7 @@ namespace MyProject
 
         private int m_LastFiredBulletIndex = 15;
         private float[] m_BulletFireTimes;
+        private bool m_ShouldDraw = true;
 
         public void DrawBar()
         {
@@ -119,6 +120,9 @@ namespace MyProject
             // if (_cam != this.m_Cam) // only draw in the player camera
             //     return;
 
+            if (m_ShouldDraw == false)
+                return;
+
             if (m_GunWeapon == null)
                 return;
 
@@ -141,6 +145,14 @@ namespace MyProject
             {
                 if (m_Player.weapon is IGunWeapon _weapon)
                     InitializeGunWeapon(_weapon);
+            };
+
+            m_Player.health.onHealthIsZero_OnSync += () => { m_ShouldDraw = false; };
+
+            m_Player.health.onHealthChanged_OnSync += _i =>
+            {
+                if (m_Player.health.health > 0)
+                    m_ShouldDraw = true;
             };
         }
 
