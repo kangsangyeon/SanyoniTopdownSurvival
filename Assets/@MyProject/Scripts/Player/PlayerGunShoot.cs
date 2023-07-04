@@ -144,7 +144,7 @@ namespace MyProject
             ObserversRpcFire(_position, _direction, _tick);
         }
 
-        [ObserversRpc(ExcludeOwner = true)]
+        [ObserversRpc(ExcludeOwner = true, ExcludeServer = true)]
         private void ObserversRpcFire(Vector2 _position, Vector2 _direction, uint _tick)
         {
             // 총을 발사한 클라이언트가 총알을 발사한 tick으로부터
@@ -152,7 +152,8 @@ namespace MyProject
             float passedTime = (float)base.TimeManager.TimePassed(_tick, false);
             passedTime = Mathf.Min(MAX_PASSED_TIME, passedTime);
 
-            SpawnProjectile(_position, _direction, passedTime);
+            var _projectile = SpawnProjectile(_position, _direction, passedTime);
+            _projectile.m_StartTime = Time.time;
         }
 
         private void Awake()

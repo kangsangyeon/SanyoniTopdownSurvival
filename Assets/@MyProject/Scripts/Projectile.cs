@@ -47,7 +47,8 @@ public class Projectile : MonoBehaviour
             transform.position
             + m_Direction * m_Speed * (_delta + _passedTimeDelta);
 
-        if (Time.time - m_StartTime >= m_LiveDuration)
+        float _duration = m_LiveDuration - m_PassedTime;
+        if (Time.time - m_StartTime >= _duration)
         {
             onLifeEnd?.Invoke();
         }
