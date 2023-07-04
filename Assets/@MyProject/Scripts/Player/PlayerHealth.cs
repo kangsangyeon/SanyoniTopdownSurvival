@@ -19,7 +19,8 @@ public class PlayerHealth : NetworkBehaviour
     private List<HealthModifier> m_DamageList = new List<HealthModifier>();
     public ReadOnlyCollection<HealthModifier> damageList => m_DamageList.AsReadOnly();
 
-    public event System.Action onHealthIsZero;
+    public event System.Action onHealthIsZero_OnServer;
+    public event System.Action onHealthIsZero_OnSync;
     public event System.Action<int> onHealthChanged_OnServer;
     public event System.Action<int> onHealthChanged_OnSync;
 
@@ -29,7 +30,7 @@ public class PlayerHealth : NetworkBehaviour
         onHealthChanged_OnSync?.Invoke(_amount);
         if (_next <= 0)
         {
-            onHealthIsZero?.Invoke();
+            onHealthIsZero_OnSync?.Invoke();
         }
     }
 
@@ -50,7 +51,7 @@ public class PlayerHealth : NetworkBehaviour
         if (m_Health <= 0)
         {
             m_Health = 0;
-            onHealthIsZero?.Invoke();
+            onHealthIsZero_OnServer?.Invoke();
         }
     }
 

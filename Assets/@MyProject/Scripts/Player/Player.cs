@@ -109,7 +109,7 @@ namespace MyProject
             });
             Scene_Game.Instance.Server_AddPlayer(this);
 
-            health.onHealthIsZero += () =>
+            health.onHealthIsZero_OnServer += () =>
             {
                 HealthModifier _healthModifier;
 
@@ -171,7 +171,7 @@ namespace MyProject
                 m_UI_PlayerAmmo.enabled = false;
             }
 
-            health.onHealthIsZero += () =>
+            health.onHealthIsZero_OnSync += () =>
             {
                 m_Collider.enabled = false;
                 foreach (SpriteRenderer _renderer in m_SpriteRenderers)

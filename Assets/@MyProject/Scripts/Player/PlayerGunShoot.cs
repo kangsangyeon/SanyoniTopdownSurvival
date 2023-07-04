@@ -194,6 +194,16 @@ namespace MyProject
             _projectile.onLifeEnd += () => { m_ProjectilePool.Release(_projectile); };
             _projectile.onHit += (col) =>
             {
+                if (base.IsServer)
+                {
+                    var _health = col.GetComponent<PlayerHealth>();
+                    if (_health.health == 0)
+                    {
+                        // 이미 죽은 대상에게는 아무런 영향을 주지 않고 무시합니다.
+                        return;
+                    }
+                }
+
                 m_ProjectilePool.Release(_projectile);
 
                 if (base.IsServer)
