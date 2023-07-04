@@ -116,7 +116,7 @@ namespace MyProject
             _player.onKill += (target =>
             {
                 m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(_player);
-                m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(target);
+                m_PlayerInfoDict[target.OwnerId] = new PlayerInfo(target);
 
                 onPlayerKill_OnServer?.Invoke(_player, target);
                 ObserversRpc_OnPlayerKill(new PlayerKillEventParam()
