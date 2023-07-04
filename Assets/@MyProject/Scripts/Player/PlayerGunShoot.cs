@@ -115,7 +115,8 @@ namespace MyProject
                 // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
                 // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
                 // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
-                SpawnProjectile(m_FirePoint.position, m_Direction, 0.0f);
+                var _projectile = SpawnProjectile(m_FirePoint.position, m_Direction, 0.0f);
+                _projectile.m_StartTime = Time.time;
 
                 // 서버에게 발사 사실을 알립니다.
                 ServerRpcFire(m_FirePoint.position, m_Direction, base.TimeManager.Tick);

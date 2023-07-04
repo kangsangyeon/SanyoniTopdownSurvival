@@ -47,12 +47,9 @@ public class Projectile : MonoBehaviour
             transform.position
             + m_Direction * m_Speed * (_delta + _passedTimeDelta);
 
-        if (InstanceFinder.IsServer)
+        if (Time.time - m_StartTime >= m_LiveDuration)
         {
-            if (Time.time - m_StartTime >= m_LiveDuration)
-            {
-                onLifeEnd?.Invoke();
-            }
+            onLifeEnd?.Invoke();
         }
     }
 
