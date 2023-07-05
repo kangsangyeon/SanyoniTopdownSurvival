@@ -162,8 +162,6 @@ namespace MyProject
         {
             base.OnStartClient();
 
-            Debug.Log(base.Owner.ClientId);
-
             weapon = GetComponentInChildren<IWeapon>();
 
             if (base.IsOwner == false)
