@@ -109,7 +109,7 @@ namespace MyProject
 
             _player.onDead += (source => this.Invoke(() =>
             {
-                _player.transform.position = m_RespawnPoint.position;
+                _player.movement.Teleport(_player.Owner, m_RespawnPoint.position);
                 _player.Server_OnRespawn();
             }, m_RespawnTime));
 

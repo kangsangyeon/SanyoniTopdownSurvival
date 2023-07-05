@@ -1,4 +1,4 @@
-using System;
+using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Prediction;
 using FishNet.Transporting;
@@ -50,11 +50,19 @@ namespace MyProject
         private Rigidbody2D m_Rigidbody;
         private Vector2 m_Movement;
         private bool m_CanMove = true;
+        private bool m_TeleportQueue;
+        private Vector2 m_TeleportPosition;
 
         private void BuildData(out MoveData _moveData)
         {
             _moveData = default;
             _moveData.movement = m_Movement;
+        }
+
+        [TargetRpc(RunLocally = true)]
+        public void Teleport(NetworkConnection _conn, Vector2 _position)
+        {
+            transform.position = _position;
         }
 
         [Replicate]
