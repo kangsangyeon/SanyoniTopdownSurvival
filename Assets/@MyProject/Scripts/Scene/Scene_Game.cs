@@ -35,48 +35,33 @@ namespace MyProject
         public event System.Action<Player> onPlayerAdded_OnServer;
         public event System.Action<PlayerAddedEventParam> onPlayerAdded_OnClient;
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnPlayerAdded(PlayerAddedEventParam _param)
         {
-            if (base.IsServer == false)
-            {
-                // 서버에서는 동일한 로직이 실행되었으므로, 중복해서 실행하지 않습니다.
-                m_PlayerInfoDict.Add(_param.player.connectionId, _param.player);
-                m_PlayerRankDict.Add(_param.player.connectionId, m_PlayerInfoDict.Count);
-            }
-
+            m_PlayerInfoDict.Add(_param.player.connectionId, _param.player);
+            m_PlayerRankDict.Add(_param.player.connectionId, m_PlayerInfoDict.Count);
             onPlayerAdded_OnClient?.Invoke(_param);
         }
 
         public event System.Action<Player> onPlayerRemoved_OnServer;
         public event System.Action<PlayerRemovedEventParam> onPlayerRemoved_OnClient;
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnPlayerRemoved(PlayerRemovedEventParam _param)
         {
-            if (base.IsServer == false)
-            {
-                // 서버에서는 동일한 로직이 실행되었으므로, 중복해서 실행하지 않습니다.
-                m_PlayerInfoDict.Remove(_param.player.connectionId);
-                m_PlayerRankDict.Remove(_param.player.connectionId);
-            }
-
+            m_PlayerInfoDict.Remove(_param.player.connectionId);
+            m_PlayerRankDict.Remove(_param.player.connectionId);
             onPlayerRemoved_OnClient?.Invoke(_param);
         }
 
         public event System.Action<Player, Player> onPlayerKill_OnServer;
         public event System.Action<PlayerKillEventParam> onPlayerKill_OnClient;
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnPlayerKill(PlayerKillEventParam _param)
         {
-            if (base.IsServer == false)
-            {
-                // 서버에서는 동일한 로직이 실행되었으므로, 중복해서 실행하지 않습니다.
-                m_PlayerInfoDict[_param.killer.connectionId] = _param.killer;
-                m_PlayerInfoDict[_param.target.connectionId] = _param.target;
-            }
-
+            m_PlayerInfoDict[_param.killer.connectionId] = _param.killer;
+            m_PlayerInfoDict[_param.target.connectionId] = _param.target;
             onPlayerKill_OnClient?.Invoke(_param);
         }
 
@@ -84,8 +69,6 @@ namespace MyProject
 
         #endregion
 
-        private System.Action<Player> m_OnPlayerAdded_OnServer;
-        private System.Action<Player> m_OnPlayerRemoved_OnServer;
         private System.Action<PlayerAddedEventParam> m_OnPlayerAdded_OnClient;
         private System.Action<PlayerRemovedEventParam> m_OnPlayerRemoved_OnClient;
 
@@ -103,14 +86,10 @@ namespace MyProject
             });
         }
 
-        [ObserversRpc]
-        private void ObserversRpc_RefreshPlayerRankList() => RefreshPlayerRankList();
-
         [Server]
         public void Server_AddPlayer(Player _player)
         {
-            _player.onKill_OnServer += (target =>
-                ObserversRpc_RefreshPlayerRankList());
+            _player.onKill_OnClient += target => RefreshPlayerRankList();
 
             _player.onDead_OnServer += (source =>
                 this.Invoke(() => { _player.Server_Respawn(m_RespawnPoint.position); }, m_RespawnTime));
@@ -121,6 +100,11 @@ namespace MyProject
                 m_PlayerInfoDict[target.OwnerId] = new PlayerInfo(target);
 
                 onPlayerKill_OnServer?.Invoke(_player, target);
+                onPlayerKill_OnClient?.Invoke(new PlayerKillEventParam()
+                {
+                    killer = new PlayerInfo(_player),
+                    target = new PlayerInfo(target)
+                });
                 ObserversRpc_OnPlayerKill(new PlayerKillEventParam()
                 {
                     killer = new PlayerInfo(_player),
@@ -133,6 +117,7 @@ namespace MyProject
             m_PlayerRankDict.Add(_player.OwnerId, m_PlayerInfoDict.Count);
 
             onPlayerAdded_OnServer?.Invoke(_player);
+            onPlayerAdded_OnClient?.Invoke(new PlayerAddedEventParam() { player = new PlayerInfo(_player) });
             ObserversRpc_OnPlayerAdded(new PlayerAddedEventParam() { player = new PlayerInfo(_player) });
         }
 
@@ -144,6 +129,7 @@ namespace MyProject
             m_PlayerRankDict.Remove(_player.OwnerId);
 
             onPlayerRemoved_OnServer?.Invoke(_player);
+            onPlayerRemoved_OnClient?.Invoke(new PlayerRemovedEventParam() { player = new PlayerInfo(_player) });
             ObserversRpc_OnPlayerRemoved(new PlayerRemovedEventParam() { player = new PlayerInfo(_player) });
         }
 
@@ -184,22 +170,11 @@ namespace MyProject
         {
             base.OnStartNetwork();
 
-            if (base.IsServer)
-            {
-                m_OnPlayerAdded_OnServer = p => RefreshPlayerRankList();
-                onPlayerAdded_OnServer += m_OnPlayerAdded_OnServer;
+            m_OnPlayerAdded_OnClient = p => RefreshPlayerRankList();
+            onPlayerAdded_OnClient += m_OnPlayerAdded_OnClient;
 
-                m_OnPlayerRemoved_OnServer = p => RefreshPlayerRankList();
-                onPlayerRemoved_OnServer += m_OnPlayerRemoved_OnServer;
-            }
-            else
-            {
-                m_OnPlayerAdded_OnClient = p => RefreshPlayerRankList();
-                onPlayerAdded_OnClient += m_OnPlayerAdded_OnClient;
-
-                m_OnPlayerRemoved_OnClient = p => RefreshPlayerRankList();
-                onPlayerRemoved_OnClient += m_OnPlayerRemoved_OnClient;
-            }
+            m_OnPlayerRemoved_OnClient = p => RefreshPlayerRankList();
+            onPlayerRemoved_OnClient += m_OnPlayerRemoved_OnClient;
 
             m_UI_PlayerList.Initialize();
         }
@@ -208,22 +183,11 @@ namespace MyProject
         {
             base.OnStopNetwork();
 
-            if (base.IsServer)
-            {
-                onPlayerAdded_OnServer -= m_OnPlayerAdded_OnServer;
-                m_OnPlayerAdded_OnServer = null;
+            onPlayerAdded_OnClient -= m_OnPlayerAdded_OnClient;
+            m_OnPlayerAdded_OnClient = null;
 
-                onPlayerRemoved_OnServer -= m_OnPlayerRemoved_OnServer;
-                m_OnPlayerRemoved_OnServer = null;
-            }
-            else
-            {
-                onPlayerAdded_OnClient -= m_OnPlayerAdded_OnClient;
-                m_OnPlayerAdded_OnClient = null;
-
-                onPlayerRemoved_OnClient -= m_OnPlayerRemoved_OnClient;
-                m_OnPlayerRemoved_OnClient = null;
-            }
+            onPlayerRemoved_OnClient -= m_OnPlayerRemoved_OnClient;
+            m_OnPlayerRemoved_OnClient = null;
 
             m_PlayerList.Clear();
             m_PlayerInfoDict.Clear();
