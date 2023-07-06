@@ -33,7 +33,7 @@ namespace MyProject
                 if (m_Weapon != value)
                 {
                     m_Weapon = value;
-                    onWeaponChanged?.Invoke();
+                    Server_OnWeaponChanged();
                 }
             }
         }
@@ -44,61 +44,96 @@ namespace MyProject
         private int m_Power = 0;
         public int power => m_Power;
 
-        public event System.Action<Player> onKill; // param: target(=죽인 대상)
-        public event System.Action<object> onDead; // param: source(=죽은 원인)
-        public event System.Action onPowerChanged;
-        public event System.Action onRespawn;
-        public event System.Action onWeaponChanged;
+        #region Events
+
+        public event System.Action<Player> onKill_OnServer; // param: target(=죽인 대상)
+        public event System.Action<Player_OnKill_EventParam> onKill_OnClient;
 
         [Server]
-        public void Server_OnKill(Player _target)
+        private void Server_OnKill(Player _target)
         {
-            onKill?.Invoke(_target);
-            Observers_OnKill(_target);
+            onKill_OnServer?.Invoke(_target);
+            ObserversRpc_OnKill(new Player_OnKill_EventParam() { target = new PlayerInfo(_target) });
         }
+
+        [ObserversRpc]
+        private void ObserversRpc_OnKill(Player_OnKill_EventParam _param)
+        {
+            onKill_OnClient?.Invoke(_param);
+        }
+
+        public event System.Action<object> onDead_OnServer; // param: source(=죽은 원인)
+        public event System.Action<Player_OnDead_EventParam> onDead_OnClient;
 
         [Server]
-        public void Server_OnDead(object _source)
+        private void Server_OnDead(object _source)
         {
-            onDead?.Invoke(_source);
-            Observers_OnDead(_source);
+            onDead_OnServer?.Invoke(_source);
+            ObserversRpc_OnDead(new Player_OnDead_EventParam() { });
         }
+
+        [ObserversRpc]
+        private void ObserversRpc_OnDead(Player_OnDead_EventParam _param)
+        {
+            onDead_OnClient?.Invoke(_param);
+        }
+
+        public event System.Action onPowerChanged_OnServer;
+        public event System.Action onPowerChanged_OnClient;
 
         [Server]
-        public void Server_OnPowerChanged()
+        private void Server_OnPowerChanged()
         {
-            onPowerChanged?.Invoke();
-            Observers_OnPowerChanged();
+            onPowerChanged_OnServer?.Invoke();
+            ObserversRpc_OnPowerChanged();
         }
+
+        [ObserversRpc]
+        private void ObserversRpc_OnPowerChanged()
+        {
+            onPowerChanged_OnClient?.Invoke();
+        }
+
+        public event System.Action onRespawn_OnServer;
+        public event System.Action onRespawn_OnClient;
 
         [Server]
-        public void Server_OnRespawn()
+        private void Server_OnRespawn()
         {
-            onRespawn?.Invoke();
-            Observers_OnRespawn();
+            onRespawn_OnServer?.Invoke();
+            ObserversRpc_OnRespawn();
         }
+
+        [ObserversRpc]
+        private void ObserversRpc_OnRespawn()
+        {
+            onRespawn_OnClient?.Invoke();
+        }
+
+        public event System.Action onWeaponChanged_OnServer;
+        public event System.Action onWeaponChanged_OnClient;
 
         [Server]
-        public void Server_OnWeaponChanged()
+        private void Server_OnWeaponChanged()
         {
-            onWeaponChanged?.Invoke();
-            Observers_OnWeaponChanged();
+            onWeaponChanged_OnServer?.Invoke();
+            ObserversRpc_OnWeaponChanged();
         }
 
-        [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnKill(Player _target) => onKill?.Invoke(_target);
+        [ObserversRpc]
+        private void ObserversRpc_OnWeaponChanged()
+        {
+            onWeaponChanged_OnClient?.Invoke();
+        }
 
-        [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnDead(object _source) => onDead?.Invoke(_source);
+        #endregion
 
-        [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnPowerChanged() => onPowerChanged?.Invoke();
-
-        [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnRespawn() => onRespawn?.Invoke();
-
-        [ObserversRpc(ExcludeServer = true)]
-        public void Observers_OnWeaponChanged() => onWeaponChanged?.Invoke();
+        [Server]
+        public void Server_Respawn(Vector2 _position)
+        {
+            movement.Teleport(base.Owner, _position);
+            Server_OnRespawn();
+        }
 
         public override void OnStartServer()
         {
@@ -135,6 +170,7 @@ namespace MyProject
                         var _killer = _weapon.owner as Player;
 
                         ++_killer.m_KillCount;
+
                         _killer.Server_OnKill(this);
                     }
                 }
@@ -145,7 +181,7 @@ namespace MyProject
                 Server_OnDead(_healthModifier.source);
             };
 
-            onRespawn += () =>
+            onRespawn_OnServer += () =>
             {
                 health.ApplyModifier(new HealthModifier()
                     { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
@@ -178,7 +214,7 @@ namespace MyProject
                     m_HealthBar.enabled = false;
             };
 
-            onRespawn += () =>
+            onRespawn_OnServer += () =>
             {
                 m_Collider.enabled = true;
                 foreach (SpriteRenderer _renderer in m_SpriteRenderers)
@@ -186,11 +222,6 @@ namespace MyProject
                 if (m_HealthBar)
                     m_HealthBar.enabled = true;
             };
-        }
-
-        public override void OnStopClient()
-        {
-            base.OnStopClient();
         }
     }
 }

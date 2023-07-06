@@ -105,15 +105,13 @@ namespace MyProject
         [Server]
         public void Server_AddPlayer(Player _player)
         {
-            _player.onKill += (target => ObserversRpc_RefreshPlayerRankList());
+            _player.onKill_OnServer += (target =>
+                ObserversRpc_RefreshPlayerRankList());
 
-            _player.onDead += (source => this.Invoke(() =>
-            {
-                _player.movement.Teleport(_player.Owner, m_RespawnPoint.position);
-                _player.Server_OnRespawn();
-            }, m_RespawnTime));
+            _player.onDead_OnServer += (source =>
+                this.Invoke(() => { _player.Server_Respawn(m_RespawnPoint.position); }, m_RespawnTime));
 
-            _player.onKill += (target =>
+            _player.onKill_OnServer += (target =>
             {
                 m_PlayerInfoDict[_player.OwnerId] = new PlayerInfo(_player);
                 m_PlayerInfoDict[target.OwnerId] = new PlayerInfo(target);

@@ -46,4 +46,17 @@ namespace MyProject.Event
         public PlayerInfo killer;
         public PlayerInfo target;
     }
+
+    [System.Serializable]
+    public struct Player_OnKill_EventParam
+    {
+        public PlayerInfo target;
+    }
+
+    [System.Serializable]
+    public struct Player_OnDead_EventParam
+    {
+        // TODO
+        // object
+    }
 }

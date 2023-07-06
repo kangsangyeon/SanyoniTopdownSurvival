@@ -141,7 +141,7 @@ namespace MyProject
             if (m_Player.weapon is IGunWeapon _weapon)
                 InitializeGunWeapon(_weapon);
 
-            m_Player.onWeaponChanged += () =>
+            m_Player.onWeaponChanged_OnServer += () =>
             {
                 if (m_Player.weapon is IGunWeapon _weapon)
                     InitializeGunWeapon(_weapon);

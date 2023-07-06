@@ -39,7 +39,7 @@ namespace MyProject
         {
             if (m_Player.weapon is IGunWeapon _gunWeapon)
                 InitializeGunWeaponEvents(_gunWeapon);
-            m_Player.onWeaponChanged += () =>
+            m_Player.onWeaponChanged_OnServer += () =>
             {
                 if (m_Player.weapon is IGunWeapon _gunWeapon)
                     InitializeGunWeaponEvents(_gunWeapon);
