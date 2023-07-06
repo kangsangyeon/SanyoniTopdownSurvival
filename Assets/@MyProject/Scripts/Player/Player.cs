@@ -199,13 +199,13 @@ namespace MyProject
             Scene_Game.Instance.Server_RemovePlayer(this);
         }
 
-        public override void OnStartClient()
+        public override void OnStartNetwork()
         {
-            base.OnStartClient();
-
+            base.OnStartNetwork();
+            
             weapon = GetComponentInChildren<IWeapon>();
 
-            if (base.IsOwner == false)
+            if (base.Owner.IsLocalClient == false)
             {
                 m_UI_PlayerAmmo.enabled = false;
             }
