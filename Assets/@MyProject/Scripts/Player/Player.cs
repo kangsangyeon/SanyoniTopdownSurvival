@@ -53,10 +53,11 @@ namespace MyProject
         private void Server_OnKill(Player _target)
         {
             onKill_OnServer?.Invoke(_target);
+            onKill_OnClient?.Invoke(new Player_OnKill_EventParam() { target = new PlayerInfo(_target) });
             ObserversRpc_OnKill(new Player_OnKill_EventParam() { target = new PlayerInfo(_target) });
         }
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnKill(Player_OnKill_EventParam _param)
         {
             onKill_OnClient?.Invoke(_param);
@@ -69,10 +70,11 @@ namespace MyProject
         private void Server_OnDead(object _source)
         {
             onDead_OnServer?.Invoke(_source);
+            onDead_OnClient?.Invoke(new Player_OnDead_EventParam() { });
             ObserversRpc_OnDead(new Player_OnDead_EventParam() { });
         }
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnDead(Player_OnDead_EventParam _param)
         {
             onDead_OnClient?.Invoke(_param);
@@ -85,10 +87,11 @@ namespace MyProject
         private void Server_OnPowerChanged()
         {
             onPowerChanged_OnServer?.Invoke();
+            onPowerChanged_OnClient?.Invoke();
             ObserversRpc_OnPowerChanged();
         }
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnPowerChanged()
         {
             onPowerChanged_OnClient?.Invoke();
@@ -101,10 +104,11 @@ namespace MyProject
         private void Server_OnRespawn()
         {
             onRespawn_OnServer?.Invoke();
+            onRespawn_OnClient?.Invoke();
             ObserversRpc_OnRespawn();
         }
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnRespawn()
         {
             onRespawn_OnClient?.Invoke();
@@ -117,10 +121,11 @@ namespace MyProject
         private void Server_OnWeaponChanged()
         {
             onWeaponChanged_OnServer?.Invoke();
+            onWeaponChanged_OnClient?.Invoke();
             ObserversRpc_OnWeaponChanged();
         }
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnWeaponChanged()
         {
             onWeaponChanged_OnClient?.Invoke();
@@ -214,7 +219,7 @@ namespace MyProject
                     m_HealthBar.enabled = false;
             };
 
-            onRespawn_OnServer += () =>
+            onRespawn_OnClient += () =>
             {
                 m_Collider.enabled = true;
                 foreach (SpriteRenderer _renderer in m_SpriteRenderers)

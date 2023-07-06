@@ -1,6 +1,4 @@
-using FishNet;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Projectile : MonoBehaviour
 {
@@ -11,6 +9,7 @@ public class Projectile : MonoBehaviour
     private Vector3 m_Direction;
     private bool m_AlreadyHit = false;
     private float m_PassedTime;
+    private float m_ActualLiveDuration;
 
     public float m_StartTime;
     public event System.Action onLifeEnd;
@@ -22,6 +21,7 @@ public class Projectile : MonoBehaviour
         m_Direction = _direction;
         m_AlreadyHit = false;
         m_PassedTime = _passedTime;
+        m_ActualLiveDuration = m_LiveDuration - _passedTime;
     }
 
     private void Update()
@@ -47,8 +47,7 @@ public class Projectile : MonoBehaviour
             transform.position
             + m_Direction * m_Speed * (_delta + _passedTimeDelta);
 
-        float _duration = m_LiveDuration - m_PassedTime;
-        if (Time.time - m_StartTime >= _duration)
+        if (Time.time - m_StartTime >= m_ActualLiveDuration)
         {
             onLifeEnd?.Invoke();
         }
