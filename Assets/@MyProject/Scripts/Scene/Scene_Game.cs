@@ -89,7 +89,11 @@ namespace MyProject
         private System.Action<PlayerAddedEventParam> m_OnPlayerAdded_OnClient;
         private System.Action<PlayerRemovedEventParam> m_OnPlayerRemoved_OnClient;
 
-        [TargetRpc]
+        /// <summary>
+        /// * exclude server: 서버 PC에서 클라이언트로 플레이하던 중단하던 playerInfoList를 계속 관리하고 있어야 하기 때문에,
+        /// 서버 PC에서 이 메세지를 받아 중복 처리해서는 안됩니다.
+        /// </summary>
+        [TargetRpc(ExcludeServer = true)]
         public void TargetRpc_JoinGame(NetworkConnection _conn, GameJoinedEventParam _param)
         {
             _param.playerInfoList.ForEach(p =>
@@ -219,11 +223,11 @@ namespace MyProject
 
                 onPlayerRemoved_OnClient -= m_OnPlayerRemoved_OnClient;
                 m_OnPlayerRemoved_OnClient = null;
-
-                m_PlayerList.Clear();
-                m_PlayerInfoDict.Clear();
-                m_PlayerRankDict.Clear();
             }
+
+            m_PlayerList.Clear();
+            m_PlayerInfoDict.Clear();
+            m_PlayerRankDict.Clear();
 
             m_UI_PlayerList.Uninitialize();
         }
