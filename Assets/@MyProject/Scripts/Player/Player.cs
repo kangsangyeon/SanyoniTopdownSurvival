@@ -1,15 +1,19 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using FishNet.Object;
+using MyProject.Event;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace MyProject
 {
-    public class Player : MonoBehaviour
+    public class Player : NetworkBehaviour
     {
         [SerializeField] private PlayerHealth m_Health;
         public PlayerHealth health => m_Health;
+
+        [SerializeField] private PlayerMovement m_Movement;
+        public PlayerMovement movement => m_Movement;
 
         [SerializeField] private Collider2D m_Collider;
 
@@ -17,6 +21,7 @@ namespace MyProject
         public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
 
         [SerializeField] private HealthBar m_HealthBar;
+        [SerializeField] private UI_PlayerAmmo m_UI_PlayerAmmo;
 
         private IWeapon m_Weapon;
 
@@ -28,7 +33,7 @@ namespace MyProject
                 if (m_Weapon != value)
                 {
                     m_Weapon = value;
-                    onWeaponChanged.Invoke();
+                    Server_OnWeaponChanged();
                 }
             }
         }
@@ -39,26 +44,112 @@ namespace MyProject
         private int m_Power = 0;
         public int power => m_Power;
 
-        public UnityEvent<Player> onKill = new UnityEvent<Player>(); // param: target(=죽인 대상)
-        public UnityEvent<object> onDead = new UnityEvent<object>(); // param: source(=죽은 원인)
-        public UnityEvent onPowerChanged = new UnityEvent();
-        public UnityEvent onRespawn = new UnityEvent();
-        public UnityEvent onWeaponChanged = new UnityEvent();
+        #region Events
 
-        private void Start()
+        public event System.Action<Player> onKill_OnServer; // param: target(=죽인 대상)
+        public event System.Action<Player_OnKill_EventParam> onKill_OnClient;
+
+        [Server]
+        private void Server_OnKill(Player _target)
         {
-            weapon = GetComponentInChildren<IWeapon>();
+            onKill_OnServer?.Invoke(_target);
+            onKill_OnClient?.Invoke(new Player_OnKill_EventParam() { target = new PlayerInfo(_target) });
+            ObserversRpc_OnKill(new Player_OnKill_EventParam() { target = new PlayerInfo(_target) });
+        }
 
-            health.onHealthIsZero.AddListener(() =>
+        [ObserversRpc(ExcludeServer = true)]
+        private void ObserversRpc_OnKill(Player_OnKill_EventParam _param)
+        {
+            onKill_OnClient?.Invoke(_param);
+        }
+
+        public event System.Action<object> onDead_OnServer; // param: source(=죽은 원인)
+        public event System.Action<Player_OnDead_EventParam> onDead_OnClient;
+
+        [Server]
+        private void Server_OnDead(object _source)
+        {
+            onDead_OnServer?.Invoke(_source);
+            onDead_OnClient?.Invoke(new Player_OnDead_EventParam() { });
+            ObserversRpc_OnDead(new Player_OnDead_EventParam() { });
+        }
+
+        [ObserversRpc(ExcludeServer = true)]
+        private void ObserversRpc_OnDead(Player_OnDead_EventParam _param)
+        {
+            onDead_OnClient?.Invoke(_param);
+        }
+
+        public event System.Action onPowerChanged_OnServer;
+        public event System.Action onPowerChanged_OnClient;
+
+        [Server]
+        private void Server_OnPowerChanged()
+        {
+            onPowerChanged_OnServer?.Invoke();
+            onPowerChanged_OnClient?.Invoke();
+            ObserversRpc_OnPowerChanged();
+        }
+
+        [ObserversRpc(ExcludeServer = true)]
+        private void ObserversRpc_OnPowerChanged()
+        {
+            onPowerChanged_OnClient?.Invoke();
+        }
+
+        public event System.Action onRespawn_OnServer;
+        public event System.Action onRespawn_OnClient;
+
+        [Server]
+        private void Server_OnRespawn()
+        {
+            onRespawn_OnServer?.Invoke();
+            onRespawn_OnClient?.Invoke();
+            ObserversRpc_OnRespawn();
+        }
+
+        [ObserversRpc(ExcludeServer = true)]
+        private void ObserversRpc_OnRespawn()
+        {
+            onRespawn_OnClient?.Invoke();
+        }
+
+        public event System.Action onWeaponChanged_OnServer;
+        public event System.Action onWeaponChanged_OnClient;
+
+        [Server]
+        private void Server_OnWeaponChanged()
+        {
+            onWeaponChanged_OnServer?.Invoke();
+            onWeaponChanged_OnClient?.Invoke();
+            ObserversRpc_OnWeaponChanged();
+        }
+
+        [ObserversRpc(ExcludeServer = true)]
+        private void ObserversRpc_OnWeaponChanged()
+        {
+            onWeaponChanged_OnClient?.Invoke();
+        }
+
+        #endregion
+
+        [Server]
+        public void Server_Respawn(Vector2 _position)
+        {
+            movement.Teleport(base.Owner, _position);
+            Server_OnRespawn();
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            Scene_Game.Instance.TargetRpc_JoinGame(base.Owner, new GameJoinedEventParam()
             {
-                m_Collider.enabled = false;
-                foreach (SpriteRenderer _renderer in m_SpriteRenderers)
-                    _renderer.enabled = false;
-                if (m_HealthBar)
-                    m_HealthBar.enabled = false;
+                playerInfoList = Scene_Game.Instance.playerInfoDict.Values.ToList()
             });
+            Scene_Game.Instance.Server_AddPlayer(this);
 
-            health.onHealthIsZero.AddListener(() =>
+            health.onHealthIsZero_OnServer += () =>
             {
                 HealthModifier _healthModifier;
 
@@ -84,27 +175,58 @@ namespace MyProject
                         var _killer = _weapon.owner as Player;
 
                         ++_killer.m_KillCount;
-                        _killer.onKill.Invoke(this);
+
+                        _killer.Server_OnKill(this);
                     }
                 }
 
                 // 플레이어로부터 죽은 것이 아닐 때 실행됩니다.
                 _healthModifier = health.damageList.Last();
 
-                onDead.Invoke(_healthModifier.source);
-            });
+                Server_OnDead(_healthModifier.source);
+            };
 
-            onRespawn.AddListener(() =>
+            onRespawn_OnServer += () =>
+            {
+                health.ApplyModifier(new HealthModifier()
+                    { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
+            };
+        }
+
+        public override void OnStopServer()
+        {
+            base.OnStopServer();
+            Scene_Game.Instance.Server_RemovePlayer(this);
+        }
+
+        public override void OnStartNetwork()
+        {
+            base.OnStartNetwork();
+            
+            weapon = GetComponentInChildren<IWeapon>();
+
+            if (base.Owner.IsLocalClient == false)
+            {
+                m_UI_PlayerAmmo.enabled = false;
+            }
+
+            health.onHealthIsZero_OnSync += () =>
+            {
+                m_Collider.enabled = false;
+                foreach (SpriteRenderer _renderer in m_SpriteRenderers)
+                    _renderer.enabled = false;
+                if (m_HealthBar)
+                    m_HealthBar.enabled = false;
+            };
+
+            onRespawn_OnClient += () =>
             {
                 m_Collider.enabled = true;
                 foreach (SpriteRenderer _renderer in m_SpriteRenderers)
                     _renderer.enabled = true;
                 if (m_HealthBar)
                     m_HealthBar.enabled = true;
-
-                health.ApplyModifier(new HealthModifier()
-                    { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
-            });
+            };
         }
     }
 }

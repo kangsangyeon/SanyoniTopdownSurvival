@@ -13,8 +13,9 @@ namespace MyProject
 
         private void InitializeGunWeaponEvents(IGunWeapon _gunWeapon)
         {
-            _gunWeapon.onFire.AddListener(() => m_AudioSource.PlayOneShot(m_FireClip));
-            _gunWeapon.onReloadStart.AddListener(() =>
+            _gunWeapon.onFire += () =>
+                m_AudioSource.PlayOneShot(m_FireClip);
+            _gunWeapon.onReloadStart += () =>
             {
                 if (m_AudioSource.isPlaying)
                     m_AudioSource.Stop();
@@ -31,18 +32,18 @@ namespace MyProject
                     m_AudioSource.clip = m_ReloadFinishClip;
                     m_AudioSource.Play();
                 }, _waitForPlayReloadFinish);
-            });
+            };
         }
 
         private void Start()
         {
             if (m_Player.weapon is IGunWeapon _gunWeapon)
                 InitializeGunWeaponEvents(_gunWeapon);
-            m_Player.onWeaponChanged.AddListener(() =>
+            m_Player.onWeaponChanged_OnServer += () =>
             {
                 if (m_Player.weapon is IGunWeapon _gunWeapon)
                     InitializeGunWeaponEvents(_gunWeapon);
-            });
+            };
         }
     }
 }

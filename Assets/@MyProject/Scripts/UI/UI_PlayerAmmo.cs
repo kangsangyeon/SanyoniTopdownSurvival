@@ -42,6 +42,7 @@ namespace MyProject
 
         private int m_LastFiredBulletIndex = 15;
         private float[] m_BulletFireTimes;
+        private bool m_ShouldDraw = true;
 
         public void DrawBar()
         {
@@ -116,7 +117,10 @@ namespace MyProject
 
         public override void DrawShapes(Camera _cam)
         {
-            if (_cam != this.m_Cam) // only draw in the player camera
+            // if (_cam != this.m_Cam) // only draw in the player camera
+            //     return;
+
+            if (m_ShouldDraw == false)
                 return;
 
             if (m_GunWeapon == null)
@@ -137,11 +141,19 @@ namespace MyProject
             if (m_Player.weapon is IGunWeapon _weapon)
                 InitializeGunWeapon(_weapon);
 
-            m_Player.onWeaponChanged.AddListener(() =>
+            m_Player.onWeaponChanged_OnServer += () =>
             {
                 if (m_Player.weapon is IGunWeapon _weapon)
                     InitializeGunWeapon(_weapon);
-            });
+            };
+
+            m_Player.health.onHealthIsZero_OnSync += () => { m_ShouldDraw = false; };
+
+            m_Player.health.onHealthChanged_OnSync += _i =>
+            {
+                if (m_Player.health.health > 0)
+                    m_ShouldDraw = true;
+            };
         }
 
         private void InitializeGunWeapon(IGunWeapon _gunWeapon)
@@ -149,14 +161,15 @@ namespace MyProject
             m_GunWeapon = _gunWeapon;
 
             m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1];
-            m_GunWeapon.onMaxMagazineCountChanged.AddListener(() => m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1]);
+            m_GunWeapon.onMaxMagazineCountChanged += () =>
+                m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1];
 
             m_LastFiredBulletIndex = m_GunWeapon.currentMagazineCount;
-            m_GunWeapon.onCurrentMagazineCountChanged.AddListener(() =>
+            m_GunWeapon.onCurrentMagazineCountChanged += () =>
             {
                 m_LastFiredBulletIndex = m_GunWeapon.currentMagazineCount;
                 m_BulletFireTimes[m_LastFiredBulletIndex] = Time.time;
-            });
+            };
         }
     }
 }
