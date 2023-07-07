@@ -229,27 +229,6 @@ MonoBehaviour:
   m_MaxTime: 300
   m_MaxKillCount: 30
   m_RespawnTime: 5
-  onPlayerAdded_OnServer:
-    m_PersistentCalls:
-      m_Calls: []
-  onPlayerAdded_OnClient:
-    m_PersistentCalls:
-      m_Calls: []
-  onPlayerRemoved_OnServer:
-    m_PersistentCalls:
-      m_Calls: []
-  onPlayerRemoved_OnClient:
-    m_PersistentCalls:
-      m_Calls: []
-  onPlayerKill_OnServer:
-    m_PersistentCalls:
-      m_Calls: []
-  onPlayerKill_OnClient:
-    m_PersistentCalls:
-      m_Calls: []
-  onPlayerRankRefreshed:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &21494056
 Transform:
   m_ObjectHideFlags: 0
