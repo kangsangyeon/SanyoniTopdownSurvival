@@ -10,6 +10,8 @@
 Assets/*
 !Assets/@MyProject
 !Assets/@MyProject.meta
+!Assets/@Sample
+!Assets/@Sample.meta
 !Assets/NuGet.config
 !Assets/NuGet.config.meta
 !Assets/packages.config
