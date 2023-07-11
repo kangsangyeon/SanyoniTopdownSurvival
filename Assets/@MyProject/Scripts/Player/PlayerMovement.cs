@@ -1,4 +1,5 @@
 using FishNet.Connection;
+using FishNet.Managing.Timing;
 using FishNet.Object;
 using FishNet.Object.Prediction;
 using FishNet.Transporting;
@@ -11,6 +12,7 @@ namespace MyProject
         public struct MoveData : IReplicateData
         {
             public Vector2 movement;
+            public bool dashRequested;
 
             /* Everything below this is required for
             * the interface. You do not need to implement
@@ -29,6 +31,7 @@ namespace MyProject
         public struct ReconcileData : IReconcileData
         {
             public Vector3 position;
+            public float dashRemainingTime;
 
             /* Everything below this is required for
             * the interface. You do not need to implement
@@ -45,6 +48,9 @@ namespace MyProject
         }
 
         [SerializeField] private float m_MoveSpeed = 4f;
+        [SerializeField] private float m_DashMoveSpeedMultiplier = 2.0f;
+        [SerializeField] private float m_DashDuration = 1.0f;
+        [SerializeField] private float m_DashDelay = 1.0f;
         [SerializeField] private Player m_Player;
 
         private Rigidbody2D m_Rigidbody;
@@ -52,11 +58,18 @@ namespace MyProject
         private bool m_CanMove = true;
         private bool m_TeleportQueue;
         private Vector2 m_TeleportPosition;
+        private float m_LastDashStartTime;
+        private bool m_DashQueue;
+        private float m_DashRemainingTime;
+        private Vector2 m_DashDirection;
 
         private void BuildData(out MoveData _moveData)
         {
             _moveData = default;
             _moveData.movement = m_Movement;
+            _moveData.dashRequested = m_DashQueue;
+
+            m_DashQueue = false;
         }
 
         [TargetRpc(RunLocally = true)]
@@ -81,8 +94,37 @@ namespace MyProject
             // 이것이 클라이언트 액션이 클라이언트에서 거의 확실하게 여러 번 수행되는 이유입니다.
             // 로컬에서 처리될 때 한 번, 그리고 replay 될 때마다 다시 한 번 수행됩니다.
 
-            var _positionDelta = _moveData.movement * m_MoveSpeed * (float)base.TimeManager.TickDelta;
-            transform.position = new Vector3(transform.position.x + _positionDelta.x, transform.position.y + _positionDelta.y, transform.position.z);
+            float _delta = (float)base.TimeManager.TickDelta;
+            float _moveSpeedMultiplier = 1.0f;
+            Vector2 _movement = _moveData.movement;
+
+            if (_moveData.dashRequested)
+            {
+                Debug.Log("dash queue");
+
+                // 대시를 사용할 수 있는지 판별합니다.
+                var _elapsedTimeFromLastDash = Time.time - m_LastDashStartTime;
+                if (_elapsedTimeFromLastDash > m_DashDuration + m_DashDelay)
+                {
+                    m_DashRemainingTime = m_DashDuration;
+                    m_DashDirection = _moveData.movement;
+                    m_LastDashStartTime = Time.time;
+                }
+            }
+
+            if (m_DashRemainingTime > 0)
+            {
+                Debug.Log($"dashing! remaining time: {m_DashRemainingTime}");
+
+                _moveSpeedMultiplier = _moveSpeedMultiplier * m_DashMoveSpeedMultiplier;
+                _movement = m_DashDirection;
+                m_DashRemainingTime = m_DashRemainingTime - _delta;
+            }
+
+            Vector2 _positionDelta = _movement * m_MoveSpeed * _moveSpeedMultiplier * _delta;
+
+            transform.position = new Vector3(transform.position.x + _positionDelta.x,
+                transform.position.y + _positionDelta.y, transform.position.z);
         }
 
         [Reconcile]
@@ -91,6 +133,7 @@ namespace MyProject
             bool _asServer, Channel _channel = Channel.Unreliable)
         {
             transform.position = _reconcileData.position;
+            m_DashRemainingTime = _reconcileData.dashRemainingTime;
         }
 
         private void Awake()
@@ -162,7 +205,11 @@ namespace MyProject
         {
             if (base.IsServer)
             {
-                ReconcileData _reconcileData = new ReconcileData() { position = transform.position };
+                ReconcileData _reconcileData = new ReconcileData()
+                {
+                    position = transform.position,
+                    dashRemainingTime = m_DashRemainingTime
+                };
                 Reconcile(_reconcileData, true);
             }
         }
@@ -178,6 +225,9 @@ namespace MyProject
                 m_Movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
                 if (m_Movement.magnitude >= 1.0f)
                     m_Movement.Normalize();
+
+                if (Input.GetKeyDown(KeyCode.LeftShift))
+                    m_DashQueue = true;
             }
             else
             {

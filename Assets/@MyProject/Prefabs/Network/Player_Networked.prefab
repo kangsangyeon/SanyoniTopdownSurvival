@@ -106,6 +106,9 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6898481489028741344}
   _networkObjectCache: {fileID: 6898481489028741344}
   m_MoveSpeed: 4
+  m_DashMoveSpeedMultiplier: 4
+  m_DashDuration: 0.5
+  m_DashDelay: 1
   m_Player: {fileID: 303206710634895370}
 --- !u!114 &7953408533327377731
 MonoBehaviour:
