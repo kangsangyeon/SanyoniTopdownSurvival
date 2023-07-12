@@ -121,16 +121,21 @@ namespace MyProject
         [ServerRpc]
         private void ServerRpcFire(Vector2 _position, Vector2 _direction, uint _tick)
         {
-            // 클라이언트가 총알을 발사한 tick으로부터 현재 서버 tick까지
-            // 얼만큼의 시간이 걸렸는지 얻습니다.
-            float _passedTime = (float)base.TimeManager.TimePassed(_tick, false);
+            // 발사한 자신이 서버이기도 한 경우,
+            // 이미 총알을 클라이언트 코드 내에서 스폰했기 때문에 중복으로 생성하지 않습니다.
+            if (base.IsOwner == false)
+            {
+                // 클라이언트가 총알을 발사한 tick으로부터 현재 서버 tick까지
+                // 얼만큼의 시간이 걸렸는지 얻습니다.
+                float _passedTime = (float)base.TimeManager.TimePassed(_tick, false);
 
-            _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
+                _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
 
-            // 총알을 스폰합니다.
-            var _projectile = SpawnProjectile(_position, _direction, _passedTime);
-            _projectile.m_StartTime = Time.time;
-            _projectile.m_Speed = projectileSpeed;
+                // 총알을 스폰합니다.
+                var _projectile = SpawnProjectile(_position, _direction, _passedTime);
+                _projectile.m_StartTime = Time.time;
+                _projectile.m_Speed = projectileSpeed;
+            }
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
             ObserversRpcFire(_position, _direction, _tick);
