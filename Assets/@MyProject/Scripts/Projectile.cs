@@ -3,7 +3,6 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private Collider2D m_Collider;
-    [SerializeField] private float m_Speed = 8f;
     [SerializeField] private float m_LiveDuration = 1f;
 
     private Vector3 m_Direction;
@@ -12,6 +11,7 @@ public class Projectile : MonoBehaviour
     private float m_ActualLiveDuration;
 
     public float m_StartTime;
+    public float m_Speed = 10f;
     public event System.Action onLifeEnd;
     public event System.Action<Collider2D> onHit;
 

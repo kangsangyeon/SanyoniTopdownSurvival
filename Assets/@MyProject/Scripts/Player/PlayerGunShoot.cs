@@ -1,7 +1,5 @@
-using System;
 using FishNet.Object;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.Pool;
 
 namespace MyProject
@@ -15,10 +13,6 @@ namespace MyProject
 
         [SerializeField] private Projectile m_Prefab_Projectile;
         [SerializeField] private Transform m_FirePoint;
-        [SerializeField] private int m_Damage = -10;
-        [SerializeField] private int m_MaxMagazineCount = 20;
-        [SerializeField] private float m_ReloadDuration = 1.5f;
-        [SerializeField] private float m_FireDelay = 0.2f;
 
         private Player m_Player;
 
@@ -38,7 +32,9 @@ namespace MyProject
 
         #region IGunWeapon
 
-        public int damageMagnitude => m_Damage;
+        public int damageMagnitude =>
+            Mathf.RoundToInt(m_Player.attackProperty.projectileDamage * m_Player.attackProperty.projectileDamageMultiplier);
+
         public object owner => player;
 
         public int currentMagazineCount
@@ -54,27 +50,19 @@ namespace MyProject
             }
         }
 
-        public int maxMagazineCount
-        {
-            get => m_MaxMagazineCount;
-            set
-            {
-                if (m_MaxMagazineCount != value)
-                {
-                    m_MaxMagazineCount = value;
-                    onMaxMagazineCountChanged?.Invoke();
-                }
-            }
-        }
+        public int maxMagazineCount =>
+            Mathf.RoundToInt(m_Player.attackProperty.maxMagazine * m_Player.attackProperty.maxMagazineMultiplier);
 
-        public float reloadDuration
-        {
-            get => m_ReloadDuration;
-            private set => m_ReloadDuration = value;
-        }
+        public float reloadDuration =>
+            m_Player.attackProperty.reloadDuration * m_Player.attackProperty.reloadDurationMultiplier;
+
+        public float fireDelay =>
+            m_Player.attackProperty.fireDelay * m_Player.attackProperty.fireDelayMultiplier;
+
+        public float projectileSpeed =>
+            m_Player.attackProperty.projectileSpeed * m_Player.attackProperty.projectileSpeedMultiplier;
 
         public event System.Action onCurrentMagazineCountChanged;
-        public event System.Action onMaxMagazineCountChanged;
         public event System.Action onFire;
         public event System.Action onReloadStart;
         public event System.Action onReloadFinished;
@@ -99,10 +87,10 @@ namespace MyProject
             float _elapsedTimeSinceLastFire = Time.time - m_LastFireTime;
 
             // 재장전 중에 총알을 발사할 수 없습니다.
-            bool _canShoot = _elapsedTimeSinceLastReloadStart >= m_ReloadDuration;
+            bool _canShoot = _elapsedTimeSinceLastReloadStart >= reloadDuration;
 
             // 가장 마지막으로 발사한 뒤 일정 시간 뒤에 다시 발사할 수 있습니다.
-            _canShoot = _canShoot && _elapsedTimeSinceLastFire >= m_FireDelay;
+            _canShoot = _canShoot && _elapsedTimeSinceLastFire >= fireDelay;
 
             // 총알이 탄창에 없을 때 발사할 수 없습니다.
             _canShoot = _canShoot && currentMagazineCount > 0;
@@ -119,6 +107,7 @@ namespace MyProject
                 // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
                 var _projectile = SpawnProjectile(m_FirePoint.position, m_Direction, 0.0f);
                 _projectile.m_StartTime = Time.time;
+                _projectile.m_Speed = projectileSpeed;
 
                 // 서버에게 발사 사실을 알립니다.
                 ServerRpcFire(m_FirePoint.position, m_Direction, base.TimeManager.Tick);
@@ -141,6 +130,7 @@ namespace MyProject
             // 총알을 스폰합니다.
             var _projectile = SpawnProjectile(_position, _direction, _passedTime);
             _projectile.m_StartTime = Time.time;
+            _projectile.m_Speed = projectileSpeed;
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
             ObserversRpcFire(_position, _direction, _tick);
@@ -156,6 +146,7 @@ namespace MyProject
 
             var _projectile = SpawnProjectile(_position, _direction, passedTime);
             _projectile.m_StartTime = Time.time;
+            _projectile.m_Speed = projectileSpeed;
         }
 
         private void Awake()
@@ -168,7 +159,7 @@ namespace MyProject
 
         private void Start()
         {
-            currentMagazineCount = m_MaxMagazineCount;
+            currentMagazineCount = maxMagazineCount;
             m_LastFireTime = -9999;
             m_LastReloadStartTime = -9999;
             m_CanShoot = true;
@@ -227,9 +218,9 @@ namespace MyProject
                     // 서버에서 생성된 총알만 게임에 영향을 끼치는 동작을 합니다.
 
                     var _health = col.GetComponent<PlayerHealth>();
-                    _health.ApplyModifier(new HealthModifier() { magnitude = m_Damage, source = this, time = Time.time });
-                    // Debug.Log(
-                    //     $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.health}/{_health.MaxHealth}.");
+                    _health.ApplyModifier(new HealthModifier() { magnitude = damageMagnitude, source = this, time = Time.time });
+                    Debug.Log(
+                        $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.health}/{_health.MaxHealth}.");
                 }
             };
 
@@ -265,7 +256,7 @@ namespace MyProject
                 {
                     currentMagazineCount = maxMagazineCount;
                     onReloadFinished?.Invoke();
-                }, m_ReloadDuration);
+                }, reloadDuration);
             }
         }
     }

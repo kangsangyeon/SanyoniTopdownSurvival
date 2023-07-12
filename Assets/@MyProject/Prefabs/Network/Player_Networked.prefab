@@ -160,6 +160,7 @@ MonoBehaviour:
   - {fileID: 6985391522037102447}
   m_HealthBar: {fileID: 2366015180899774990}
   m_UI_PlayerAmmo: {fileID: 4112100880092855492}
+  m_AttackPropertyModifierList: []
 --- !u!114 &902337200437215603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,7 +198,6 @@ MonoBehaviour:
   - {fileID: 7953408534171895954}
   - {fileID: 7362423346603092481}
   - {fileID: 8188622899265703181}
-  - {fileID: 2206058179507298379}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -488,7 +488,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1940715101851773754}
   - component: {fileID: 7223186168142529593}
-  - component: {fileID: 2206058179507298379}
+  - component: {fileID: 175829208743842419}
   m_Layer: 0
   m_Name: PlayerGun
   m_TagString: Untagged
@@ -564,7 +564,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2206058179507298379
+--- !u!114 &175829208743842419
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -573,22 +573,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 5979897570575395950}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bdac4b0be7d81647bac5415b2d00dc0, type: 3}
+  m_Script: {fileID: 11500000, guid: f6892a430973f8f43803d6782eeecd73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 8
+  _componentIndexCache: 255
   _addedNetworkObject: {fileID: 6898481489028741344}
-  _networkObjectCache: {fileID: 6898481489028741344}
-  m_Prefab_Trail: {fileID: 3474134861899990008, guid: 1db7764058173584887550dfe36213af, type: 3}
+  _networkObjectCache: {fileID: 0}
+  m_Prefab_Projectile: {fileID: 8248581483534487021, guid: 539009f3fd6a8ac479105d2381986482, type: 3}
   m_FirePoint: {fileID: 7931043546990238610}
   m_Damage: -10
   m_MaxMagazineCount: 20
   m_ReloadDuration: 1.5
-  m_FireDelay: 0.6
-  m_BulletsPerShot: 10
-  m_ShotAngle: 30
-  m_ShotLength: 3
-  m_BulletToEndDuration: 0.15
+  m_FireDelay: 0.2
 --- !u!1 &7953408534171895952
 GameObject:
   m_ObjectHideFlags: 0

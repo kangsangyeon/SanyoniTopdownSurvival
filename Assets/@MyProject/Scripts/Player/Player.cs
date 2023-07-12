@@ -44,6 +44,36 @@ namespace MyProject
         private int m_Power = 0;
         public int power => m_Power;
 
+        #region Attack Property
+
+        private AttackProperty m_AttackProperty = new AttackProperty();
+        public AttackProperty attackProperty => m_AttackProperty;
+
+        [SerializeField]
+        private List<AttackPropertyModifier> m_AttackPropertyModifierList = new List<AttackPropertyModifier>();
+
+        public IReadOnlyList<AttackPropertyModifier> attackPropertyModifierList => m_AttackPropertyModifierList;
+
+        public void AddAttackPropertyModifier(AttackPropertyModifier _modifier)
+        {
+            m_AttackPropertyModifierList.Add(_modifier);
+            RefreshAttackProperty();
+        }
+
+        public void RemoveAttackPropertyModifier(AttackPropertyModifier _modifier)
+        {
+            m_AttackPropertyModifierList.Remove(_modifier);
+            RefreshAttackProperty();
+        }
+
+        private void RefreshAttackProperty()
+        {
+            AttackProperty _newAttackProperty = new AttackProperty();
+            m_AttackPropertyModifierList.ForEach(m => m.Modify(m_AttackProperty));
+        }
+
+        #endregion
+
         #region Events
 
         public event System.Action<Player> onKill_OnServer; // param: target(=죽인 대상)
@@ -202,8 +232,10 @@ namespace MyProject
         public override void OnStartNetwork()
         {
             base.OnStartNetwork();
-            
+
             weapon = GetComponentInChildren<IWeapon>();
+
+            m_AttackPropertyModifierList.ForEach(AddAttackPropertyModifier);
 
             if (base.Owner.IsLocalClient == false)
             {
