@@ -72,27 +72,30 @@ namespace MyProject
         private void RefreshAttackProperty()
         {
             AttackProperty _newAttackProperty = new AttackProperty();
-            m_AttackPropertyModifierList.ForEach(ApplyAttackPropertyModifier);
+            m_AttackPropertyModifierList.ForEach(m => ApplyAttackPropertyModifier(_newAttackProperty, m));
+            m_AttackProperty = _newAttackProperty;
         }
 
-        private void ApplyAttackPropertyModifier(AttackPropertyModifierDefine _modifierDefine)
+        private void ApplyAttackPropertyModifier(
+            AttackProperty _attackProperty,
+            AttackPropertyModifierDefine _modifierDefine)
         {
-            attackProperty.reloadDurationMultiplier =
-                attackProperty.reloadDurationMultiplier * _modifierDefine.reloadDurationMultiplier;
-            attackProperty.fireDelayMultiplier =
-                attackProperty.fireDelayMultiplier * _modifierDefine.fireDelayMultiplier;
-            attackProperty.maxMagazineMultiplier =
-                attackProperty.maxMagazineMultiplier * _modifierDefine.maxMagazineMultiplier;
-            attackProperty.projectileSpeedMultiplier =
-                attackProperty.projectileSpeedMultiplier * _modifierDefine.projectileSpeedMultiplier;
-            attackProperty.projectileDamageMultiplier =
-                attackProperty.projectileDamageMultiplier * _modifierDefine.projectileDamageMultiplier;
-            attackProperty.projectileSizeMultiplier =
-                attackProperty.projectileSizeMultiplier * _modifierDefine.projectileSizeMultiplier;
-            attackProperty.projectileCountPerShot =
-                attackProperty.projectileCountPerShot + _modifierDefine.projectileCountPerShotAdditional;
-            attackProperty.projectileSpreadAngle =
-                attackProperty.projectileSpreadAngle + _modifierDefine.projectileSpreadAngleMultiplier;
+            _attackProperty.reloadDurationMultiplier =
+                _attackProperty.reloadDurationMultiplier * _modifierDefine.reloadDurationMultiplier;
+            _attackProperty.fireDelayMultiplier =
+                _attackProperty.fireDelayMultiplier * _modifierDefine.fireDelayMultiplier;
+            _attackProperty.maxMagazineMultiplier =
+                _attackProperty.maxMagazineMultiplier * _modifierDefine.maxMagazineMultiplier;
+            _attackProperty.projectileSpeedMultiplier =
+                _attackProperty.projectileSpeedMultiplier * _modifierDefine.projectileSpeedMultiplier;
+            _attackProperty.projectileDamageMultiplier =
+                _attackProperty.projectileDamageMultiplier * _modifierDefine.projectileDamageMultiplier;
+            _attackProperty.projectileSizeMultiplier =
+                _attackProperty.projectileSizeMultiplier * _modifierDefine.projectileSizeMultiplier;
+            _attackProperty.projectileCountPerShot =
+                _attackProperty.projectileCountPerShot + _modifierDefine.projectileCountPerShotAdditional;
+            _attackProperty.projectileSpreadAngle =
+                _attackProperty.projectileSpreadAngle + _modifierDefine.projectileSpreadAngleMultiplier;
         }
 
         #endregion
