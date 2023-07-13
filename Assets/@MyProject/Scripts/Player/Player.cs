@@ -49,27 +49,46 @@ namespace MyProject
         private AttackProperty m_AttackProperty = new AttackProperty();
         public AttackProperty attackProperty => m_AttackProperty;
 
-        [SerializeField]
-        private List<AttackPropertyModifier> m_AttackPropertyModifierList = new List<AttackPropertyModifier>();
+        [SerializeField] private List<AttackPropertyModifierDefine> m_AttackPropertyModifierList = new List<AttackPropertyModifierDefine>();
 
-        public IReadOnlyList<AttackPropertyModifier> attackPropertyModifierList => m_AttackPropertyModifierList;
+        public IReadOnlyList<AttackPropertyModifierDefine> attackPropertyModifierList => m_AttackPropertyModifierList;
 
-        public void AddAttackPropertyModifier(AttackPropertyModifier _modifier)
+        public void AddAttackPropertyModifier(AttackPropertyModifierDefine _modifierDefine)
         {
-            m_AttackPropertyModifierList.Add(_modifier);
+            m_AttackPropertyModifierList.Add(_modifierDefine);
             RefreshAttackProperty();
         }
 
-        public void RemoveAttackPropertyModifier(AttackPropertyModifier _modifier)
+        public void RemoveAttackPropertyModifier(AttackPropertyModifierDefine _modifierDefine)
         {
-            m_AttackPropertyModifierList.Remove(_modifier);
+            m_AttackPropertyModifierList.Remove(_modifierDefine);
             RefreshAttackProperty();
         }
 
         private void RefreshAttackProperty()
         {
             AttackProperty _newAttackProperty = new AttackProperty();
-            m_AttackPropertyModifierList.ForEach(m => m.Modify(m_AttackProperty));
+            m_AttackPropertyModifierList.ForEach(ApplyAttackPropertyModifier);
+        }
+
+        private void ApplyAttackPropertyModifier(AttackPropertyModifierDefine _modifierDefine)
+        {
+            attackProperty.reloadDurationMultiplier =
+                attackProperty.reloadDurationMultiplier * _modifierDefine.reloadDurationMultiplier;
+            attackProperty.fireDelayMultiplier =
+                attackProperty.fireDelayMultiplier * _modifierDefine.fireDelayMultiplier;
+            attackProperty.maxMagazineMultiplier =
+                attackProperty.maxMagazineMultiplier * _modifierDefine.maxMagazineMultiplier;
+            attackProperty.projectileSpeedMultiplier =
+                attackProperty.projectileSpeedMultiplier * _modifierDefine.projectileSpeedMultiplier;
+            attackProperty.projectileDamageMultiplier =
+                attackProperty.projectileDamageMultiplier * _modifierDefine.projectileDamageMultiplier;
+            attackProperty.projectileSizeMultiplier =
+                attackProperty.projectileSizeMultiplier * _modifierDefine.projectileSizeMultiplier;
+            attackProperty.projectileCountPerShot =
+                attackProperty.projectileCountPerShot + _modifierDefine.projectileCountPerShotAdditional;
+            attackProperty.projectileSpreadAngle =
+                attackProperty.projectileSpreadAngle + _modifierDefine.projectileSpreadAngleMultiplier;
         }
 
         #endregion
