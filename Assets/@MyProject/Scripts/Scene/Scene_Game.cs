@@ -12,6 +12,7 @@ namespace MyProject
         public static Scene_Game Instance;
 
         [SerializeField] private UI_PlayerList m_UI_PlayerList;
+        [SerializeField] private UI_GetAbility m_UI_GetAbility;
         [SerializeField] private Transform m_RespawnPoint;
         [SerializeField] private int m_MaxTime = 60 * 5;
         [SerializeField] private int m_MaxKillCount = 30;
@@ -177,6 +178,7 @@ namespace MyProject
             onPlayerRemoved_OnClient += m_OnPlayerRemoved_OnClient;
 
             m_UI_PlayerList.Initialize();
+            m_UI_GetAbility.Initialize();
         }
 
         public override void OnStopNetwork()
@@ -194,6 +196,7 @@ namespace MyProject
             m_PlayerRankDict.Clear();
 
             m_UI_PlayerList.Uninitialize();
+            m_UI_GetAbility.Uninitialize();
         }
     }
 }

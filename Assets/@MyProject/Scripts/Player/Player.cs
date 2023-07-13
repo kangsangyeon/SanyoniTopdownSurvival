@@ -44,24 +44,28 @@ namespace MyProject
         private int m_Power = 0;
         public int power => m_Power;
 
-        #region Attack Property
+        #region Ability
 
         private AttackProperty m_AttackProperty = new AttackProperty();
         public AttackProperty attackProperty => m_AttackProperty;
 
-        [SerializeField] private List<AttackPropertyModifierDefine> m_AttackPropertyModifierList = new List<AttackPropertyModifierDefine>();
+        private List<AbilityDefinition> m_AbilityList = new List<AbilityDefinition>();
+        public IReadOnlyList<AbilityDefinition> abilityList => m_AbilityList;
 
+        private List<AttackPropertyModifierDefine> m_AttackPropertyModifierList = new List<AttackPropertyModifierDefine>();
         public IReadOnlyList<AttackPropertyModifierDefine> attackPropertyModifierList => m_AttackPropertyModifierList;
 
-        public void AddAttackPropertyModifier(AttackPropertyModifierDefine _modifierDefine)
+        public void AddAbility(AbilityDefinition _definition)
         {
-            m_AttackPropertyModifierList.Add(_modifierDefine);
+            m_AbilityList.Add(_definition);
+            _definition.attackPropertyModifierDefineList.ForEach(m_AttackPropertyModifierList.Add);
             RefreshAttackProperty();
         }
 
-        public void RemoveAttackPropertyModifier(AttackPropertyModifierDefine _modifierDefine)
+        public void RemoveAbility(AbilityDefinition _definition)
         {
-            m_AttackPropertyModifierList.Remove(_modifierDefine);
+            m_AbilityList.Remove(_definition);
+            _definition.attackPropertyModifierDefineList.ForEach(m => m_AttackPropertyModifierList.Remove(m));
             RefreshAttackProperty();
         }
 
@@ -253,8 +257,6 @@ namespace MyProject
             base.OnStartNetwork();
 
             weapon = GetComponentInChildren<IWeapon>();
-
-            m_AttackPropertyModifierList.ForEach(AddAttackPropertyModifier);
 
             if (base.Owner.IsLocalClient == false)
             {
