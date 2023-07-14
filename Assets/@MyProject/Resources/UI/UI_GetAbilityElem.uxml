@@ -2,7 +2,7 @@
     <ui:VisualElement style="flex-direction: row; flex-grow: 1;">
         <ui:VisualElement style="flex-grow: 1; flex-direction: row; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
             <ui:VisualElement name="VisualElement" style="align-items: center; justify-content: center; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
-                <ui:VisualElement style="width: 100px; height: 100px;" />
+                <ui:VisualElement name="ability-thumbnail" style="width: 100px; height: 100px; background-color: rgb(255, 255, 255); background-image: none;" />
                 <ui:Label text="Ability Name" display-tooltip-when-elided="true" name="ability-name" style="font-size: 20px; margin-top: 5px;" />
             </ui:VisualElement>
             <ui:VisualElement style="padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; flex-grow: 1; -unity-text-align: upper-left;">

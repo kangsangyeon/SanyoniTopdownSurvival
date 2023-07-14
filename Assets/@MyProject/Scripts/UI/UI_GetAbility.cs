@@ -29,7 +29,7 @@ namespace MyProject
 
         public void Show()
         {
-            m_Document.rootVisualElement.style.display = DisplayStyle.None;
+            m_Document.rootVisualElement.style.display = DisplayStyle.Flex;
         }
 
         public void Hide()
@@ -59,12 +59,17 @@ namespace MyProject
         private void RefreshElem(UI_GetAbilityElement _elem, AbilityDefinition _abilityDefinition)
         {
             Label _abilityNameLabel = _elem.Q<Label>("ability-name");
-            VisualElement _abilityThumbnail = _elem.Q<Label>("ability-thumbnail");
             Label _abilityDescriptionLabel = _elem.Q<Label>("ability-description");
+            VisualElement _abilityThumbnail = _elem.Q("ability-thumbnail");
 
             _abilityNameLabel.text = _abilityDefinition.abilityName;
-            _abilityThumbnail.style.backgroundImage = new StyleBackground(_abilityDefinition.thumbnail);
             _abilityDescriptionLabel.text = _abilityDefinition.description;
+
+            if (_abilityDefinition.thumbnail)
+            {
+                _abilityThumbnail.style.backgroundColor = new Color(0, 0, 0, 0);
+                _abilityThumbnail.style.backgroundImage = new StyleBackground(_abilityDefinition.thumbnail);
+            }
 
             _elem.RegisterCallback<ClickEvent>(_evt => onSelectAbility?.Invoke(_abilityDefinition));
         }
