@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using FishNet.Connection;
 using FishNet.Object;
 using MyProject.Event;
 using UnityEngine;
@@ -52,22 +53,76 @@ namespace MyProject
         private List<AbilityDefinition> m_AbilityList = new List<AbilityDefinition>();
         public IReadOnlyList<AbilityDefinition> abilityList => m_AbilityList;
 
-        private List<AttackPropertyModifierDefine> m_AttackPropertyModifierList = new List<AttackPropertyModifierDefine>();
+        private List<AttackPropertyModifierDefine> m_AttackPropertyModifierList =
+            new List<AttackPropertyModifierDefine>();
+
         public IReadOnlyList<AttackPropertyModifierDefine> attackPropertyModifierList => m_AttackPropertyModifierList;
 
-        public void AddAbility(AbilityDefinition _definition)
+        #region Ability Events
+
+        public event System.Action<Player_OnAbilityAdded_EventParam> onAbilityAdded_OnClient;
+        public event System.Action<Player_OnAbilityRemoved_EventParam> onAbilityRemoved_OnClient;
+
+        [Server]
+        private void Server_OnAbilityAdded(Player _player, AbilityDefinition _abilityDefinition)
         {
-            m_AbilityList.Add(_definition);
-            _definition.attackPropertyModifierDefineList.ForEach(m_AttackPropertyModifierList.Add);
-            RefreshAttackProperty();
+            onAbilityAdded_OnClient?.Invoke(new Player_OnAbilityAdded_EventParam()
+                { player = new PlayerInfo(_player), abilityId = _abilityDefinition.abilityId });
+            ObserversRpc_OnAbilityAdded(new Player_OnAbilityAdded_EventParam()
+                { player = new PlayerInfo(_player), abilityId = _abilityDefinition.abilityId });
         }
 
-        public void RemoveAbility(AbilityDefinition _definition)
+        [ObserversRpc(ExcludeServer = true)]
+        private void ObserversRpc_OnAbilityAdded(Player_OnAbilityAdded_EventParam _param)
+        {
+            onAbilityAdded_OnClient?.Invoke(_param);
+        }
+
+        [Server]
+        private void Server_OnAbilityRemoved(Player _player, AbilityDefinition _abilityDefinition)
+        {
+            onAbilityRemoved_OnClient?.Invoke(new Player_OnAbilityRemoved_EventParam()
+                { player = new PlayerInfo(_player), abilityId = _abilityDefinition.abilityId });
+            ObserversRpc_OnAbilityRemoved(new Player_OnAbilityRemoved_EventParam()
+                { player = new PlayerInfo(_player), abilityId = _abilityDefinition.abilityId });
+        }
+
+        [ObserversRpc(ExcludeServer = true)]
+        private void ObserversRpc_OnAbilityRemoved(Player_OnAbilityRemoved_EventParam _param)
+        {
+            onAbilityRemoved_OnClient?.Invoke(_param);
+        }
+
+        #endregion
+
+        [ServerRpc]
+        public void ServerRpc_RequestAddAbility(Player_RequestAddAbilityParam _param)
+        {
+            var _abilityDefinition = OfflineGameplayDependencies.abilityDatabase.GetAbility(_param.abilityId);
+            Server_AddAbility(_abilityDefinition);
+        }
+
+        [Server]
+        public void Server_AddAbility(AbilityDefinition _definition)
+        {
+            m_AbilityList.Add(_definition);
+            foreach (var m in _definition.attackPropertyModifierDefineList) m_AttackPropertyModifierList.Add(m);
+            RefreshAttackProperty();
+
+            Server_OnAbilityAdded(this, _definition);
+        }
+
+        [Server]
+        public void Server_RemoveAbility(AbilityDefinition _definition)
         {
             m_AbilityList.Remove(_definition);
-            _definition.attackPropertyModifierDefineList.ForEach(m => m_AttackPropertyModifierList.Remove(m));
+            foreach (var m in _definition.attackPropertyModifierDefineList) m_AttackPropertyModifierList.Remove(m);
             RefreshAttackProperty();
+
+            Server_OnAbilityRemoved(this, _definition);
         }
+
+        #endregion
 
         private void RefreshAttackProperty()
         {
@@ -98,8 +153,6 @@ namespace MyProject
                 _attackProperty.projectileSpreadAngle + _modifierDefine.projectileSpreadAngleMultiplier;
         }
 
-        #endregion
-
         #region Events
 
         public event System.Action<Player> onKill_OnServer; // param: target(=죽인 대상)
@@ -121,6 +174,7 @@ namespace MyProject
 
         public event System.Action<object> onDead_OnServer; // param: source(=죽은 원인)
         public event System.Action<Player_OnDead_EventParam> onDead_OnClient;
+        public event System.Action<Player_OnDead_EventParam> onDead_OnOwnerClient;
 
         [Server]
         private void Server_OnDead(object _source)
@@ -128,12 +182,19 @@ namespace MyProject
             onDead_OnServer?.Invoke(_source);
             onDead_OnClient?.Invoke(new Player_OnDead_EventParam() { });
             ObserversRpc_OnDead(new Player_OnDead_EventParam() { });
+            TargetRpc_OnDead(this.Owner, new Player_OnDead_EventParam() { });
         }
 
         [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_OnDead(Player_OnDead_EventParam _param)
         {
             onDead_OnClient?.Invoke(_param);
+        }
+
+        [TargetRpc]
+        private void TargetRpc_OnDead(NetworkConnection _conn, Player_OnDead_EventParam _param)
+        {
+            onDead_OnOwnerClient?.Invoke(_param);
         }
 
         public event System.Action onPowerChanged_OnServer;
@@ -261,7 +322,11 @@ namespace MyProject
 
             weapon = GetComponentInChildren<IWeapon>();
 
-            if (base.Owner.IsLocalClient == false)
+            if (base.Owner.IsLocalClient)
+            {
+                OfflineGameplayDependencies.gameScene.myPlayer = this;
+            }
+            else
             {
                 m_UI_PlayerAmmo.enabled = false;
             }

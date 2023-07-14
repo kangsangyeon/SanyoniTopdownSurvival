@@ -59,4 +59,24 @@ namespace MyProject.Event
         // TODO
         // object
     }
+
+    [System.Serializable]
+    public struct Player_OnAbilityAdded_EventParam
+    {
+        public PlayerInfo player;
+        public string abilityId;
+    }
+
+    [System.Serializable]
+    public struct Player_OnAbilityRemoved_EventParam
+    {
+        public PlayerInfo player;
+        public string abilityId;
+    }
+
+    [System.Serializable]
+    public struct Player_RequestAddAbilityParam
+    {
+        public string abilityId;
+    }
 }

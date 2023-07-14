@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using FishNet;
 using MyProject.Event;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -16,9 +15,7 @@ namespace MyProject
         private readonly List<UI_GetAbilityElement> m_AbilityElemList = new List<UI_GetAbilityElement>();
         private Player m_Player;
 
-        private Action<PlayerKillEventParam> m_OnPlayerKill_OnClient;
-
-        public event System.Action<AbilityDefinition> onSelectAbility_OnClient;
+        public event System.Action<AbilityDefinition> onSelectAbility;
 
         public void Initialize()
         {
@@ -32,12 +29,23 @@ namespace MyProject
 
         public void Show()
         {
-            m_Document.gameObject.SetActive(true);
+            m_Document.rootVisualElement.style.display = DisplayStyle.None;
         }
 
         public void Hide()
         {
-            m_Document.gameObject.SetActive(false);
+            m_Document.rootVisualElement.style.display = DisplayStyle.None;
+            RemoveAllElem();
+        }
+
+        public void CreateElem(AbilityDefinition _abilityDefinition)
+        {
+            UI_GetAbilityElement _elem = new UI_GetAbilityElement()
+                { name = $"ability-elem [name: {_abilityDefinition.name}]" };
+            m_Parent.hierarchy.Add(_elem);
+            m_AbilityElemList.Add(_elem);
+
+            RefreshElem(_elem, _abilityDefinition);
         }
 
         private void RemoveAllElem()
@@ -46,16 +54,6 @@ namespace MyProject
                 _elem.RemoveFromHierarchy();
 
             m_AbilityElemList.Clear();
-        }
-
-        private void CreateElem(AbilityDefinition _abilityDefinition)
-        {
-            UI_GetAbilityElement _elem = new UI_GetAbilityElement()
-                { name = $"ability-elem [name: {_abilityDefinition.name}]" };
-            m_Parent.hierarchy.Add(_elem);
-            m_AbilityElemList.Add(_elem);
-
-            RefreshElem(_elem, _abilityDefinition);
         }
 
         private void RefreshElem(UI_GetAbilityElement _elem, AbilityDefinition _abilityDefinition)
@@ -68,11 +66,7 @@ namespace MyProject
             _abilityThumbnail.style.backgroundImage = new StyleBackground(_abilityDefinition.thumbnail);
             _abilityDescriptionLabel.text = _abilityDefinition.description;
 
-            _elem.RegisterCallback<ClickEvent>(_evt =>
-            {
-                m_Player.AddAbility(_abilityDefinition);
-                m_Document.gameObject.SetActive(false);
-            });
+            _elem.RegisterCallback<ClickEvent>(_evt => onSelectAbility?.Invoke(_abilityDefinition));
         }
     }
 }
