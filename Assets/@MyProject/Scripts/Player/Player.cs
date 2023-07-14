@@ -53,10 +53,10 @@ namespace MyProject
         private List<AbilityDefinition> m_AbilityList = new List<AbilityDefinition>();
         public IReadOnlyList<AbilityDefinition> abilityList => m_AbilityList;
 
-        private List<AttackPropertyModifierDefine> m_AttackPropertyModifierList =
-            new List<AttackPropertyModifierDefine>();
+        private List<AttackPropertyModifierDefinition> m_AttackPropertyModifierList =
+            new List<AttackPropertyModifierDefinition>();
 
-        public IReadOnlyList<AttackPropertyModifierDefine> attackPropertyModifierList => m_AttackPropertyModifierList;
+        public IReadOnlyList<AttackPropertyModifierDefinition> attackPropertyModifierList => m_AttackPropertyModifierList;
 
         #region Ability Events
 
@@ -106,7 +106,7 @@ namespace MyProject
         public void Server_AddAbility(AbilityDefinition _definition)
         {
             m_AbilityList.Add(_definition);
-            foreach (var m in _definition.attackPropertyModifierDefineList) m_AttackPropertyModifierList.Add(m);
+            foreach (var m in _definition.attackPropertyModifierDefinitionList) m_AttackPropertyModifierList.Add(m);
             RefreshAttackProperty();
 
             Server_OnAbilityAdded(this, _definition);
@@ -116,7 +116,7 @@ namespace MyProject
         public void Server_RemoveAbility(AbilityDefinition _definition)
         {
             m_AbilityList.Remove(_definition);
-            foreach (var m in _definition.attackPropertyModifierDefineList) m_AttackPropertyModifierList.Remove(m);
+            foreach (var m in _definition.attackPropertyModifierDefinitionList) m_AttackPropertyModifierList.Remove(m);
             RefreshAttackProperty();
 
             Server_OnAbilityRemoved(this, _definition);
@@ -133,24 +133,24 @@ namespace MyProject
 
         private void ApplyAttackPropertyModifier(
             AttackProperty _attackProperty,
-            AttackPropertyModifierDefine _modifierDefine)
+            AttackPropertyModifierDefinition _modifierDefinition)
         {
             _attackProperty.reloadDurationMultiplier =
-                _attackProperty.reloadDurationMultiplier * _modifierDefine.reloadDurationMultiplier;
+                _attackProperty.reloadDurationMultiplier * _modifierDefinition.reloadDurationMultiplier;
             _attackProperty.fireDelayMultiplier =
-                _attackProperty.fireDelayMultiplier * _modifierDefine.fireDelayMultiplier;
+                _attackProperty.fireDelayMultiplier * _modifierDefinition.fireDelayMultiplier;
             _attackProperty.maxMagazineMultiplier =
-                _attackProperty.maxMagazineMultiplier * _modifierDefine.maxMagazineMultiplier;
+                _attackProperty.maxMagazineMultiplier * _modifierDefinition.maxMagazineMultiplier;
             _attackProperty.projectileSpeedMultiplier =
-                _attackProperty.projectileSpeedMultiplier * _modifierDefine.projectileSpeedMultiplier;
+                _attackProperty.projectileSpeedMultiplier * _modifierDefinition.projectileSpeedMultiplier;
             _attackProperty.projectileDamageMultiplier =
-                _attackProperty.projectileDamageMultiplier * _modifierDefine.projectileDamageMultiplier;
+                _attackProperty.projectileDamageMultiplier * _modifierDefinition.projectileDamageMultiplier;
             _attackProperty.projectileSizeMultiplier =
-                _attackProperty.projectileSizeMultiplier * _modifierDefine.projectileSizeMultiplier;
+                _attackProperty.projectileSizeMultiplier * _modifierDefinition.projectileSizeMultiplier;
             _attackProperty.projectileCountPerShot =
-                _attackProperty.projectileCountPerShot + _modifierDefine.projectileCountPerShotAdditional;
+                _attackProperty.projectileCountPerShot + _modifierDefinition.projectileCountPerShotAdditional;
             _attackProperty.projectileSpreadAngle =
-                _attackProperty.projectileSpreadAngle + _modifierDefine.projectileSpreadAngleMultiplier;
+                _attackProperty.projectileSpreadAngle + _modifierDefinition.projectileSpreadAngleMultiplier;
         }
 
         #region Events

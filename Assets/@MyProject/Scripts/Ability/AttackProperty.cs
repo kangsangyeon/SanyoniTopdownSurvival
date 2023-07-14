@@ -1,5 +1,6 @@
 namespace MyProject
 {
+    [System.Serializable]
     public class AttackProperty
     {
         public readonly float reloadDuration = 3.0f;

@@ -27,6 +27,8 @@ namespace MyProject
         private void Awake()
         {
             s_Instance = this;
+
+            m_UI_GetAbility.Hide();
         }
     }
 }

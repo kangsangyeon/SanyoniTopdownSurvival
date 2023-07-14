@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace MyProject
 {
-    [CreateAssetMenu(menuName = "MyProject/AttackPropertyModifierDefine")]
-    public class AttackPropertyModifierDefine : ScriptableObject
+    [CreateAssetMenu(menuName = "MyProject/AttackPropertyModifierDefinition")]
+    public class AttackPropertyModifierDefinition : ScriptableObject
     {
         [SerializeField] private float m_ReloadDurationMultiplier = 1.0f;
         public float reloadDurationMultiplier => m_ReloadDurationMultiplier;

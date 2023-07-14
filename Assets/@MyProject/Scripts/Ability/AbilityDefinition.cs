@@ -19,7 +19,7 @@ namespace MyProject
         [SerializeField] private string m_Description;
         public string description => m_Description;
 
-        [SerializeField] private List<AttackPropertyModifierDefine> m_AttackPropertyModifierDefineList = new List<AttackPropertyModifierDefine>();
-        public IReadOnlyList<AttackPropertyModifierDefine> attackPropertyModifierDefineList => m_AttackPropertyModifierDefineList;
+        [SerializeField] private List<AttackPropertyModifierDefinition> m_AttackPropertyModifierDefinitionList = new List<AttackPropertyModifierDefinition>();
+        public IReadOnlyList<AttackPropertyModifierDefinition> attackPropertyModifierDefinitionList => m_AttackPropertyModifierDefinitionList;
     }
 }
