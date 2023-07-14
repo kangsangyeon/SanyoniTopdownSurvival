@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41d24b2f0c65cfd48afbc61125a9fe71, type: 3}
-  m_Name: New Attack Property Modifier Definition 3
+  m_Name: AttackPropertyModifierDefinition_IncreaseBulletDamage
   m_EditorClassIdentifier: 
   m_ReloadDurationMultiplier: 1
   m_FireDelayMultiplier: 1
   m_MaxMagazineMultiplier: 1
   m_ProjectileSpeedMultiplier: 1
-  m_ProjectileDamageMultiplier: 1
+  m_ProjectileDamageMultiplier: 2
   m_ProjectileSizeMultiplier: 1
   m_ProjectileCountPerShotAdditional: 0
   m_ProjectileSpreadAngleMultiplier: 1

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aaeaa09c6210bea4cb460c39f7871888, type: 3}
-  m_Name: New Ability Definition 1
+  m_Name: AbilityDefinition_BuckShot
   m_EditorClassIdentifier: 
-  m_AbilityId: 3566766e-7e4b-4ce5-a4ef-9acdd4381bcc
-  m_AbilityName: ability 1
+  m_AbilityId: 6d2921b2-425b-4cc0-91d9-c88c9eceffd0
+  m_AbilityName: ability 3
   m_Thumbnail: {fileID: 0}
-  m_Description: 
+  m_Description: "\uCD1D\uC54C\uC774 \uC0B0\uD0C4\uC73C\uB85C \uBC1C\uC0AC\uB429\uB2C8\uB2E4!"
   m_AttackPropertyModifierDefinitionList:
-  - {fileID: 11400000, guid: e62cad0aa97b8d84493d12503e413b9e, type: 2}
+  - {fileID: 11400000, guid: cac21f2d53a72a64fa77369a4d3ab9ad, type: 2}
