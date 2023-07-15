@@ -7,7 +7,19 @@ namespace MyProject
     {
         [SerializeField] private AbilityDatabaseDefinition m_Definition;
 
-        private Dictionary<string, AbilityDefinition> m_AbilityDefinitionDict = new Dictionary<string, AbilityDefinition>();
+        private Dictionary<string, AbilityDefinition> m_AbilityDefinitionDict =
+            new Dictionary<string, AbilityDefinition>();
+
+        public void Initialize()
+        {
+            foreach (var _abilityDefinition in m_Definition.definitionList)
+                m_AbilityDefinitionDict.Add(_abilityDefinition.abilityId, _abilityDefinition);
+        }
+
+        public void Uninitialize()
+        {
+            m_AbilityDefinitionDict.Clear();
+        }
 
         public AbilityDefinition GetAbility(string _id) => m_AbilityDefinitionDict[_id];
 

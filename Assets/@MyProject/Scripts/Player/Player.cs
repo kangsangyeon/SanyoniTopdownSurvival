@@ -56,7 +56,8 @@ namespace MyProject
         private List<AttackPropertyModifierDefinition> m_AttackPropertyModifierList =
             new List<AttackPropertyModifierDefinition>();
 
-        public IReadOnlyList<AttackPropertyModifierDefinition> attackPropertyModifierList => m_AttackPropertyModifierList;
+        public IReadOnlyList<AttackPropertyModifierDefinition> attackPropertyModifierList =>
+            m_AttackPropertyModifierList;
 
         #region Ability Events
 
@@ -109,7 +110,22 @@ namespace MyProject
             foreach (var m in _definition.attackPropertyModifierDefinitionList) m_AttackPropertyModifierList.Add(m);
             RefreshAttackProperty();
 
+            ObserversRpc_AddAbility(new Player_ObserversRpc_AddAbility_EventParam()
+                { player = new PlayerInfo(this), abilityId = _definition.abilityId });
+
             Server_OnAbilityAdded(this, _definition);
+        }
+
+        [ObserversRpc(ExcludeServer = true)]
+        private void ObserversRpc_AddAbility(Player_ObserversRpc_AddAbility_EventParam _param)
+        {
+            AbilityDefinition _abilityDefinition =
+                OfflineGameplayDependencies.abilityDatabase.GetAbility(_param.abilityId);
+
+            m_AbilityList.Add(_abilityDefinition);
+            foreach (var m in _abilityDefinition.attackPropertyModifierDefinitionList)
+                m_AttackPropertyModifierList.Add(m);
+            RefreshAttackProperty();
         }
 
         [Server]
@@ -119,7 +135,22 @@ namespace MyProject
             foreach (var m in _definition.attackPropertyModifierDefinitionList) m_AttackPropertyModifierList.Remove(m);
             RefreshAttackProperty();
 
+            ObserversRpc_RemoveAbility(new Player_ObserversRpc_RemoveAbility_EventParam()
+                { player = new PlayerInfo(this), abilityId = _definition.abilityId });
+
             Server_OnAbilityRemoved(this, _definition);
+        }
+
+        [ObserversRpc]
+        private void ObserversRpc_RemoveAbility(Player_ObserversRpc_RemoveAbility_EventParam _param)
+        {
+            AbilityDefinition _abilityDefinition =
+                OfflineGameplayDependencies.abilityDatabase.GetAbility(_param.abilityId);
+
+            m_AbilityList.Remove(_abilityDefinition);
+            foreach (var m in _abilityDefinition.attackPropertyModifierDefinitionList)
+                m_AttackPropertyModifierList.Remove(m);
+            RefreshAttackProperty();
         }
 
         #endregion

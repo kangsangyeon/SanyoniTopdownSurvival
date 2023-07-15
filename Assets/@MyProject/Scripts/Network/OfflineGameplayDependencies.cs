@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace MyProject
@@ -27,8 +28,15 @@ namespace MyProject
         private void Awake()
         {
             s_Instance = this;
-
             m_UI_GetAbility.Hide();
+            m_AbilityDatabase.Initialize();
+        }
+
+        private void OnDestroy()
+        {
+            s_Instance = null;
+            m_UI_GetAbility.Hide();
+            m_AbilityDatabase.Uninitialize();
         }
     }
 }
