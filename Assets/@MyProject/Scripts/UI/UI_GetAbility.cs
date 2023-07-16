@@ -1,6 +1,5 @@
-using System;
 using System.Collections.Generic;
-using MyProject.Event;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,20 +10,37 @@ namespace MyProject
         [SerializeField] private Scene_Game m_GameScene;
         [SerializeField] private UIDocument m_Document;
 
-        private VisualElement m_Parent;
+        private ListView m_ListView;
         private readonly List<UI_GetAbilityElement> m_AbilityElemList = new List<UI_GetAbilityElement>();
+        private readonly List<AbilityDefinition> m_AbilityDefinitionList = new List<AbilityDefinition>();
         private Player m_Player;
 
         public event System.Action<AbilityDefinition> onSelectAbility;
 
         public void Initialize()
         {
-            m_Parent = m_Document.rootVisualElement.Q("ability-list");
+            m_ListView = m_Document.rootVisualElement.Q<ListView>("ability-list");
+            m_ListView.itemsSource = m_AbilityDefinitionList;
+            m_ListView.makeItem = () => new UI_GetAbilityElement();
+            m_ListView.bindItem = (_visualElem, _index) =>
+            {
+                UI_GetAbilityElement _elem = _visualElem as UI_GetAbilityElement;
+                _elem.Bind(m_AbilityDefinitionList[_index]);
+            };
+            m_ListView.itemsChosen += (_item) =>
+            {
+                AbilityDefinition _definition = _item.First() as AbilityDefinition;
+                onSelectAbility?.Invoke(_definition);
+            };
         }
 
         public void Uninitialize()
         {
-            RemoveAllElem();
+            m_AbilityDefinitionList.Clear();
+            m_ListView.Rebuild();
+            m_ListView.itemsSource = null;
+            m_ListView.makeItem = null;
+            m_ListView.bindItem = null;
         }
 
         public void Show()
@@ -35,43 +51,13 @@ namespace MyProject
         public void Hide()
         {
             m_Document.rootVisualElement.style.display = DisplayStyle.None;
-            RemoveAllElem();
+            m_AbilityDefinitionList.Clear();
+            m_ListView.Rebuild();
         }
 
-        public void CreateElem(AbilityDefinition _abilityDefinition)
+        public void AddItem(AbilityDefinition _definition)
         {
-            UI_GetAbilityElement _elem = new UI_GetAbilityElement()
-                { name = $"ability-elem [name: {_abilityDefinition.name}]" };
-            m_Parent.hierarchy.Add(_elem);
-            m_AbilityElemList.Add(_elem);
-
-            RefreshElem(_elem, _abilityDefinition);
-        }
-
-        private void RemoveAllElem()
-        {
-            foreach (var _elem in m_AbilityElemList)
-                _elem.RemoveFromHierarchy();
-
-            m_AbilityElemList.Clear();
-        }
-
-        private void RefreshElem(UI_GetAbilityElement _elem, AbilityDefinition _abilityDefinition)
-        {
-            Label _abilityNameLabel = _elem.Q<Label>("ability-name");
-            Label _abilityDescriptionLabel = _elem.Q<Label>("ability-description");
-            VisualElement _abilityThumbnail = _elem.Q("ability-thumbnail");
-
-            _abilityNameLabel.text = _abilityDefinition.abilityName;
-            _abilityDescriptionLabel.text = _abilityDefinition.description;
-
-            if (_abilityDefinition.thumbnail)
-            {
-                _abilityThumbnail.style.backgroundColor = new Color(0, 0, 0, 0);
-                _abilityThumbnail.style.backgroundImage = new StyleBackground(_abilityDefinition.thumbnail);
-            }
-
-            _elem.RegisterCallback<ClickEvent>(_evt => onSelectAbility?.Invoke(_abilityDefinition));
+            m_AbilityDefinitionList.Add(_definition);
         }
     }
 }

@@ -228,9 +228,9 @@ namespace MyProject
                 // 내 캐릭터가 죽었을 때 Ability 획득 ui를 보여줍니다.
                 _player.onDead_OnOwnerClient += _param =>
                 {
-                    OfflineGameplayDependencies.ui_GetAbility.CreateElem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
-                    OfflineGameplayDependencies.ui_GetAbility.CreateElem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
-                    OfflineGameplayDependencies.ui_GetAbility.CreateElem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
+                    OfflineGameplayDependencies.ui_GetAbility.AddItem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
+                    OfflineGameplayDependencies.ui_GetAbility.AddItem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
+                    OfflineGameplayDependencies.ui_GetAbility.AddItem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
                     OfflineGameplayDependencies.ui_GetAbility.Show();
                 };
             };
