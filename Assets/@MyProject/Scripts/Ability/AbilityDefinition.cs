@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MyProject
 {
@@ -19,7 +20,10 @@ namespace MyProject
         [SerializeField] private string m_Description;
         public string description => m_Description;
 
-        [SerializeField] private List<AttackPropertyModifierDefinition> m_AttackPropertyModifierDefinitionList = new List<AttackPropertyModifierDefinition>();
-        public IReadOnlyList<AttackPropertyModifierDefinition> attackPropertyModifierDefinitionList => m_AttackPropertyModifierDefinitionList;
+        [SerializeField] private List<AbilityPropertyModifierDefinition> m_AbilityPropertyModifierDefinitionList =
+            new List<AbilityPropertyModifierDefinition>();
+
+        public IReadOnlyList<AbilityPropertyModifierDefinition> abilityPropertyModifierDefinitionList =>
+            m_AbilityPropertyModifierDefinitionList;
     }
 }

@@ -16,5 +16,5 @@ MonoBehaviour:
   m_AbilityName: ability 1
   m_Thumbnail: {fileID: 0}
   m_Description: "\uB354\uC6B1 \uBE60\uB974\uAC8C \uC7AC\uC7A5\uC804\uD569\uB2C8\uB2E4!"
-  m_AttackPropertyModifierDefinitionList:
+  m_AbilityPropertyModifierDefinitionList:
   - {fileID: 11400000, guid: e62cad0aa97b8d84493d12503e413b9e, type: 2}

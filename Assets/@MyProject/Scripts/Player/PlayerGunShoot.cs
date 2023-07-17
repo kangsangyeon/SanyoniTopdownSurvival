@@ -34,8 +34,8 @@ namespace MyProject
         #region IGunWeapon
 
         public int damageMagnitude =>
-            Mathf.RoundToInt(m_Player.attackProperty.projectileDamage *
-                             m_Player.attackProperty.projectileDamageMultiplier);
+            Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage *
+                             m_Player.abilityProperty.projectileDamageMultiplier);
 
         public object owner => player;
 
@@ -53,25 +53,25 @@ namespace MyProject
         }
 
         public int maxMagazineCount =>
-            Mathf.RoundToInt(m_Player.attackProperty.maxMagazine * m_Player.attackProperty.maxMagazineMultiplier);
+            Mathf.RoundToInt(m_Player.abilityProperty.maxMagazine * m_Player.abilityProperty.maxMagazineMultiplier);
 
         public float reloadDuration =>
-            m_Player.attackProperty.reloadDuration * m_Player.attackProperty.reloadDurationMultiplier;
+            m_Player.abilityProperty.reloadDuration * m_Player.abilityProperty.reloadDurationMultiplier;
 
         public float fireDelay =>
-            m_Player.attackProperty.fireDelay * m_Player.attackProperty.fireDelayMultiplier;
+            m_Player.abilityProperty.fireDelay * m_Player.abilityProperty.fireDelayMultiplier;
 
         public float projectileSpeed =>
-            m_Player.attackProperty.projectileSpeed * m_Player.attackProperty.projectileSpeedMultiplier;
+            m_Player.abilityProperty.projectileSpeed * m_Player.abilityProperty.projectileSpeedMultiplier;
 
         public float projectileScaleMultiplier =>
-            m_Player.attackProperty.projectileSizeMultiplier;
+            m_Player.abilityProperty.projectileSizeMultiplier;
 
         public int projectileCountPerShot =>
-            m_Player.attackProperty.projectileCountPerShot;
+            m_Player.abilityProperty.projectileCountPerShot;
 
         public float projectileShotAngleRange =>
-            m_Player.attackProperty.projectileShotAngleRange;
+            m_Player.abilityProperty.projectileShotAngleRange;
 
         public event System.Action onCurrentMagazineCountChanged;
         public event System.Action onFire;

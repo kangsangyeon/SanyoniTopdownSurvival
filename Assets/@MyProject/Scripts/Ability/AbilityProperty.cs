@@ -1,9 +1,7 @@
-using UnityEngine.Serialization;
-
 namespace MyProject
 {
     [System.Serializable]
-    public class AttackProperty
+    public class AbilityProperty
     {
         public readonly float reloadDuration = 3.0f;
         public float reloadDurationMultiplier = 1.0f;

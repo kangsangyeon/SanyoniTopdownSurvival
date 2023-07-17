@@ -47,17 +47,17 @@ namespace MyProject
 
         #region Ability
 
-        private AttackProperty m_AttackProperty = new AttackProperty();
-        public AttackProperty attackProperty => m_AttackProperty;
+        private AbilityProperty m_AbilityProperty = new AbilityProperty();
+        public AbilityProperty abilityProperty => m_AbilityProperty;
 
         private List<AbilityDefinition> m_AbilityList = new List<AbilityDefinition>();
         public IReadOnlyList<AbilityDefinition> abilityList => m_AbilityList;
 
-        private List<AttackPropertyModifierDefinition> m_AttackPropertyModifierList =
-            new List<AttackPropertyModifierDefinition>();
+        private List<AbilityPropertyModifierDefinition> m_AbilityPropertyModifierList =
+            new List<AbilityPropertyModifierDefinition>();
 
-        public IReadOnlyList<AttackPropertyModifierDefinition> attackPropertyModifierList =>
-            m_AttackPropertyModifierList;
+        public IReadOnlyList<AbilityPropertyModifierDefinition> abilityPropertyModifierList =>
+            m_AbilityPropertyModifierList;
 
         #region Ability Events
 
@@ -107,8 +107,8 @@ namespace MyProject
         public void Server_AddAbility(AbilityDefinition _definition)
         {
             m_AbilityList.Add(_definition);
-            foreach (var m in _definition.attackPropertyModifierDefinitionList) m_AttackPropertyModifierList.Add(m);
-            RefreshAttackProperty();
+            foreach (var m in _definition.abilityPropertyModifierDefinitionList) m_AbilityPropertyModifierList.Add(m);
+            RefreshAbilityProperty();
 
             ObserversRpc_AddAbility(new Player_ObserversRpc_AddAbility_EventParam()
                 { player = new PlayerInfo(this), abilityId = _definition.abilityId });
@@ -123,17 +123,17 @@ namespace MyProject
                 OfflineGameplayDependencies.abilityDatabase.GetAbility(_param.abilityId);
 
             m_AbilityList.Add(_abilityDefinition);
-            foreach (var m in _abilityDefinition.attackPropertyModifierDefinitionList)
-                m_AttackPropertyModifierList.Add(m);
-            RefreshAttackProperty();
+            foreach (var m in _abilityDefinition.abilityPropertyModifierDefinitionList)
+                m_AbilityPropertyModifierList.Add(m);
+            RefreshAbilityProperty();
         }
 
         [Server]
         public void Server_RemoveAbility(AbilityDefinition _definition)
         {
             m_AbilityList.Remove(_definition);
-            foreach (var m in _definition.attackPropertyModifierDefinitionList) m_AttackPropertyModifierList.Remove(m);
-            RefreshAttackProperty();
+            foreach (var m in _definition.abilityPropertyModifierDefinitionList) m_AbilityPropertyModifierList.Remove(m);
+            RefreshAbilityProperty();
 
             ObserversRpc_RemoveAbility(new Player_ObserversRpc_RemoveAbility_EventParam()
                 { player = new PlayerInfo(this), abilityId = _definition.abilityId });
@@ -148,40 +148,40 @@ namespace MyProject
                 OfflineGameplayDependencies.abilityDatabase.GetAbility(_param.abilityId);
 
             m_AbilityList.Remove(_abilityDefinition);
-            foreach (var m in _abilityDefinition.attackPropertyModifierDefinitionList)
-                m_AttackPropertyModifierList.Remove(m);
-            RefreshAttackProperty();
+            foreach (var m in _abilityDefinition.abilityPropertyModifierDefinitionList)
+                m_AbilityPropertyModifierList.Remove(m);
+            RefreshAbilityProperty();
         }
 
         #endregion
 
-        private void RefreshAttackProperty()
+        private void RefreshAbilityProperty()
         {
-            AttackProperty _newAttackProperty = new AttackProperty();
-            m_AttackPropertyModifierList.ForEach(m => ApplyAttackPropertyModifier(_newAttackProperty, m));
-            m_AttackProperty = _newAttackProperty;
+            AbilityProperty _newAbilityProperty = new AbilityProperty();
+            m_AbilityPropertyModifierList.ForEach(m => ApplyAbilityPropertyModifier(_newAbilityProperty, m));
+            m_AbilityProperty = _newAbilityProperty;
         }
 
-        private void ApplyAttackPropertyModifier(
-            AttackProperty _attackProperty,
-            AttackPropertyModifierDefinition _modifierDefinition)
+        private void ApplyAbilityPropertyModifier(
+            AbilityProperty _abilityProperty,
+            AbilityPropertyModifierDefinition _modifierDefinition)
         {
-            _attackProperty.reloadDurationMultiplier =
-                _attackProperty.reloadDurationMultiplier * _modifierDefinition.reloadDurationMultiplier;
-            _attackProperty.fireDelayMultiplier =
-                _attackProperty.fireDelayMultiplier * _modifierDefinition.fireDelayMultiplier;
-            _attackProperty.maxMagazineMultiplier =
-                _attackProperty.maxMagazineMultiplier * _modifierDefinition.maxMagazineMultiplier;
-            _attackProperty.projectileSpeedMultiplier =
-                _attackProperty.projectileSpeedMultiplier * _modifierDefinition.projectileSpeedMultiplier;
-            _attackProperty.projectileDamageMultiplier =
-                _attackProperty.projectileDamageMultiplier * _modifierDefinition.projectileDamageMultiplier;
-            _attackProperty.projectileSizeMultiplier =
-                _attackProperty.projectileSizeMultiplier * _modifierDefinition.projectileSizeMultiplier;
-            _attackProperty.projectileCountPerShot =
-                _attackProperty.projectileCountPerShot + _modifierDefinition.projectileCountPerShotAdditional;
-            _attackProperty.projectileShotAngleRange =
-                _attackProperty.projectileShotAngleRange + _modifierDefinition.projectileSpreadAngleMultiplier;
+            _abilityProperty.reloadDurationMultiplier =
+                _abilityProperty.reloadDurationMultiplier * _modifierDefinition.reloadDurationMultiplier;
+            _abilityProperty.fireDelayMultiplier =
+                _abilityProperty.fireDelayMultiplier * _modifierDefinition.fireDelayMultiplier;
+            _abilityProperty.maxMagazineMultiplier =
+                _abilityProperty.maxMagazineMultiplier * _modifierDefinition.maxMagazineMultiplier;
+            _abilityProperty.projectileSpeedMultiplier =
+                _abilityProperty.projectileSpeedMultiplier * _modifierDefinition.projectileSpeedMultiplier;
+            _abilityProperty.projectileDamageMultiplier =
+                _abilityProperty.projectileDamageMultiplier * _modifierDefinition.projectileDamageMultiplier;
+            _abilityProperty.projectileSizeMultiplier =
+                _abilityProperty.projectileSizeMultiplier * _modifierDefinition.projectileSizeMultiplier;
+            _abilityProperty.projectileCountPerShot =
+                _abilityProperty.projectileCountPerShot + _modifierDefinition.projectileCountPerShotAdditional;
+            _abilityProperty.projectileShotAngleRange =
+                _abilityProperty.projectileShotAngleRange + _modifierDefinition.projectileSpreadAngleMultiplier;
         }
 
         #region Events
