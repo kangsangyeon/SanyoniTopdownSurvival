@@ -80,11 +80,17 @@ namespace MyProject
 
         #endregion
 
-        private Projectile SpawnProjectile(Vector2 _position, Vector2 _direction, float _passedTime)
+        private Projectile SpawnProjectile(
+            int _ownerConnectionId, float _passedTime,
+            Vector2 _position, Vector2 _direction)
         {
             Projectile _projectile = m_ProjectilePool.Get();
             _projectile.gameObject.layer = gameObject.layer;
             _projectile.Initialize(_position, _direction, _passedTime);
+            _projectile.m_OwnerConnectionId = _ownerConnectionId;
+            _projectile.m_StartTime = Time.time;
+            _projectile.m_Speed = projectileSpeed;
+            _projectile.scaleMultiplier = projectileScaleMultiplier;
 
             return _projectile;
         }
@@ -112,34 +118,19 @@ namespace MyProject
                 Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _gunLookRotation));
                 Vector3 _gunLookDirection = _angleQuaternion * Vector2.right;
 
-                if (projectileCountPerShot > 1)
-                {
-                    var _projectileDirections =
-                        GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
 
-                    _projectileDirections.ForEach(_direction =>
-                    {
-                        // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
-                        // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
-                        // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
-                        var _projectile = SpawnProjectile(m_FirePoint.position, _direction, 0.0f);
-                        _projectile.m_OwnerConnectionId = base.OwnerId;
-                        _projectile.m_StartTime = Time.time;
-                        _projectile.m_Speed = projectileSpeed;
-                        _projectile.scaleMultiplier = projectileScaleMultiplier;
-                    });
-                }
-                else
+                var _projectileDirections =
+                    GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+
+                _projectileDirections.ForEach(_direction =>
                 {
                     // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
                     // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
                     // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
-                    var _projectile = SpawnProjectile(m_FirePoint.position, _gunLookDirection, 0.0f);
-                    _projectile.m_OwnerConnectionId = base.OwnerId;
-                    _projectile.m_StartTime = Time.time;
-                    _projectile.m_Speed = projectileSpeed;
-                    _projectile.scaleMultiplier = projectileScaleMultiplier;
-                }
+                    var _projectile = SpawnProjectile(
+                        base.OwnerId, 0.0f,
+                        m_FirePoint.position, _direction);
+                });
 
                 // 서버에게 발사 사실을 알립니다.
                 ServerRpcFire(new PlayerGunShoot_Fire_EventParam()
@@ -169,32 +160,19 @@ namespace MyProject
 
                 _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
 
-                if (projectileCountPerShot > 1)
-                {
-                    float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
 
-                    var _projectileDirections =
-                        GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+                float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
 
-                    _projectileDirections.ForEach(_d =>
-                    {
-                        // 총알을 스폰합니다.
-                        var _projectile = SpawnProjectile(_param.position, _d, _passedTime);
-                        _projectile.m_OwnerConnectionId = _param.ownerConnectionId;
-                        _projectile.m_StartTime = Time.time;
-                        _projectile.m_Speed = projectileSpeed;
-                        _projectile.scaleMultiplier = projectileScaleMultiplier;
-                    });
-                }
-                else
+                var _projectileDirections =
+                    GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+
+                _projectileDirections.ForEach(_d =>
                 {
                     // 총알을 스폰합니다.
-                    var _projectile = SpawnProjectile(_param.position, _param.direction, _passedTime);
-                    _projectile.m_OwnerConnectionId = _param.ownerConnectionId;
-                    _projectile.m_StartTime = Time.time;
-                    _projectile.m_Speed = projectileSpeed;
-                    _projectile.scaleMultiplier = projectileScaleMultiplier;
-                }
+                    var _projectile = SpawnProjectile(
+                        _param.ownerConnectionId, _passedTime,
+                        _param.position, _d);
+                });
             }
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
@@ -209,36 +187,30 @@ namespace MyProject
             float passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
             passedTime = Mathf.Min(MAX_PASSED_TIME, passedTime);
 
-            if (projectileCountPerShot > 1)
-            {
-                float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
+            float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
 
-                var _projectileDirections =
-                    GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+            var _projectileDirections =
+                GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
 
-                _projectileDirections.ForEach(_d =>
-                {
-                    // 총알을 스폰합니다.
-                    var _projectile = SpawnProjectile(_param.position, _d, passedTime);
-                    _projectile.m_OwnerConnectionId = _param.ownerConnectionId;
-                    _projectile.m_StartTime = Time.time;
-                    _projectile.m_Speed = projectileSpeed;
-                    _projectile.scaleMultiplier = projectileScaleMultiplier;
-                });
-            }
-            else
+            _projectileDirections.ForEach(_d =>
             {
                 // 총알을 스폰합니다.
-                var _projectile = SpawnProjectile(_param.position, _param.direction, passedTime);
-                _projectile.m_OwnerConnectionId = _param.ownerConnectionId;
-                _projectile.m_StartTime = Time.time;
-                _projectile.m_Speed = projectileSpeed;
-                _projectile.scaleMultiplier = projectileScaleMultiplier;
-            }
+                var _projectile = SpawnProjectile(
+                    _param.ownerConnectionId, passedTime,
+                    _param.position, _d);
+            });
         }
 
         private List<Vector3> GetProjectileDirections(float _rangeCenterRotation, int _count, float _angleRange)
         {
+            if (_count == 1)
+            {
+                Vector3 _rangeCenterDirection =
+                    Quaternion.Euler(new Vector3(0, 0, _rangeCenterRotation))
+                    * Vector2.right;
+                return new List<Vector3>() { _rangeCenterDirection };
+            }
+
             List<Vector3> _outDirectionList = new List<Vector3>();
 
             float _startAngle = _rangeCenterRotation - (_angleRange / 2);
@@ -328,8 +300,6 @@ namespace MyProject
                     var _health = col.GetComponent<PlayerHealth>();
                     _health.ApplyModifier(new HealthModifier()
                         { magnitude = damageMagnitude, source = this, time = Time.time });
-                    Debug.Log(
-                        $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.health}/{_health.MaxHealth}.");
                 }
             };
 
