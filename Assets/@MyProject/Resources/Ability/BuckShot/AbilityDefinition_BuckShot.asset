@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AbilityDefinition_BuckShot
   m_EditorClassIdentifier: 
   m_AbilityId: 6d2921b2-425b-4cc0-91d9-c88c9eceffd0
-  m_AbilityName: ability 3
+  m_AbilityName: Buck Shot
   m_Thumbnail: {fileID: 0}
   m_Description: "\uCD1D\uC54C\uC774 \uC0B0\uD0C4\uC73C\uB85C \uBC1C\uC0AC\uB429\uB2C8\uB2E4!"
   m_AbilityPropertyModifierDefinitionList:
