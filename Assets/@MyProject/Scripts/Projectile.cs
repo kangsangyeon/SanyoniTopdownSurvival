@@ -1,4 +1,4 @@
-using System;
+using MyProject;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -26,6 +26,9 @@ public class Projectile : MonoBehaviour
 
     public float m_StartTime;
     public float m_Speed = 10f;
+
+    public int m_OwnerConnectionId;
+
     public event System.Action onLifeEnd;
     public event System.Action<Collider2D> onHit;
 
@@ -79,6 +82,10 @@ public class Projectile : MonoBehaviour
 
         if (col.gameObject.CompareTag("Player"))
         {
+            var _player = col.GetComponent<Player>();
+            if (_player.OwnerId == m_OwnerConnectionId)
+                return;
+
             m_AlreadyHit = true;
             onHit?.Invoke(col);
         }

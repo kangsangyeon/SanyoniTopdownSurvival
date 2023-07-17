@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FishNet.Object;
+using MyProject.Event;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -24,7 +25,6 @@ namespace MyProject
         }
 
         private ObjectPool<Projectile> m_ProjectilePool;
-        private Vector2 m_Direction;
         private float m_LastReloadStartTime;
         private float m_LastFireTime;
         private int m_CurrentMagazineCount;
@@ -108,15 +108,12 @@ namespace MyProject
 
             if (_canShoot)
             {
-                Vector2 _position = m_Player.transform.position;
-                Vector2 _mousePositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                m_Direction = _mousePositionWorld - _position;
-                m_Direction.Normalize();
+                float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
+                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _gunLookRotation));
+                Vector3 _gunLookDirection = _angleQuaternion * Vector2.right;
 
                 if (projectileCountPerShot > 1)
                 {
-                    float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
-
                     var _projectileDirections =
                         GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
 
@@ -126,6 +123,7 @@ namespace MyProject
                         // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
                         // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
                         var _projectile = SpawnProjectile(m_FirePoint.position, _direction, 0.0f);
+                        _projectile.m_OwnerConnectionId = base.OwnerId;
                         _projectile.m_StartTime = Time.time;
                         _projectile.m_Speed = projectileSpeed;
                         _projectile.scaleMultiplier = projectileScaleMultiplier;
@@ -136,14 +134,21 @@ namespace MyProject
                     // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
                     // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
                     // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
-                    var _projectile = SpawnProjectile(m_FirePoint.position, m_Direction, 0.0f);
+                    var _projectile = SpawnProjectile(m_FirePoint.position, _gunLookDirection, 0.0f);
+                    _projectile.m_OwnerConnectionId = base.OwnerId;
                     _projectile.m_StartTime = Time.time;
                     _projectile.m_Speed = projectileSpeed;
                     _projectile.scaleMultiplier = projectileScaleMultiplier;
                 }
 
                 // 서버에게 발사 사실을 알립니다.
-                ServerRpcFire(m_FirePoint.position, m_Direction, base.TimeManager.Tick);
+                ServerRpcFire(new PlayerGunShoot_Fire_EventParam()
+                {
+                    tick = base.TimeManager.Tick,
+                    ownerConnectionId = base.LocalConnection.ClientId,
+                    position = m_FirePoint.position,
+                    direction = _gunLookDirection
+                });
 
                 m_LastFireTime = Time.time;
                 --currentMagazineCount;
@@ -152,7 +157,7 @@ namespace MyProject
         }
 
         [ServerRpc]
-        private void ServerRpcFire(Vector2 _position, Vector2 _direction, uint _tick)
+        private void ServerRpcFire(PlayerGunShoot_Fire_EventParam _param)
         {
             // 발사한 자신이 서버이기도 한 경우,
             // 이미 총알을 클라이언트 코드 내에서 스폰했기 때문에 중복으로 생성하지 않습니다.
@@ -160,13 +165,13 @@ namespace MyProject
             {
                 // 클라이언트가 총알을 발사한 tick으로부터 현재 서버 tick까지
                 // 얼만큼의 시간이 걸렸는지 얻습니다.
-                float _passedTime = (float)base.TimeManager.TimePassed(_tick, false);
+                float _passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
 
                 _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
 
                 if (projectileCountPerShot > 1)
                 {
-                    float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
+                    float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
 
                     var _projectileDirections =
                         GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
@@ -174,7 +179,8 @@ namespace MyProject
                     _projectileDirections.ForEach(_d =>
                     {
                         // 총알을 스폰합니다.
-                        var _projectile = SpawnProjectile(_position, _d, _passedTime);
+                        var _projectile = SpawnProjectile(_param.position, _d, _passedTime);
+                        _projectile.m_OwnerConnectionId = _param.ownerConnectionId;
                         _projectile.m_StartTime = Time.time;
                         _projectile.m_Speed = projectileSpeed;
                         _projectile.scaleMultiplier = projectileScaleMultiplier;
@@ -183,7 +189,8 @@ namespace MyProject
                 else
                 {
                     // 총알을 스폰합니다.
-                    var _projectile = SpawnProjectile(_position, _direction, _passedTime);
+                    var _projectile = SpawnProjectile(_param.position, _param.direction, _passedTime);
+                    _projectile.m_OwnerConnectionId = _param.ownerConnectionId;
                     _projectile.m_StartTime = Time.time;
                     _projectile.m_Speed = projectileSpeed;
                     _projectile.scaleMultiplier = projectileScaleMultiplier;
@@ -191,20 +198,20 @@ namespace MyProject
             }
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
-            ObserversRpcFire(_position, _direction, _tick);
+            ObserversRpcFire(_param);
         }
 
         [ObserversRpc(ExcludeOwner = true, ExcludeServer = true)]
-        private void ObserversRpcFire(Vector2 _position, Vector2 _direction, uint _tick)
+        private void ObserversRpcFire(PlayerGunShoot_Fire_EventParam _param)
         {
             // 총을 발사한 클라이언트가 총알을 발사한 tick으로부터
             // 이 클라이언트의 현재 tick까지 얼만큼의 시간이 걸렸는지 얻습니다.
-            float passedTime = (float)base.TimeManager.TimePassed(_tick, false);
+            float passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
             passedTime = Mathf.Min(MAX_PASSED_TIME, passedTime);
 
             if (projectileCountPerShot > 1)
             {
-                float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
+                float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
 
                 var _projectileDirections =
                     GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
@@ -212,7 +219,8 @@ namespace MyProject
                 _projectileDirections.ForEach(_d =>
                 {
                     // 총알을 스폰합니다.
-                    var _projectile = SpawnProjectile(_position, _d, passedTime);
+                    var _projectile = SpawnProjectile(_param.position, _d, passedTime);
+                    _projectile.m_OwnerConnectionId = _param.ownerConnectionId;
                     _projectile.m_StartTime = Time.time;
                     _projectile.m_Speed = projectileSpeed;
                     _projectile.scaleMultiplier = projectileScaleMultiplier;
@@ -221,7 +229,8 @@ namespace MyProject
             else
             {
                 // 총알을 스폰합니다.
-                var _projectile = SpawnProjectile(_position, _direction, passedTime);
+                var _projectile = SpawnProjectile(_param.position, _param.direction, passedTime);
+                _projectile.m_OwnerConnectionId = _param.ownerConnectionId;
                 _projectile.m_StartTime = Time.time;
                 _projectile.m_Speed = projectileSpeed;
                 _projectile.scaleMultiplier = projectileScaleMultiplier;
