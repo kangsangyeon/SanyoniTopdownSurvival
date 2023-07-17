@@ -33,7 +33,8 @@ namespace MyProject
         #region IGunWeapon
 
         public int damageMagnitude =>
-            Mathf.RoundToInt(m_Player.attackProperty.projectileDamage * m_Player.attackProperty.projectileDamageMultiplier);
+            Mathf.RoundToInt(m_Player.attackProperty.projectileDamage *
+                             m_Player.attackProperty.projectileDamageMultiplier);
 
         public object owner => player;
 
@@ -61,6 +62,9 @@ namespace MyProject
 
         public float projectileSpeed =>
             m_Player.attackProperty.projectileSpeed * m_Player.attackProperty.projectileSpeedMultiplier;
+
+        public float projectileScaleMultiplier =>
+            m_Player.attackProperty.projectileSizeMultiplier;
 
         public event System.Action onCurrentMagazineCountChanged;
         public event System.Action onFire;
@@ -108,6 +112,7 @@ namespace MyProject
                 var _projectile = SpawnProjectile(m_FirePoint.position, m_Direction, 0.0f);
                 _projectile.m_StartTime = Time.time;
                 _projectile.m_Speed = projectileSpeed;
+                _projectile.scaleMultiplier = projectileScaleMultiplier;
 
                 // 서버에게 발사 사실을 알립니다.
                 ServerRpcFire(m_FirePoint.position, m_Direction, base.TimeManager.Tick);
@@ -135,6 +140,7 @@ namespace MyProject
                 var _projectile = SpawnProjectile(_position, _direction, _passedTime);
                 _projectile.m_StartTime = Time.time;
                 _projectile.m_Speed = projectileSpeed;
+                _projectile.scaleMultiplier = projectileScaleMultiplier;
             }
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
@@ -152,6 +158,7 @@ namespace MyProject
             var _projectile = SpawnProjectile(_position, _direction, passedTime);
             _projectile.m_StartTime = Time.time;
             _projectile.m_Speed = projectileSpeed;
+            _projectile.scaleMultiplier = projectileScaleMultiplier;
         }
 
         private void Awake()
@@ -223,7 +230,8 @@ namespace MyProject
                     // 서버에서 생성된 총알만 게임에 영향을 끼치는 동작을 합니다.
 
                     var _health = col.GetComponent<PlayerHealth>();
-                    _health.ApplyModifier(new HealthModifier() { magnitude = damageMagnitude, source = this, time = Time.time });
+                    _health.ApplyModifier(new HealthModifier()
+                        { magnitude = damageMagnitude, source = this, time = Time.time });
                     Debug.Log(
                         $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.health}/{_health.MaxHealth}.");
                 }

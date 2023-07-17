@@ -9,6 +9,7 @@ namespace MyProject
         float reloadDuration { get; }
         float fireDelay { get; }
         float projectileSpeed { get; }
+        float projectileScaleMultiplier { get; }
 
         event System.Action onCurrentMagazineCountChanged;
         event System.Action onFire;
