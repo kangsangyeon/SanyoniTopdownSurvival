@@ -10,6 +10,8 @@ namespace MyProject
         float fireDelay { get; }
         float projectileSpeed { get; }
         float projectileScaleMultiplier { get; }
+        int projectileCountPerShot { get; }
+        float projectileShotAngleRange { get; }
 
         event System.Action onCurrentMagazineCountChanged;
         event System.Action onFire;

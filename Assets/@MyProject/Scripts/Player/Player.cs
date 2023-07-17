@@ -180,8 +180,8 @@ namespace MyProject
                 _attackProperty.projectileSizeMultiplier * _modifierDefinition.projectileSizeMultiplier;
             _attackProperty.projectileCountPerShot =
                 _attackProperty.projectileCountPerShot + _modifierDefinition.projectileCountPerShotAdditional;
-            _attackProperty.projectileSpreadAngle =
-                _attackProperty.projectileSpreadAngle + _modifierDefinition.projectileSpreadAngleMultiplier;
+            _attackProperty.projectileShotAngleRange =
+                _attackProperty.projectileShotAngleRange + _modifierDefinition.projectileSpreadAngleMultiplier;
         }
 
         #region Events

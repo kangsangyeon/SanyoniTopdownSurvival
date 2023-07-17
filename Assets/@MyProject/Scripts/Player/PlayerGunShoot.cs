@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FishNet.Object;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -66,6 +67,12 @@ namespace MyProject
         public float projectileScaleMultiplier =>
             m_Player.attackProperty.projectileSizeMultiplier;
 
+        public int projectileCountPerShot =>
+            m_Player.attackProperty.projectileCountPerShot;
+
+        public float projectileShotAngleRange =>
+            m_Player.attackProperty.projectileShotAngleRange;
+
         public event System.Action onCurrentMagazineCountChanged;
         public event System.Action onFire;
         public event System.Action onReloadStart;
@@ -106,13 +113,34 @@ namespace MyProject
                 m_Direction = _mousePositionWorld - _position;
                 m_Direction.Normalize();
 
-                // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
-                // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
-                // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
-                var _projectile = SpawnProjectile(m_FirePoint.position, m_Direction, 0.0f);
-                _projectile.m_StartTime = Time.time;
-                _projectile.m_Speed = projectileSpeed;
-                _projectile.scaleMultiplier = projectileScaleMultiplier;
+                if (projectileCountPerShot > 1)
+                {
+                    float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
+
+                    var _projectileDirections =
+                        GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+
+                    _projectileDirections.ForEach(_direction =>
+                    {
+                        // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
+                        // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
+                        // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
+                        var _projectile = SpawnProjectile(m_FirePoint.position, _direction, 0.0f);
+                        _projectile.m_StartTime = Time.time;
+                        _projectile.m_Speed = projectileSpeed;
+                        _projectile.scaleMultiplier = projectileScaleMultiplier;
+                    });
+                }
+                else
+                {
+                    // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
+                    // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
+                    // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
+                    var _projectile = SpawnProjectile(m_FirePoint.position, m_Direction, 0.0f);
+                    _projectile.m_StartTime = Time.time;
+                    _projectile.m_Speed = projectileSpeed;
+                    _projectile.scaleMultiplier = projectileScaleMultiplier;
+                }
 
                 // 서버에게 발사 사실을 알립니다.
                 ServerRpcFire(m_FirePoint.position, m_Direction, base.TimeManager.Tick);
@@ -136,11 +164,30 @@ namespace MyProject
 
                 _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
 
-                // 총알을 스폰합니다.
-                var _projectile = SpawnProjectile(_position, _direction, _passedTime);
-                _projectile.m_StartTime = Time.time;
-                _projectile.m_Speed = projectileSpeed;
-                _projectile.scaleMultiplier = projectileScaleMultiplier;
+                if (projectileCountPerShot > 1)
+                {
+                    float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
+
+                    var _projectileDirections =
+                        GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+
+                    _projectileDirections.ForEach(_d =>
+                    {
+                        // 총알을 스폰합니다.
+                        var _projectile = SpawnProjectile(_position, _d, _passedTime);
+                        _projectile.m_StartTime = Time.time;
+                        _projectile.m_Speed = projectileSpeed;
+                        _projectile.scaleMultiplier = projectileScaleMultiplier;
+                    });
+                }
+                else
+                {
+                    // 총알을 스폰합니다.
+                    var _projectile = SpawnProjectile(_position, _direction, _passedTime);
+                    _projectile.m_StartTime = Time.time;
+                    _projectile.m_Speed = projectileSpeed;
+                    _projectile.scaleMultiplier = projectileScaleMultiplier;
+                }
             }
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
@@ -155,10 +202,50 @@ namespace MyProject
             float passedTime = (float)base.TimeManager.TimePassed(_tick, false);
             passedTime = Mathf.Min(MAX_PASSED_TIME, passedTime);
 
-            var _projectile = SpawnProjectile(_position, _direction, passedTime);
-            _projectile.m_StartTime = Time.time;
-            _projectile.m_Speed = projectileSpeed;
-            _projectile.scaleMultiplier = projectileScaleMultiplier;
+            if (projectileCountPerShot > 1)
+            {
+                float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
+
+                var _projectileDirections =
+                    GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+
+                _projectileDirections.ForEach(_d =>
+                {
+                    // 총알을 스폰합니다.
+                    var _projectile = SpawnProjectile(_position, _d, passedTime);
+                    _projectile.m_StartTime = Time.time;
+                    _projectile.m_Speed = projectileSpeed;
+                    _projectile.scaleMultiplier = projectileScaleMultiplier;
+                });
+            }
+            else
+            {
+                // 총알을 스폰합니다.
+                var _projectile = SpawnProjectile(_position, _direction, passedTime);
+                _projectile.m_StartTime = Time.time;
+                _projectile.m_Speed = projectileSpeed;
+                _projectile.scaleMultiplier = projectileScaleMultiplier;
+            }
+        }
+
+        private List<Vector3> GetProjectileDirections(float _rangeCenterRotation, int _count, float _angleRange)
+        {
+            List<Vector3> _outDirectionList = new List<Vector3>();
+
+            float _startAngle = _rangeCenterRotation - (_angleRange / 2);
+
+            for (int i = 0; i < _count; ++i)
+            {
+                float _delta = i / (float)(_count - 1);
+                float _angleDelta = _angleRange * _delta;
+                float _angle = _startAngle + _angleDelta;
+                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _angle));
+                Vector3 _bulletDirection = _angleQuaternion * Vector2.right;
+
+                _outDirectionList.Add(_bulletDirection);
+            }
+
+            return _outDirectionList;
         }
 
         private void Awake()

@@ -1,3 +1,5 @@
+using UnityEngine.Serialization;
+
 namespace MyProject
 {
     [System.Serializable]
@@ -22,6 +24,6 @@ namespace MyProject
 
         public int projectileCountPerShot = 1;
 
-        public float projectileSpreadAngle = 20.0f;
+        public float projectileShotAngleRange = 20.0f;
     }
 }
