@@ -37,7 +37,7 @@ namespace MyProject
         public void Uninitialize()
         {
             m_AbilityDefinitionList.Clear();
-            m_ListView.Rebuild();
+            m_ListView?.Rebuild();
             m_ListView.itemsSource = null;
             m_ListView.makeItem = null;
             m_ListView.bindItem = null;
@@ -52,7 +52,7 @@ namespace MyProject
         {
             m_Document.rootVisualElement.style.display = DisplayStyle.None;
             m_AbilityDefinitionList.Clear();
-            m_ListView.Rebuild();
+            m_ListView?.Rebuild();
         }
 
         public void AddItem(AbilityDefinition _definition)
