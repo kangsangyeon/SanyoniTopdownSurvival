@@ -115,11 +115,23 @@ namespace MyProject
             if (Application.isFocused == false)
                 return;
 
-            Vector2 _position = transform.position;
-            Vector2 _mousePositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 _direction = _mousePositionWorld - _position;
-            m_Angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, m_Angle));
+            Vector3 _position = transform.position;
+            Vector3 _mousePositionWorld = _position;
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                _mousePositionWorld = hit.point;
+            }
+
+            if (_position != _mousePositionWorld)
+            {
+                Debug.DrawLine(_position, _mousePositionWorld, Color.red);
+                Vector3 _positionDiff = _mousePositionWorld - _position;
+                _positionDiff.y = 0.0f;
+                m_Angle = Mathf.Atan2(_positionDiff.z, _positionDiff.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.Euler(new Vector3(0, -m_Angle, 0));
+            }
         }
     }
 }
