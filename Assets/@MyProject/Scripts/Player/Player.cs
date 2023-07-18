@@ -16,7 +16,7 @@ namespace MyProject
         [SerializeField] private PlayerMovement m_Movement;
         public PlayerMovement movement => m_Movement;
 
-        [SerializeField] private Collider2D m_Collider;
+        [SerializeField] private Collider m_Collider;
 
         [SerializeField] private List<SpriteRenderer> m_SpriteRenderers;
         public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
