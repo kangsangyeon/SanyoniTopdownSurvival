@@ -114,10 +114,11 @@ namespace MyProject
 
             if (_canShoot)
             {
-                float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
-                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _gunLookRotation));
-                Vector3 _gunLookDirection = _angleQuaternion * Vector2.right;
+                Vector3 _gunLookDirection = transform.forward;
+                float _gunLookRotation = transform.eulerAngles.y;
 
+                Debug.Log($"gun look rotation {_gunLookRotation}");
+                Debug.DrawLine(transform.position, transform.position + _gunLookDirection, Color.red, 2.0f);
 
                 var _projectileDirections =
                     GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
@@ -318,6 +319,12 @@ namespace MyProject
 
         private void Update()
         {
+            Vector3 _gunLookDirection = transform.forward;
+            float _gunLookRotation = transform.eulerAngles.y;
+
+            Debug.Log($"gun look rotation {_gunLookRotation}");
+            Debug.DrawLine(transform.position, transform.position + _gunLookDirection, Color.red, 2.0f);
+            
             if (base.IsOwner == false)
                 return;
 

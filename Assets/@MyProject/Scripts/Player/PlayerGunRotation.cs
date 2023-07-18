@@ -126,7 +126,6 @@ namespace MyProject
 
             if (_position != _mousePositionWorld)
             {
-                Debug.DrawLine(_position, _mousePositionWorld, Color.red);
                 Vector3 _positionDiff = _mousePositionWorld - _position;
                 _positionDiff.y = 0.0f;
                 m_Angle = Mathf.Atan2(_positionDiff.z, _positionDiff.x) * Mathf.Rad2Deg;
