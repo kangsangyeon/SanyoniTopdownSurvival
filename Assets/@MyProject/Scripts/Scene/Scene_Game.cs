@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FishNet.Connection;
@@ -29,6 +30,23 @@ namespace MyProject
 
         private readonly Dictionary<int, PlayerInfo> m_PlayerInfoDict = new Dictionary<int, PlayerInfo>();
         public IReadOnlyDictionary<int, PlayerInfo> playerInfoDict => m_PlayerInfoDict;
+
+        private Player m_MyPlayer;
+
+        public Player myPlayer
+        {
+            get => m_MyPlayer;
+            set
+            {
+                if (m_MyPlayer == value)
+                    return;
+
+                m_MyPlayer = value;
+                onSetMyPlayer_OnLocal?.Invoke(value);
+            }
+        }
+
+        public event System.Action<Player> onSetMyPlayer_OnLocal;
 
         #region Events
 
@@ -71,6 +89,9 @@ namespace MyProject
 
         private System.Action<PlayerAddedEventParam> m_OnPlayerAdded_OnClient;
         private System.Action<PlayerRemovedEventParam> m_OnPlayerRemoved_OnClient;
+        private System.Action<Player> m_OnSetMyPlayer_OnLocal;
+
+        private System.Action<AbilityDefinition> m_UI_GetAbility_OnSelectAbility;
 
         /// <summary>
         /// * exclude server: 서버 PC에서 클라이언트로 플레이하던 중단하던 playerInfoList를 계속 관리하고 있어야 하기 때문에,
@@ -177,6 +198,7 @@ namespace MyProject
             onPlayerRemoved_OnClient += m_OnPlayerRemoved_OnClient;
 
             m_UI_PlayerList.Initialize();
+            OfflineGameplayDependencies.ui_GetAbility.Initialize();
         }
 
         public override void OnStopNetwork()
@@ -194,6 +216,47 @@ namespace MyProject
             m_PlayerRankDict.Clear();
 
             m_UI_PlayerList.Uninitialize();
+            OfflineGameplayDependencies.ui_GetAbility.Uninitialize();
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            
+            m_OnSetMyPlayer_OnLocal = _player =>
+            {
+                // 내 캐릭터가 죽었을 때 Ability 획득 ui를 보여줍니다.
+                _player.onDead_OnOwnerClient += _param =>
+                {
+                    OfflineGameplayDependencies.ui_GetAbility.AddItem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
+                    OfflineGameplayDependencies.ui_GetAbility.AddItem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
+                    OfflineGameplayDependencies.ui_GetAbility.AddItem(OfflineGameplayDependencies.abilityDatabase.GetRandomAbility());
+                    OfflineGameplayDependencies.ui_GetAbility.Show();
+                };
+            };
+            onSetMyPlayer_OnLocal += m_OnSetMyPlayer_OnLocal;
+
+            m_UI_GetAbility_OnSelectAbility = _abilityDefine =>
+            {
+                if (base.IsServer)
+                    m_MyPlayer.Server_AddAbility(_abilityDefine);
+                else
+                    m_MyPlayer.ServerRpc_RequestAddAbility(new Player_RequestAddAbilityParam() { abilityId = _abilityDefine.abilityId });
+
+                OfflineGameplayDependencies.ui_GetAbility.Hide();
+            };
+            OfflineGameplayDependencies.ui_GetAbility.onSelectAbility += m_UI_GetAbility_OnSelectAbility;
+        }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+
+            onSetMyPlayer_OnLocal -= m_OnSetMyPlayer_OnLocal;
+            m_OnSetMyPlayer_OnLocal = null;
+
+            OfflineGameplayDependencies.ui_GetAbility.onSelectAbility -= m_UI_GetAbility_OnSelectAbility;
+            m_UI_GetAbility_OnSelectAbility = null;
         }
     }
 }

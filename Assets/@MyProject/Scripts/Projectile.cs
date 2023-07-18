@@ -1,17 +1,34 @@
+using MyProject;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private Collider2D m_Collider;
-    [SerializeField] private float m_Speed = 8f;
     [SerializeField] private float m_LiveDuration = 1f;
 
+    private float m_ScaleOrigin;
     private Vector3 m_Direction;
     private bool m_AlreadyHit = false;
     private float m_PassedTime;
     private float m_ActualLiveDuration;
 
+    private float m_ScaleMultiplier;
+
+    public float scaleMultiplier
+    {
+        get => m_ScaleMultiplier;
+        set
+        {
+            m_ScaleMultiplier = value;
+            transform.localScale = Vector3.one * m_ScaleOrigin * value;
+        }
+    }
+
     public float m_StartTime;
+    public float m_Speed = 10f;
+
+    public int m_OwnerConnectionId;
+
     public event System.Action onLifeEnd;
     public event System.Action<Collider2D> onHit;
 
@@ -22,6 +39,11 @@ public class Projectile : MonoBehaviour
         m_AlreadyHit = false;
         m_PassedTime = _passedTime;
         m_ActualLiveDuration = m_LiveDuration - _passedTime;
+    }
+
+    private void Awake()
+    {
+        m_ScaleOrigin = transform.localScale.x;
     }
 
     private void Update()
@@ -60,6 +82,10 @@ public class Projectile : MonoBehaviour
 
         if (col.gameObject.CompareTag("Player"))
         {
+            var _player = col.GetComponent<Player>();
+            if (_player.OwnerId == m_OwnerConnectionId)
+                return;
+
             m_AlreadyHit = true;
             onHit?.Invoke(col);
         }

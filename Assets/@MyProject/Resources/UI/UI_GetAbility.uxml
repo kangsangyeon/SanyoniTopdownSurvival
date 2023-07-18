@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="align-items: center; flex-grow: 1;">
+        <ui:VisualElement style="align-items: stretch; width: 70%; flex-grow: 1; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+            <ui:Label text="능력을 선택하세요!" display-tooltip-when-elided="true" style="-unity-text-align: upper-center; font-size: 80px; color: rgb(229, 229, 229); -unity-font-definition: url(&apos;project://database/Assets/@MyProject/Resources/Fonts%20&amp;%20Materials/NotoSansKR-Medium%20SDF.asset?fileID=11400000&amp;guid=f73682fba15dfad489de074d459ae699&amp;type=2#NotoSansKR-Medium SDF&apos;);" />
+            <ui:ListView focusable="true" name="ability-list" virtualization-method="DynamicHeight" picking-mode="Ignore" style="justify-content: flex-start; flex-grow: 1; margin-top: 10px; background-color: rgb(19, 19, 19);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

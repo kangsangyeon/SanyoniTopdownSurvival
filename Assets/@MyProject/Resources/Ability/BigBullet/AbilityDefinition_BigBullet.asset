@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaeaa09c6210bea4cb460c39f7871888, type: 3}
+  m_Name: AbilityDefinition_BigBullet
+  m_EditorClassIdentifier: 
+  m_AbilityId: e887a42c-310d-4360-93db-4b8e373ed2a2
+  m_AbilityName: Big Bullet
+  m_Thumbnail: {fileID: 0}
+  m_Description: "\uCD1D\uC54C\uC774 \uCEE4\uC9D1\uB2C8\uB2E4!"
+  m_AbilityPropertyModifierDefinitionList:
+  - {fileID: 11400000, guid: dfcc3d5ad5f93fb408cec1e6043c9c46, type: 2}

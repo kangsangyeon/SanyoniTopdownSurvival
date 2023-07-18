@@ -1,7 +1,7 @@
-using System;
+using System.Collections.Generic;
 using FishNet.Object;
+using MyProject.Event;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.Pool;
 
 namespace MyProject
@@ -15,10 +15,6 @@ namespace MyProject
 
         [SerializeField] private Projectile m_Prefab_Projectile;
         [SerializeField] private Transform m_FirePoint;
-        [SerializeField] private int m_Damage = -10;
-        [SerializeField] private int m_MaxMagazineCount = 20;
-        [SerializeField] private float m_ReloadDuration = 1.5f;
-        [SerializeField] private float m_FireDelay = 0.2f;
 
         private Player m_Player;
 
@@ -29,7 +25,6 @@ namespace MyProject
         }
 
         private ObjectPool<Projectile> m_ProjectilePool;
-        private Vector2 m_Direction;
         private float m_LastReloadStartTime;
         private float m_LastFireTime;
         private int m_CurrentMagazineCount;
@@ -38,7 +33,10 @@ namespace MyProject
 
         #region IGunWeapon
 
-        public int damageMagnitude => m_Damage;
+        public int damageMagnitude =>
+            Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage *
+                             m_Player.abilityProperty.projectileDamageMultiplier);
+
         public object owner => player;
 
         public int currentMagazineCount
@@ -54,38 +52,45 @@ namespace MyProject
             }
         }
 
-        public int maxMagazineCount
-        {
-            get => m_MaxMagazineCount;
-            set
-            {
-                if (m_MaxMagazineCount != value)
-                {
-                    m_MaxMagazineCount = value;
-                    onMaxMagazineCountChanged?.Invoke();
-                }
-            }
-        }
+        public int maxMagazineCount =>
+            Mathf.RoundToInt(m_Player.abilityProperty.maxMagazine * m_Player.abilityProperty.maxMagazineMultiplier);
 
-        public float reloadDuration
-        {
-            get => m_ReloadDuration;
-            private set => m_ReloadDuration = value;
-        }
+        public float reloadDuration =>
+            m_Player.abilityProperty.reloadDuration * m_Player.abilityProperty.reloadDurationMultiplier;
+
+        public float fireDelay =>
+            m_Player.abilityProperty.fireDelay * m_Player.abilityProperty.fireDelayMultiplier;
+
+        public float projectileSpeed =>
+            m_Player.abilityProperty.projectileSpeed * m_Player.abilityProperty.projectileSpeedMultiplier;
+
+        public float projectileScaleMultiplier =>
+            m_Player.abilityProperty.projectileSizeMultiplier;
+
+        public int projectileCountPerShot =>
+            m_Player.abilityProperty.projectileCountPerShot;
+
+        public float projectileShotAngleRange =>
+            m_Player.abilityProperty.projectileShotAngleRange;
 
         public event System.Action onCurrentMagazineCountChanged;
-        public event System.Action onMaxMagazineCountChanged;
         public event System.Action onFire;
         public event System.Action onReloadStart;
         public event System.Action onReloadFinished;
 
         #endregion
 
-        private Projectile SpawnProjectile(Vector2 _position, Vector2 _direction, float _passedTime)
+        private Projectile SpawnProjectile(
+            int _ownerConnectionId, float _passedTime,
+            Vector2 _position, Vector2 _direction)
         {
             Projectile _projectile = m_ProjectilePool.Get();
             _projectile.gameObject.layer = gameObject.layer;
             _projectile.Initialize(_position, _direction, _passedTime);
+            _projectile.m_OwnerConnectionId = _ownerConnectionId;
+            _projectile.m_StartTime = Time.time;
+            _projectile.m_Speed = projectileSpeed;
+            _projectile.scaleMultiplier = projectileScaleMultiplier;
 
             return _projectile;
         }
@@ -99,29 +104,42 @@ namespace MyProject
             float _elapsedTimeSinceLastFire = Time.time - m_LastFireTime;
 
             // 재장전 중에 총알을 발사할 수 없습니다.
-            bool _canShoot = _elapsedTimeSinceLastReloadStart >= m_ReloadDuration;
+            bool _canShoot = _elapsedTimeSinceLastReloadStart >= reloadDuration;
 
             // 가장 마지막으로 발사한 뒤 일정 시간 뒤에 다시 발사할 수 있습니다.
-            _canShoot = _canShoot && _elapsedTimeSinceLastFire >= m_FireDelay;
+            _canShoot = _canShoot && _elapsedTimeSinceLastFire >= fireDelay;
 
             // 총알이 탄창에 없을 때 발사할 수 없습니다.
             _canShoot = _canShoot && currentMagazineCount > 0;
 
             if (_canShoot)
             {
-                Vector2 _position = m_Player.transform.position;
-                Vector2 _mousePositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                m_Direction = _mousePositionWorld - _position;
-                m_Direction.Normalize();
+                float _gunLookRotation = Vector2.SignedAngle(transform.right, Vector2.right) * -1;
+                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _gunLookRotation));
+                Vector3 _gunLookDirection = _angleQuaternion * Vector2.right;
 
-                // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
-                // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
-                // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
-                var _projectile = SpawnProjectile(m_FirePoint.position, m_Direction, 0.0f);
-                _projectile.m_StartTime = Time.time;
+
+                var _projectileDirections =
+                    GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+
+                _projectileDirections.ForEach(_direction =>
+                {
+                    // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
+                    // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
+                    // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
+                    var _projectile = SpawnProjectile(
+                        base.OwnerId, 0.0f,
+                        m_FirePoint.position, _direction);
+                });
 
                 // 서버에게 발사 사실을 알립니다.
-                ServerRpcFire(m_FirePoint.position, m_Direction, base.TimeManager.Tick);
+                ServerRpcFire(new PlayerGunShoot_Fire_EventParam()
+                {
+                    tick = base.TimeManager.Tick,
+                    ownerConnectionId = base.LocalConnection.ClientId,
+                    position = m_FirePoint.position,
+                    direction = _gunLookDirection
+                });
 
                 m_LastFireTime = Time.time;
                 --currentMagazineCount;
@@ -130,32 +148,85 @@ namespace MyProject
         }
 
         [ServerRpc]
-        private void ServerRpcFire(Vector2 _position, Vector2 _direction, uint _tick)
+        private void ServerRpcFire(PlayerGunShoot_Fire_EventParam _param)
         {
-            // 클라이언트가 총알을 발사한 tick으로부터 현재 서버 tick까지
-            // 얼만큼의 시간이 걸렸는지 얻습니다.
-            float _passedTime = (float)base.TimeManager.TimePassed(_tick, false);
+            // 발사한 자신이 서버이기도 한 경우,
+            // 이미 총알을 클라이언트 코드 내에서 스폰했기 때문에 중복으로 생성하지 않습니다.
+            if (base.IsOwner == false)
+            {
+                // 클라이언트가 총알을 발사한 tick으로부터 현재 서버 tick까지
+                // 얼만큼의 시간이 걸렸는지 얻습니다.
+                float _passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
 
-            _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
+                _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
 
-            // 총알을 스폰합니다.
-            var _projectile = SpawnProjectile(_position, _direction, _passedTime);
-            _projectile.m_StartTime = Time.time;
+
+                float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
+
+                var _projectileDirections =
+                    GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+
+                _projectileDirections.ForEach(_d =>
+                {
+                    // 총알을 스폰합니다.
+                    var _projectile = SpawnProjectile(
+                        _param.ownerConnectionId, _passedTime,
+                        _param.position, _d);
+                });
+            }
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
-            ObserversRpcFire(_position, _direction, _tick);
+            ObserversRpcFire(_param);
         }
 
         [ObserversRpc(ExcludeOwner = true, ExcludeServer = true)]
-        private void ObserversRpcFire(Vector2 _position, Vector2 _direction, uint _tick)
+        private void ObserversRpcFire(PlayerGunShoot_Fire_EventParam _param)
         {
             // 총을 발사한 클라이언트가 총알을 발사한 tick으로부터
             // 이 클라이언트의 현재 tick까지 얼만큼의 시간이 걸렸는지 얻습니다.
-            float passedTime = (float)base.TimeManager.TimePassed(_tick, false);
+            float passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
             passedTime = Mathf.Min(MAX_PASSED_TIME, passedTime);
 
-            var _projectile = SpawnProjectile(_position, _direction, passedTime);
-            _projectile.m_StartTime = Time.time;
+            float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
+
+            var _projectileDirections =
+                GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+
+            _projectileDirections.ForEach(_d =>
+            {
+                // 총알을 스폰합니다.
+                var _projectile = SpawnProjectile(
+                    _param.ownerConnectionId, passedTime,
+                    _param.position, _d);
+            });
+        }
+
+        private List<Vector3> GetProjectileDirections(float _rangeCenterRotation, int _count, float _angleRange)
+        {
+            if (_count == 1)
+            {
+                Vector3 _rangeCenterDirection =
+                    Quaternion.Euler(new Vector3(0, 0, _rangeCenterRotation))
+                    * Vector2.right;
+                return new List<Vector3>() { _rangeCenterDirection };
+            }
+
+            List<Vector3> _outDirectionList = new List<Vector3>();
+
+            float _startAngle = _rangeCenterRotation - (_angleRange / 2);
+
+            for (int i = 0; i < _count; ++i)
+            {
+                float _delta = i / (float)(_count - 1);
+                float _angleDelta = _angleRange * _delta;
+                float _angle = _startAngle + _angleDelta;
+                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _angle));
+                Vector3 _bulletDirection = _angleQuaternion * Vector2.right;
+
+                _outDirectionList.Add(_bulletDirection);
+            }
+
+            return _outDirectionList;
         }
 
         private void Awake()
@@ -168,7 +239,7 @@ namespace MyProject
 
         private void Start()
         {
-            currentMagazineCount = m_MaxMagazineCount;
+            currentMagazineCount = maxMagazineCount;
             m_LastFireTime = -9999;
             m_LastReloadStartTime = -9999;
             m_CanShoot = true;
@@ -227,9 +298,8 @@ namespace MyProject
                     // 서버에서 생성된 총알만 게임에 영향을 끼치는 동작을 합니다.
 
                     var _health = col.GetComponent<PlayerHealth>();
-                    _health.ApplyModifier(new HealthModifier() { magnitude = m_Damage, source = this, time = Time.time });
-                    // Debug.Log(
-                    //     $"{gameObject.name}: player {col.gameObject.name} hit! now health is {_health.health}/{_health.MaxHealth}.");
+                    _health.ApplyModifier(new HealthModifier()
+                        { magnitude = damageMagnitude, source = this, time = Time.time });
                 }
             };
 
@@ -265,7 +335,7 @@ namespace MyProject
                 {
                     currentMagazineCount = maxMagazineCount;
                     onReloadFinished?.Invoke();
-                }, m_ReloadDuration);
+                }, reloadDuration);
             }
         }
     }

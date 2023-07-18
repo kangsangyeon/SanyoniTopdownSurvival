@@ -161,8 +161,8 @@ namespace MyProject
             m_GunWeapon = _gunWeapon;
 
             m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1];
-            m_GunWeapon.onMaxMagazineCountChanged += () =>
-                m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1];
+            // m_GunWeapon.onMaxMagazineCountChanged += () =>
+            //     m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1];
 
             m_LastFiredBulletIndex = m_GunWeapon.currentMagazineCount;
             m_GunWeapon.onCurrentMagazineCountChanged += () =>

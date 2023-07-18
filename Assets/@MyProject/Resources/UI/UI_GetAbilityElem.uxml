@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-direction: row; flex-grow: 1; background-color: rgb(31, 31, 31);">
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+            <ui:VisualElement name="VisualElement" style="align-items: center; justify-content: center; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                <ui:VisualElement name="ability-thumbnail" style="width: 100px; height: 100px; background-color: rgb(255, 255, 255); background-image: none;" />
+                <ui:Label text="Ability Name" display-tooltip-when-elided="true" name="ability-name" style="font-size: 20px; margin-top: 5px; -unity-font-definition: resource(&apos;Fonts &amp; Materials/NotoSansKR-Medium SDF&apos;); color: rgb(214, 214, 214);" />
+            </ui:VisualElement>
+            <ui:VisualElement style="padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; flex-grow: 1; -unity-text-align: upper-left;">
+                <ui:Label text="Ability Description" display-tooltip-when-elided="true" name="ability-description" style="font-size: 16px; flex-grow: 1; -unity-text-align: middle-left; -unity-font-definition: resource(&apos;Fonts &amp; Materials/NotoSansKR-Medium SDF&apos;); color: rgb(215, 215, 215);" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
