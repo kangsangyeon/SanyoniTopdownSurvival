@@ -10,8 +10,8 @@ namespace MyProject
 {
     public class Player : NetworkBehaviour
     {
-        [SerializeField] private PlayerHealth m_Health;
-        public PlayerHealth health => m_Health;
+        [SerializeField] private EntityHealth m_Health;
+        public EntityHealth health => m_Health;
 
         [SerializeField] private PlayerMovement m_Movement;
         public PlayerMovement movement => m_Movement;

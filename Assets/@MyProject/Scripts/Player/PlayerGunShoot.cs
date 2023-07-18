@@ -283,7 +283,7 @@ namespace MyProject
             {
                 if (base.IsServer)
                 {
-                    var _health = col.GetComponent<PlayerHealth>();
+                    var _health = col.GetComponent<EntityHealth>();
                     if (_health.health == 0)
                     {
                         // 이미 죽은 대상에게는 아무런 영향을 주지 않고 무시합니다.
@@ -297,7 +297,7 @@ namespace MyProject
                 {
                     // 서버에서 생성된 총알만 게임에 영향을 끼치는 동작을 합니다.
 
-                    var _health = col.GetComponent<PlayerHealth>();
+                    var _health = col.GetComponent<EntityHealth>();
                     _health.ApplyModifier(new HealthModifier()
                         { magnitude = damageMagnitude, source = this, time = Time.time });
                 }
