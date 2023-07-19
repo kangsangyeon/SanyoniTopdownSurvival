@@ -282,7 +282,7 @@ namespace MyProject
         #endregion
 
         [Server]
-        public void Server_Respawn(Vector2 _position)
+        public void Server_Respawn(Vector3 _position)
         {
             movement.Teleport(base.Owner, _position);
             Server_OnRespawn();

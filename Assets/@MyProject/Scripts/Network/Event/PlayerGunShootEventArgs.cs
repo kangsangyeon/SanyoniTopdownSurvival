@@ -7,7 +7,7 @@ namespace MyProject.Event
     {
         public uint tick;
         public int ownerConnectionId;
-        public Vector2 position;
+        public Vector3 position;
         public float rotationY;
     }
 }
