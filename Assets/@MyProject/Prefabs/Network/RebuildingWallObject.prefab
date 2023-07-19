@@ -208,7 +208,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 8327255964940275592}
   _networkObjectCache: {fileID: 8327255964940275592}
-  m_MaxHealth: 100
+  m_MaxHealth: 5
   m_Health: 0
 --- !u!114 &3595343269274469582
 MonoBehaviour:
@@ -227,3 +227,6 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 8327255964940275592}
   m_RebuildingDelay: 5
   m_InvincibleTimeWhenRebuilding: 0
+  m_MaxTakableDamage: 2147483647
+  m_UseConstantDamage: 1
+  m_ConstantDamage: -1

@@ -7,9 +7,7 @@ namespace MyProject
     [RequireComponent(typeof(EntityHealth))]
     public class BreakableWallObject : NetworkBehaviour, IWallObject, IDamageableEntity
     {
-        [SerializeField] private Collider m_IgnorePlayerCollider;
-        private Collider m_Collider;
-        private Rigidbody m_RigidBody;
+        [SerializeField] private GameObject m_Prefab_BrokenObject;
 
         private DamageParam m_LastDamage;
 
@@ -70,16 +68,18 @@ namespace MyProject
 
         private void Break(in DamageParam _damageParam)
         {
-            m_Collider.enabled = false;
-            m_IgnorePlayerCollider.enabled = true;
-            m_RigidBody.AddForceAtPosition(_damageParam.direction * _damageParam.force, _damageParam.point, ForceMode.Impulse); // 3d 폭발인 경우 AddExplosionForce 함수 사용
+            GameObject _go =
+                GameObject.Instantiate(m_Prefab_BrokenObject, transform.position, transform.rotation);
+            _go.GetComponent<Rigidbody>().AddForceAtPosition(
+                _damageParam.direction * _damageParam.force, _damageParam.point,
+                ForceMode.Impulse); // 3d 폭발인 경우 AddExplosionForce 함수 사용
+            Destroy(_go, 5.0f);
+
+            Destroy(gameObject);
         }
 
         private void Awake()
         {
-            m_Collider = GetComponent<Collider>();
-            m_RigidBody = GetComponent<Rigidbody>();
-
             m_Health = GetComponent<EntityHealth>();
             m_Health.onHealthIsZero_OnServer += () => { Server_OnHealthIsZero(m_LastDamage); };
         }
