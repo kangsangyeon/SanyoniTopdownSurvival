@@ -11,9 +11,10 @@ namespace MyProject
 
     public interface IRebuildingWallObject : IWallObject
     {
-        public int rebuildingDelay { get; }
+        public float rebuildingDelay { get; }
         public float invincibleTimeWhenRebuilding { get; }
         public Vector3 rebuildingPosition { get; }
         public Quaternion rebuildingRotation { get; }
+        public Vector3 rebuildingScale { get; }
     }
 }
