@@ -74,7 +74,7 @@
       "dependencies": {}
     },
     "com.unity.2d.tilemap.extras": {
-      "version": "2.2.5",
+      "version": "3.1.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -119,7 +119,8 @@
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.2d.spriteshape": "7.0.7",
         "com.unity.2d.tilemap": "1.0.0",
-        "com.unity.2d.tilemap.extras": "2.2.5"
+        "com.unity.2d.tilemap.extras": "3.1.1",
+        "com.unity.2d.aseprite": "1.0.0"
       }
     },
     "com.unity.ide.rider": {
@@ -212,7 +213,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.6.4",
+      "version": "1.7.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
