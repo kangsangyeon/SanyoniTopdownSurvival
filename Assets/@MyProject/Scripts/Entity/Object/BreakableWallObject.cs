@@ -7,7 +7,6 @@ namespace MyProject
     [RequireComponent(typeof(EntityHealth))]
     public class BreakableWallObject : NetworkBehaviour, IWallObject, IDamageableEntity
     {
-        [SerializeField] private LayerMask m_IgnorePlayerMask;
         [SerializeField] private Collider m_IgnorePlayerCollider;
         private Collider m_Collider;
         private Rigidbody m_RigidBody;
@@ -28,12 +27,26 @@ namespace MyProject
 
         #region IDamageableEntity
 
+        [SerializeField] private int m_MaxTakableDamage = int.MaxValue;
+        public int maxTakableDamage => m_MaxTakableDamage;
+
+        [SerializeField] private bool m_UseConstantDamage = true;
+        public bool useConstantDamage => m_UseConstantDamage;
+
+        [SerializeField] private int m_ConstantDamage = 1;
+        public int constantDamage => m_ConstantDamage;
+
         public void TakeDamage(in DamageParam _hitParam, out int _appliedDamage)
         {
-            m_Health.ApplyModifier(_hitParam.healthModifier);
-            _appliedDamage = _hitParam.healthModifier.magnitude;
+            if (m_UseConstantDamage)
+                _hitParam.healthModifier.magnitude = m_ConstantDamage;
+            else if (_hitParam.healthModifier.magnitude > m_MaxTakableDamage)
+                _hitParam.healthModifier.magnitude = m_MaxTakableDamage;
 
             m_LastDamage = _hitParam;
+
+            m_Health.ApplyModifier(_hitParam.healthModifier);
+            _appliedDamage = _hitParam.healthModifier.magnitude;
         }
 
         #endregion

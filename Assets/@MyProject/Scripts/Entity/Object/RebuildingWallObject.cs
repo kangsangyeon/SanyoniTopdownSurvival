@@ -40,8 +40,22 @@ namespace MyProject
 
         #region IDamageableEntity;
 
+        [SerializeField] private int m_MaxTakableDamage = int.MaxValue;
+        public int maxTakableDamage => m_MaxTakableDamage;
+
+        [SerializeField] private bool m_UseConstantDamage = true;
+        public bool useConstantDamage => m_UseConstantDamage;
+
+        [SerializeField] private int m_ConstantDamage = 1;
+        public int constantDamage => m_ConstantDamage;
+
         public void TakeDamage(in DamageParam _hitParam, out int _appliedDamage)
         {
+            if (m_UseConstantDamage)
+                _hitParam.healthModifier.magnitude = m_ConstantDamage;
+            else if (_hitParam.healthModifier.magnitude > m_MaxTakableDamage)
+                _hitParam.healthModifier.magnitude = m_MaxTakableDamage;
+
             m_LastDamage = _hitParam;
 
             m_Health.ApplyModifier(_hitParam.healthModifier);
