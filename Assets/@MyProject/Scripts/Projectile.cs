@@ -1,5 +1,5 @@
-using System;
 using MyProject;
+using MyProject.Struct;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -88,6 +88,29 @@ public class Projectile : MonoBehaviour
 
             m_AlreadyHit = true;
             onHit?.Invoke(col);
+        }
+
+        var _damageableEntity = col.GetComponent<IDamageableEntity>();
+        if (_damageableEntity != null)
+        {
+            Debug.Log($"damageable entity hit! {col.gameObject.name}");
+
+            _damageableEntity.TakeDamage(
+                new DamageParam()
+                {
+                    direction = m_Direction,
+                    point = col.ClosestPoint(transform.position),
+                    force = 10f,
+                    time = Time.time,
+                    healthModifier = new HealthModifier()
+                    {
+                        magnitude = -10,
+                        source = this,
+                        time = Time.time
+                    }
+                }, out int _appliedDamage);
+
+            Debug.Log(_appliedDamage);
         }
     }
 }
