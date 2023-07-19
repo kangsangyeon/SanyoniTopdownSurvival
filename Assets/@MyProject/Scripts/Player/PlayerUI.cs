@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerUI : MonoBehaviour
 {
-    [SerializeField] private PlayerHealth m_PlayerHealth;
+    [SerializeField] private EntityHealth m_PlayerHealth;
     [SerializeField] private HealthBar m_HealthBar;
 
     private void Start()

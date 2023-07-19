@@ -25,8 +25,8 @@ namespace MyProject
         [SerializeField] private float m_AmmoBarRotationOffsetRad;
         [SerializeField] private float m_BarRadius;
 
-        [Header("Style")] [SerializeField] [Range(0, 1f)]
-        private float m_BulletThicknessScale = 1f;
+        [Header("Style")] [SerializeField] private Color m_Color = Color.cyan;
+        [SerializeField] [Range(0, 1f)] private float m_BulletThicknessScale = 1f;
 
         [Header("Animation")] [SerializeField] private float m_BulletDisappearTime = 1f;
 
@@ -80,14 +80,15 @@ namespace MyProject
 
                 Vector2 _a = _origin + _offset;
                 Vector2 _b = _origin - _offset;
-                Draw.Line(_a, _b, _bulletThickness, new Color(1, 1, 1, _alpha));
+                Draw.Line(_a, _b, _bulletThickness, new Color(m_Color.r, m_Color.g, m_Color.b, _alpha));
             }
 
             // 총알들을 감싸는 원호를 그립니다.
             DrawRoundedArcOutline(
                 Vector2.zero, m_BarRadius,
                 _barThickness, m_AmmoBarOutlineThickness,
-                _angRadMin, _angRadMax);
+                _angRadMin, _angRadMax,
+                m_Color);
         }
 
         Vector2 GetBulletEjectPos(Vector2 _origin, float _t)
@@ -99,20 +100,23 @@ namespace MyProject
         public static void DrawRoundedArcOutline(
             Vector2 _origin, float _radius,
             float _thickness, float _outlineThickness,
-            float _angStart, float _angEnd)
+            float _angStart, float _angEnd,
+            Color _color)
         {
+            DiscColors _colors = new DiscColors() { innerStart = _color, innerEnd = _color, outerStart = _color, outerEnd = _color };
+
             // inner / outer
             float _innerRadius = _radius - _thickness / 2;
             float _outerRadius = _radius + _thickness / 2;
             const float AA_MARGIN = 0.01f;
-            Draw.Arc(_origin, _innerRadius, _outlineThickness, _angStart - AA_MARGIN, _angEnd + AA_MARGIN);
-            Draw.Arc(_origin, _outerRadius, _outlineThickness, _angStart - AA_MARGIN, _angEnd + AA_MARGIN);
+            Draw.Arc(_origin, _innerRadius, _outlineThickness, _angStart - AA_MARGIN, _angEnd + AA_MARGIN, _colors);
+            Draw.Arc(_origin, _outerRadius, _outlineThickness, _angStart - AA_MARGIN, _angEnd + AA_MARGIN, _colors);
 
             // rounded caps
             Vector2 _originBottom = _origin + ShapesMath.AngToDir(_angStart) * _radius;
             Vector2 _originTop = _origin + ShapesMath.AngToDir(_angEnd) * _radius;
-            Draw.Arc(_originBottom, _thickness / 2, _outlineThickness, _angStart, _angStart - ShapesMath.TAU / 2);
-            Draw.Arc(_originTop, _thickness / 2, _outlineThickness, _angEnd, _angEnd + ShapesMath.TAU / 2);
+            Draw.Arc(_originBottom, _thickness / 2, _outlineThickness, _angStart, _angStart - ShapesMath.TAU / 2, _colors);
+            Draw.Arc(_originTop, _thickness / 2, _outlineThickness, _angEnd, _angEnd + ShapesMath.TAU / 2, _colors);
         }
 
         public override void DrawShapes(Camera _cam)

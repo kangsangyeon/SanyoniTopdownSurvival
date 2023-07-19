@@ -10,13 +10,13 @@ namespace MyProject
 {
     public class Player : NetworkBehaviour
     {
-        [SerializeField] private PlayerHealth m_Health;
-        public PlayerHealth health => m_Health;
+        [SerializeField] private EntityHealth m_Health;
+        public EntityHealth health => m_Health;
 
         [SerializeField] private PlayerMovement m_Movement;
         public PlayerMovement movement => m_Movement;
 
-        [SerializeField] private Collider2D m_Collider;
+        [SerializeField] private Collider m_Collider;
 
         [SerializeField] private List<SpriteRenderer> m_SpriteRenderers;
         public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
@@ -282,7 +282,7 @@ namespace MyProject
         #endregion
 
         [Server]
-        public void Server_Respawn(Vector2 _position)
+        public void Server_Respawn(Vector3 _position)
         {
             movement.Teleport(base.Owner, _position);
             Server_OnRespawn();

@@ -10,7 +10,7 @@ namespace MyProject
     {
         public struct MoveData : IReplicateData
         {
-            public Vector2 movement;
+            public Vector3 movement;
 
             /* Everything below this is required for
             * the interface. You do not need to implement
@@ -47,11 +47,11 @@ namespace MyProject
         [SerializeField] private float m_MoveSpeed = 4f;
         [SerializeField] private Player m_Player;
 
-        private Rigidbody2D m_Rigidbody;
-        private Vector2 m_Movement;
+        private CharacterController m_CharacterController;
+        private Vector3 m_Movement;
         private bool m_CanMove = true;
         private bool m_TeleportQueue;
-        private Vector2 m_TeleportPosition;
+        private Vector3 m_TeleportPosition;
 
         private void BuildData(out MoveData _moveData)
         {
@@ -60,7 +60,7 @@ namespace MyProject
         }
 
         [TargetRpc(RunLocally = true)]
-        public void Teleport(NetworkConnection _conn, Vector2 _position)
+        public void Teleport(NetworkConnection _conn, Vector3 _position)
         {
             transform.position = _position;
         }
@@ -81,8 +81,8 @@ namespace MyProject
             // 이것이 클라이언트 액션이 클라이언트에서 거의 확실하게 여러 번 수행되는 이유입니다.
             // 로컬에서 처리될 때 한 번, 그리고 replay 될 때마다 다시 한 번 수행됩니다.
 
-            var _positionDelta = _moveData.movement * m_MoveSpeed * (float)base.TimeManager.TickDelta;
-            transform.position = new Vector3(transform.position.x + _positionDelta.x, transform.position.y + _positionDelta.y, transform.position.z);
+            Vector3 _positionDelta = _moveData.movement * m_MoveSpeed * (float)base.TimeManager.TickDelta;
+            m_CharacterController.Move(_positionDelta);
         }
 
         [Reconcile]
@@ -95,7 +95,7 @@ namespace MyProject
 
         private void Awake()
         {
-            m_Rigidbody = GetComponent<Rigidbody2D>();
+            m_CharacterController = GetComponent<CharacterController>();
         }
 
         private void Start()
@@ -175,13 +175,13 @@ namespace MyProject
 
             if (m_CanMove)
             {
-                m_Movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+                m_Movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
                 if (m_Movement.magnitude >= 1.0f)
                     m_Movement.Normalize();
             }
             else
             {
-                m_Movement = Vector2.zero;
+                m_Movement = Vector3.zero;
             }
         }
     }

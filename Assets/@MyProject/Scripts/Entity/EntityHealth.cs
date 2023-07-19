@@ -4,9 +4,8 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using MyProject;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class PlayerHealth : NetworkBehaviour
+public class EntityHealth : NetworkBehaviour
 {
     [SerializeField] private int m_MaxHealth = 100;
     public int MaxHealth => m_MaxHealth;
