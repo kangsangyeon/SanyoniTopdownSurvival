@@ -1,9 +1,9 @@
+using System;
 using MyProject;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private Collider2D m_Collider;
     [SerializeField] private float m_LiveDuration = 1f;
 
     private float m_ScaleOrigin;
@@ -30,7 +30,7 @@ public class Projectile : MonoBehaviour
     public int m_OwnerConnectionId;
 
     public event System.Action onLifeEnd;
-    public event System.Action<Collider2D> onHit;
+    public event System.Action<Collider> onHit;
 
     public void Initialize(Vector3 _position, Vector3 _direction, float _passedTime)
     {
@@ -75,7 +75,7 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerEnter(Collider col)
     {
         if (m_AlreadyHit)
             return;

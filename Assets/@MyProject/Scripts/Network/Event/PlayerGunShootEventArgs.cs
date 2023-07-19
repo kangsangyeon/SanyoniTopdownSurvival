@@ -8,6 +8,6 @@ namespace MyProject.Event
         public uint tick;
         public int ownerConnectionId;
         public Vector2 position;
-        public Vector2 direction;
+        public float rotationY;
     }
 }

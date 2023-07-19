@@ -29,6 +29,8 @@ namespace MyProject
         private float m_LastFireTime;
         private int m_CurrentMagazineCount;
         private bool m_ShootQueue;
+        private Vector3 m_ShotQueuePosition;
+        private float m_ShotQueueRotationY;
         private bool m_CanShoot;
 
         #region IGunWeapon
@@ -82,7 +84,7 @@ namespace MyProject
 
         private Projectile SpawnProjectile(
             int _ownerConnectionId, float _passedTime,
-            Vector2 _position, Vector2 _direction)
+            Vector3 _position, Vector3 _direction)
         {
             Projectile _projectile = m_ProjectilePool.Get();
             _projectile.gameObject.layer = gameObject.layer;
@@ -114,14 +116,8 @@ namespace MyProject
 
             if (_canShoot)
             {
-                Vector3 _gunLookDirection = transform.forward;
-                float _gunLookRotation = transform.eulerAngles.y;
-
-                Debug.Log($"gun look rotation {_gunLookRotation}");
-                Debug.DrawLine(transform.position, transform.position + _gunLookDirection, Color.red, 2.0f);
-
                 var _projectileDirections =
-                    GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+                    GetProjectileDirections(m_ShotQueueRotationY, projectileCountPerShot, projectileShotAngleRange);
 
                 _projectileDirections.ForEach(_direction =>
                 {
@@ -130,7 +126,7 @@ namespace MyProject
                     // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
                     var _projectile = SpawnProjectile(
                         base.OwnerId, 0.0f,
-                        m_FirePoint.position, _direction);
+                        m_ShotQueuePosition, _direction);
                 });
 
                 // 서버에게 발사 사실을 알립니다.
@@ -138,8 +134,8 @@ namespace MyProject
                 {
                     tick = base.TimeManager.Tick,
                     ownerConnectionId = base.LocalConnection.ClientId,
-                    position = m_FirePoint.position,
-                    direction = _gunLookDirection
+                    position = m_ShotQueuePosition,
+                    rotationY = m_ShotQueueRotationY
                 });
 
                 m_LastFireTime = Time.time;
@@ -161,11 +157,8 @@ namespace MyProject
 
                 _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
 
-
-                float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
-
                 var _projectileDirections =
-                    GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+                    GetProjectileDirections(_param.rotationY, projectileCountPerShot, projectileShotAngleRange);
 
                 _projectileDirections.ForEach(_d =>
                 {
@@ -188,10 +181,8 @@ namespace MyProject
             float passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
             passedTime = Mathf.Min(MAX_PASSED_TIME, passedTime);
 
-            float _gunLookRotation = Vector2.SignedAngle(_param.direction, Vector2.right) * -1;
-
             var _projectileDirections =
-                GetProjectileDirections(_gunLookRotation, projectileCountPerShot, projectileShotAngleRange);
+                GetProjectileDirections(_param.rotationY, projectileCountPerShot, projectileShotAngleRange);
 
             _projectileDirections.ForEach(_d =>
             {
@@ -207,8 +198,8 @@ namespace MyProject
             if (_count == 1)
             {
                 Vector3 _rangeCenterDirection =
-                    Quaternion.Euler(new Vector3(0, 0, _rangeCenterRotation))
-                    * Vector2.right;
+                    Quaternion.Euler(new Vector3(0, _rangeCenterRotation, 0))
+                    * Vector3.forward;
                 return new List<Vector3>() { _rangeCenterDirection };
             }
 
@@ -222,7 +213,7 @@ namespace MyProject
                 float _angleDelta = _angleRange * _delta;
                 float _angle = _startAngle + _angleDelta;
                 Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _angle));
-                Vector3 _bulletDirection = _angleQuaternion * Vector2.right;
+                Vector3 _bulletDirection = _angleQuaternion * Vector3.right;
 
                 _outDirectionList.Add(_bulletDirection);
             }
@@ -319,18 +310,14 @@ namespace MyProject
 
         private void Update()
         {
-            Vector3 _gunLookDirection = transform.forward;
-            float _gunLookRotation = transform.eulerAngles.y;
-
-            Debug.Log($"gun look rotation {_gunLookRotation}");
-            Debug.DrawLine(transform.position, transform.position + _gunLookDirection, Color.red, 2.0f);
-            
             if (base.IsOwner == false)
                 return;
 
             if (Input.GetMouseButton(0) && m_CanShoot)
             {
                 m_ShootQueue = true;
+                m_ShotQueuePosition = m_FirePoint.position;
+                m_ShotQueueRotationY = transform.eulerAngles.y;
             }
 
             if (Input.GetKeyDown(KeyCode.R))
