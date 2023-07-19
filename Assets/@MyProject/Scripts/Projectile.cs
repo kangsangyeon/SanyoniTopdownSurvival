@@ -81,19 +81,17 @@ public class Projectile : MonoBehaviour
         if (m_AlreadyHit)
             return;
 
-        if (col.gameObject.CompareTag("Player"))
-        {
-            var _player = col.GetComponent<Player>();
-            if (_player.OwnerId == m_OwnerConnectionId)
-                return;
-
-            m_AlreadyHit = true;
-            onHit?.Invoke(col);
-        }
-
         var _damageableEntity = col.GetComponent<IDamageableEntity>();
         if (_damageableEntity != null)
         {
+            if (col.gameObject.CompareTag("Player"))
+            {
+                // 발사한 총알이 나 자신이 발사한 총알이라면 무시합니다.
+                var _player = col.GetComponent<Player>();
+                if (_player.OwnerId == m_OwnerConnectionId)
+                    return;
+            }
+
             if (InstanceFinder.IsServer)
             {
                 _damageableEntity.TakeDamage(
