@@ -1,5 +1,6 @@
-using System;
+using FishNet;
 using MyProject;
+using MyProject.Struct;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -80,14 +81,37 @@ public class Projectile : MonoBehaviour
         if (m_AlreadyHit)
             return;
 
-        if (col.gameObject.CompareTag("Player"))
+        var _damageableEntity = col.GetComponent<IDamageableEntity>();
+        if (_damageableEntity != null)
         {
-            var _player = col.GetComponent<Player>();
-            if (_player.OwnerId == m_OwnerConnectionId)
-                return;
+            if (col.gameObject.CompareTag("Player"))
+            {
+                // 발사한 총알이 나 자신이 발사한 총알이라면 무시합니다.
+                var _player = col.GetComponent<Player>();
+                if (_player.OwnerId == m_OwnerConnectionId)
+                    return;
+            }
 
-            m_AlreadyHit = true;
-            onHit?.Invoke(col);
+            if (InstanceFinder.IsServer)
+            {
+                _damageableEntity.TakeDamage(
+                    new DamageParam()
+                    {
+                        direction = m_Direction,
+                        point = col.ClosestPoint(transform.position),
+                        force = 10f,
+                        time = Time.time,
+                        healthModifier = new HealthModifier()
+                        {
+                            magnitude = -10,
+                            source = this,
+                            time = Time.time
+                        }
+                    }, out int _appliedDamage);
+
+                m_AlreadyHit = true;
+                onHit?.Invoke(col);
+            }
         }
     }
 }

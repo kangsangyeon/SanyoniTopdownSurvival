@@ -1,4 +1,5 @@
 using FishNet.Object;
+using MyProject.Struct;
 using UnityEngine;
 
 namespace MyProject
@@ -6,8 +7,9 @@ namespace MyProject
     [RequireComponent(typeof(EntityHealth))]
     public class BreakableWallObject : NetworkBehaviour, IWallObject, IDamageableEntity
     {
-        private Collider2D m_Collider;
-        private Rigidbody2D m_RigidBody;
+        [SerializeField] private GameObject m_Prefab_BrokenObject;
+
+        private DamageParam m_LastDamage;
 
         #region IWallObject
 
@@ -23,41 +25,63 @@ namespace MyProject
 
         #region IDamageableEntity
 
-        public void TakeDamage(int _magnitude, object _source, float _time, out int _appliedDamage)
+        [SerializeField] private int m_MaxTakableDamage = int.MaxValue;
+        public int maxTakableDamage => m_MaxTakableDamage;
+
+        [SerializeField] private bool m_UseConstantDamage = true;
+        public bool useConstantDamage => m_UseConstantDamage;
+
+        [SerializeField] private int m_ConstantDamage = 1;
+        public int constantDamage => m_ConstantDamage;
+
+        public void TakeDamage(in DamageParam _hitParam, out int _appliedDamage)
         {
-            m_Health.ApplyModifier(new HealthModifier() { magnitude = _magnitude, source = _source, time = _time });
-            _appliedDamage = _magnitude;
+            if (m_UseConstantDamage)
+                _hitParam.healthModifier.magnitude = m_ConstantDamage;
+            else if (_hitParam.healthModifier.magnitude > m_MaxTakableDamage)
+                _hitParam.healthModifier.magnitude = m_MaxTakableDamage;
+
+            m_LastDamage = _hitParam;
+
+            m_Health.ApplyModifier(_hitParam.healthModifier);
+            _appliedDamage = _hitParam.healthModifier.magnitude;
         }
 
         #endregion
 
         [Server]
-        public void Server_OnBreak()
+        private void Server_OnHealthIsZero(in DamageParam _damageParam)
         {
             // 상자를 부숩니다.
-            // Break();
+            Break(_damageParam);
 
             // 모든 이들에게 전파합니다.
-            // ObserversRpc_OnBreak();
+            ObserversRpc_Break(_damageParam);
         }
 
         [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_OnBreak(Vector2 _point, Vector2 _forceDirection, float _forceAmount)
+        private void ObserversRpc_Break(DamageParam _damageParam)
         {
             // 상자를 부숩니다.
-            // Break();
+            Break(_damageParam);
         }
 
-        private void Break(Vector2 _point, Vector2 _forceDirection, float _forceAmount)
+        private void Break(in DamageParam _damageParam)
         {
-            m_Collider.enabled = false;
-            m_RigidBody.AddForce(_forceDirection * _forceAmount, ForceMode2D.Impulse); // 3d인 경우 AddExplosionForce 함수 사용
+            GameObject _go =
+                GameObject.Instantiate(m_Prefab_BrokenObject, transform.position, transform.rotation);
+            _go.GetComponent<Rigidbody>().AddForceAtPosition(
+                _damageParam.direction * _damageParam.force, _damageParam.point,
+                ForceMode.Impulse); // 3d 폭발인 경우 AddExplosionForce 함수 사용
+            Destroy(_go, 5.0f);
+
+            Destroy(gameObject);
         }
 
         private void Awake()
         {
             m_Health = GetComponent<EntityHealth>();
-            m_Health.onHealthIsZero_OnServer += Server_OnBreak;
+            m_Health.onHealthIsZero_OnServer += () => { Server_OnHealthIsZero(m_LastDamage); };
         }
     }
 }

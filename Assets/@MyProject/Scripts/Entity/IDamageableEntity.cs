@@ -1,7 +1,12 @@
+using MyProject.Struct;
+
 namespace MyProject
 {
     public interface IDamageableEntity
     {
-        public void TakeDamage(int _magnitude, object _source, float _time, out int _appliedDamage);
+        public int maxTakableDamage { get; }
+        public bool useConstantDamage { get; }
+        public int constantDamage { get; }
+        public void TakeDamage(in DamageParam _hitParam, out int _appliedDamage);
     }
 }

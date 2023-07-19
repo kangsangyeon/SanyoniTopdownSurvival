@@ -100,4 +100,4 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 7205235226847299149}
   _networkObjectCache: {fileID: 7205235226847299149}
-  m_CharacterPrefab: {fileID: 7688801823768570622, guid: 73ff7dbf5b6a21c4990a3ae32bf02528, type: 3}
+  m_CharacterPrefab: {fileID: 4020802814622884090, guid: 73ff7dbf5b6a21c4990a3ae32bf02528, type: 3}

@@ -1,4 +1,3 @@
-using System;
 using Shapes;
 using UnityEngine;
 using UnityEngine.Rendering;
