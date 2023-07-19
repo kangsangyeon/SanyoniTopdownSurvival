@@ -4,11 +4,12 @@ using System.Linq;
 using FishNet.Connection;
 using FishNet.Object;
 using MyProject.Event;
+using MyProject.Struct;
 using UnityEngine;
 
 namespace MyProject
 {
-    public class Player : NetworkBehaviour
+    public class Player : NetworkBehaviour, IDamageableEntity
     {
         [SerializeField] private EntityHealth m_Health;
         public EntityHealth health => m_Health;
@@ -44,6 +45,30 @@ namespace MyProject
 
         private int m_Power = 0;
         public int power => m_Power;
+
+        private DamageParam m_LastDamage;
+        public DamageParam lastDamage => m_LastDamage;
+
+        #region IDamageableEntity
+
+        public int maxTakableDamage => int.MaxValue;
+        public bool useConstantDamage => false;
+        public int constantDamage => 0;
+
+        public void TakeDamage(in DamageParam _hitParam, out int _appliedDamage)
+        {
+            if (useConstantDamage)
+                _hitParam.healthModifier.magnitude = constantDamage;
+            else if (_hitParam.healthModifier.magnitude > maxTakableDamage)
+                _hitParam.healthModifier.magnitude = maxTakableDamage;
+
+            m_LastDamage = _hitParam;
+
+            m_Health.ApplyModifier(_hitParam.healthModifier);
+            _appliedDamage = _hitParam.healthModifier.magnitude;
+        }
+
+        #endregion
 
         #region Ability
 
@@ -132,7 +157,8 @@ namespace MyProject
         public void Server_RemoveAbility(AbilityDefinition _definition)
         {
             m_AbilityList.Remove(_definition);
-            foreach (var m in _definition.abilityPropertyModifierDefinitionList) m_AbilityPropertyModifierList.Remove(m);
+            foreach (var m in _definition.abilityPropertyModifierDefinitionList)
+                m_AbilityPropertyModifierList.Remove(m);
             RefreshAbilityProperty();
 
             ObserversRpc_RemoveAbility(new Player_ObserversRpc_RemoveAbility_EventParam()

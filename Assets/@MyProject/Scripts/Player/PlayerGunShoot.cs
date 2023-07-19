@@ -271,29 +271,7 @@ namespace MyProject
             Projectile _projectile = Instantiate(m_Prefab_Projectile);
             _projectile.gameObject.SetActive(false);
             _projectile.onLifeEnd += () => { m_ProjectilePool.Release(_projectile); };
-            _projectile.onHit += (col) =>
-            {
-                if (base.IsServer)
-                {
-                    var _health = col.GetComponent<EntityHealth>();
-                    if (_health.health == 0)
-                    {
-                        // 이미 죽은 대상에게는 아무런 영향을 주지 않고 무시합니다.
-                        return;
-                    }
-                }
-
-                m_ProjectilePool.Release(_projectile);
-
-                if (base.IsServer)
-                {
-                    // 서버에서 생성된 총알만 게임에 영향을 끼치는 동작을 합니다.
-
-                    var _health = col.GetComponent<EntityHealth>();
-                    _health.ApplyModifier(new HealthModifier()
-                        { magnitude = damageMagnitude, source = this, time = Time.time });
-                }
-            };
+            _projectile.onHit += (col) => { m_ProjectilePool.Release(_projectile); };
 
             return _projectile;
         }

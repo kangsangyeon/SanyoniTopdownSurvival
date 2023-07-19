@@ -1,3 +1,4 @@
+using FishNet;
 using MyProject;
 using MyProject.Struct;
 using UnityEngine;
@@ -93,20 +94,26 @@ public class Projectile : MonoBehaviour
         var _damageableEntity = col.GetComponent<IDamageableEntity>();
         if (_damageableEntity != null)
         {
-            _damageableEntity.TakeDamage(
-                new DamageParam()
-                {
-                    direction = m_Direction,
-                    point = col.ClosestPoint(transform.position),
-                    force = 10f,
-                    time = Time.time,
-                    healthModifier = new HealthModifier()
+            if (InstanceFinder.IsServer)
+            {
+                _damageableEntity.TakeDamage(
+                    new DamageParam()
                     {
-                        magnitude = -10,
-                        source = this,
-                        time = Time.time
-                    }
-                }, out int _appliedDamage);
+                        direction = m_Direction,
+                        point = col.ClosestPoint(transform.position),
+                        force = 10f,
+                        time = Time.time,
+                        healthModifier = new HealthModifier()
+                        {
+                            magnitude = -10,
+                            source = this,
+                            time = Time.time
+                        }
+                    }, out int _appliedDamage);
+
+                m_AlreadyHit = true;
+                onHit?.Invoke(col);
+            }
         }
     }
 }
