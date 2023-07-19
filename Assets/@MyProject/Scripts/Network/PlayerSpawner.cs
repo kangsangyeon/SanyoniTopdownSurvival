@@ -1,7 +1,6 @@
 using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace MyProject
 {

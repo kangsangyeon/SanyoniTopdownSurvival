@@ -93,8 +93,6 @@ public class Projectile : MonoBehaviour
         var _damageableEntity = col.GetComponent<IDamageableEntity>();
         if (_damageableEntity != null)
         {
-            Debug.Log($"damageable entity hit! {col.gameObject.name}");
-
             _damageableEntity.TakeDamage(
                 new DamageParam()
                 {
@@ -109,8 +107,6 @@ public class Projectile : MonoBehaviour
                         time = Time.time
                     }
                 }, out int _appliedDamage);
-
-            Debug.Log(_appliedDamage);
         }
     }
 }

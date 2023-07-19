@@ -1,6 +1,4 @@
-﻿using UnityEngine.Events;
-
-namespace MyProject
+﻿namespace MyProject
 {
     public interface IGunWeapon : IWeapon
     {
