@@ -230,7 +230,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &779531673867467578
 Transform:
   m_ObjectHideFlags: 0
@@ -257,6 +257,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5276727741449173614}
   - component: {fileID: 804280020948568806}
+  - component: {fileID: 761880860104288248}
   m_Layer: 6
   m_Name: MeleeAttackWeapon
   m_TagString: Untagged
@@ -278,6 +279,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2278720121107671397}
+  - {fileID: 2511827825095282809}
   m_Father: {fileID: 4114600367878032573}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &804280020948568806
@@ -296,6 +298,21 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1794637739313597232}
   _networkObjectCache: {fileID: 1794637739313597232}
   m_AttackRangeCollider: {fileID: 59308157845106533}
+--- !u!114 &761880860104288248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375973524908030748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c33e8f8895b249f68df4c94aa01fca9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Prefab_OnAttackParticle: {fileID: 8022225218783064197, guid: 9e71293bc89123d4aa6f162b1ed4ee62, type: 3}
+  m_Prefab_OnAttackHitParticle: {fileID: 2528468186685660616, guid: 2fcc77c9a9d95c7478dc18af5a733cca, type: 3}
+  m_OnAttackParticleSpawnPoint: {fileID: 2511827825095282809}
 --- !u!1 &3635088450912467166
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,8 +899,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.6823976, y: 1, z: 1.24}
-  m_Center: {x: 0.046010286, y: 0, z: 0}
+  m_Size: {x: 1.9439116, y: 1, z: 2.78}
+  m_Center: {x: 0.04077995, y: 0, z: 0}
 --- !u!1 &7625550790293430657
 GameObject:
   m_ObjectHideFlags: 0
@@ -969,6 +986,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &8496236515424825414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2511827825095282809}
+  m_Layer: 6
+  m_Name: OnAttackParticleSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2511827825095282809
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8496236515424825414}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: -0.44, y: -0.212, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5276727741449173614}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!1001 &3444896988784897739
 PrefabInstance:
   m_ObjectHideFlags: 0

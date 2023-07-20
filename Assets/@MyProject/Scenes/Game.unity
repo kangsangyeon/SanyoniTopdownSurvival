@@ -278,16 +278,17 @@ MonoBehaviour:
   <SceneId>k__BackingField: 15299233834015112743
   <AssetPathHash>k__BackingField: 0
   _sceneNetworkObjects:
-  - {fileID: 3418329739789209597}
   - {fileID: 21494057}
   - {fileID: 265210631}
   - {fileID: 435534447}
   - {fileID: 693265302}
   - {fileID: 1059103166}
   - {fileID: 1270938592}
+  - {fileID: 1717886052}
   - {fileID: 1769307353}
   - {fileID: 1771771596}
   - {fileID: 2549422017930711061}
+  - {fileID: 3418329739789209597}
 --- !u!1 &60130463
 GameObject:
   m_ObjectHideFlags: 0

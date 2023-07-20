@@ -19,16 +19,21 @@ namespace MyProject
         private Action<IWeapon_OnAttack_EventParam> m_OnAttackAction;
         private Action<IMeleeWeapon_OnAttackHit_EventParam> m_OnAttackHitAction;
 
+        private Vector3 m_CachedOnAttackParticleSpawnPosition;
+        private Quaternion m_CachedOnAttackParticleSpawnRotation;
+
         private void InitializeMeleeWeapon(IMeleeWeapon _meleeWeapon)
         {
             m_OnAttackAction = _param =>
             {
-                Quaternion _rotation = Quaternion.Euler(0, _param.rotationY, 0);
                 ParticleSystem _particle =
-                    GameObject.Instantiate(m_Prefab_OnAttackParticle);
-                _particle.transform.position = m_OnAttackParticleSpawnPoint.position;
-                _particle.transform.rotation = m_OnAttackParticleSpawnPoint.rotation;
+                    GameObject.Instantiate(m_Prefab_OnAttackParticle,
+                        m_CachedOnAttackParticleSpawnPosition,
+                        m_CachedOnAttackParticleSpawnRotation);
                 Destroy(_particle, 2.0f);
+                Debug.Log(
+                    $"particle position {_particle.transform.position}, spawn point: {m_CachedOnAttackParticleSpawnPosition}");
+                this.Invoke(() => Debug.Log(_particle.transform.position), 0.5f);
             };
             _meleeWeapon.onAttack += m_OnAttackAction;
 
@@ -52,6 +57,7 @@ namespace MyProject
 
         private void Start()
         {
+            m_Player = GetComponentInParent<Player>(); // for test
             if (m_Player == null)
                 return;
 
@@ -71,6 +77,12 @@ namespace MyProject
                 if (player.weapon is IMeleeWeapon _meleeWeapon)
                     InitializeMeleeWeapon(_meleeWeapon);
             };
+        }
+
+        private void Update()
+        {
+            m_CachedOnAttackParticleSpawnPosition = m_OnAttackParticleSpawnPoint.position;
+            m_CachedOnAttackParticleSpawnRotation = m_OnAttackParticleSpawnPoint.rotation;
         }
     }
 }
