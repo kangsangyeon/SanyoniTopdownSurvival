@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBar : MonoBehaviour
+public class UI_HealthBar : MonoBehaviour
 {
     [SerializeField] private Canvas m_Canvas;
     [SerializeField] private Slider m_Slider;

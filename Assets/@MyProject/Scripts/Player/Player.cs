@@ -22,7 +22,7 @@ namespace MyProject
         [SerializeField] private List<SpriteRenderer> m_SpriteRenderers;
         public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
 
-        [SerializeField] private HealthBar m_HealthBar;
+        [SerializeField] private UI_HealthBar m_HealthBar;
         [SerializeField] private UI_PlayerAmmo m_UI_PlayerAmmo;
 
         private IWeapon m_Weapon;
