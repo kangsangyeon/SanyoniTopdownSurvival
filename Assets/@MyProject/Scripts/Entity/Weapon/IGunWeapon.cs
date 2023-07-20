@@ -13,5 +13,7 @@
         event System.Action onCurrentMagazineCountChanged;
         event System.Action onReloadStart;
         event System.Action onReloadFinished;
+
+        void QueueReload();
     }
 }

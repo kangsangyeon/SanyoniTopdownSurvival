@@ -86,6 +86,27 @@ namespace MyProject
         public event System.Action onReloadStart;
         public event System.Action onReloadFinished;
 
+        [Client(RequireOwnership = true)]
+        public void QueueAttack()
+        {
+            m_ShootQueue = true;
+            m_ShotQueuePosition = m_FirePoint.position;
+            m_ShotQueueRotationY = transform.eulerAngles.y;
+        }
+
+        [Client(RequireOwnership = true)]
+        public void QueueReload()
+        {
+            m_LastReloadStartTime = Time.time;
+            onReloadStart?.Invoke();
+
+            this.Invoke(() =>
+            {
+                currentMagazineCount = maxMagazineCount;
+                onReloadFinished?.Invoke();
+            }, reloadDuration);
+        }
+
         #endregion
 
         private Projectile SpawnProjectile(
@@ -296,31 +317,6 @@ namespace MyProject
         private void OnReleaseProjectile(Projectile _projectile)
         {
             _projectile.gameObject.SetActive(false);
-        }
-
-        private void Update()
-        {
-            if (base.IsOwner == false)
-                return;
-
-            if (Input.GetMouseButton(0) && m_CanShoot)
-            {
-                m_ShootQueue = true;
-                m_ShotQueuePosition = m_FirePoint.position;
-                m_ShotQueueRotationY = transform.eulerAngles.y;
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                m_LastReloadStartTime = Time.time;
-                onReloadStart?.Invoke();
-
-                this.Invoke(() =>
-                {
-                    currentMagazineCount = maxMagazineCount;
-                    onReloadFinished?.Invoke();
-                }, reloadDuration);
-            }
         }
     }
 }

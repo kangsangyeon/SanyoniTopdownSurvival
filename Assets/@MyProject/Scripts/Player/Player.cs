@@ -420,5 +420,18 @@ namespace MyProject
                     m_HealthBar.enabled = true;
             };
         }
+
+        private void Update()
+        {
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                m_Weapon.QueueAttack();
+            }
+
+            if (Input.GetKeyDown(KeyCode.R) && m_Weapon is IGunWeapon _gunWeapon)
+            {
+                _gunWeapon.QueueReload();
+            }
+        }
     }
 }

@@ -19,5 +19,7 @@ namespace MyProject
         float attackDelay { get; }
 
         event System.Action<IWeapon_OnAttack_EventParam> onAttack;
+
+        void QueueAttack();
     }
 }

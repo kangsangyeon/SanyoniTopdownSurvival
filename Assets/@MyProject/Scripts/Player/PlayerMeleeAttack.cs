@@ -45,6 +45,14 @@ namespace MyProject
         public event Action<IWeapon_OnAttack_EventParam> onAttack;
         public event Action<IMeleeWeapon_OnAttackHit_EventParam> onAttackHit;
 
+        [Client(RequireOwnership = true)]
+        public void QueueAttack()
+        {
+            m_AttackQueue = true;
+            m_AttackQueuePosition = transform.position;
+            m_AttackQueueRotationY = transform.eulerAngles.y;
+        }
+
         #endregion
 
         #region Events
@@ -247,19 +255,6 @@ namespace MyProject
             {
                 if (m_AttackQueue && m_CanAttack)
                     Client_Attack();
-            }
-        }
-
-        private void Update()
-        {
-            if (base.IsOwner == false)
-                return;
-
-            if (Input.GetMouseButton(1) && m_CanAttack)
-            {
-                m_AttackQueue = true;
-                m_AttackQueuePosition = transform.position;
-                m_AttackQueueRotationY = transform.eulerAngles.y;
             }
         }
     }
