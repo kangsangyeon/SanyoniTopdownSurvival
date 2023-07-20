@@ -137,22 +137,29 @@ namespace MyProject
                 {
                     m_MeleeAttackStack = 0;
 
-                    // 투사체 공격을 실시합니다.
-                    var _projectileDirections =
-                        GetDirectionsByRotationY(
-                            m_AttackQueueRotationY,
-                            projectileCountPerShot,
-                            projectileShotAngleRange);
-
-                    _projectileDirections.ForEach(_direction =>
+                    if (base.IsServer == false)
                     {
-                        // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
-                        // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
-                        // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
-                        var _projectile = SpawnProjectile(
-                            base.OwnerId, 0.0f,
-                            m_AttackQueuePosition, _direction);
-                    });
+                        // 공격한 자신이 서버이기도 한 경우,
+                        // 서버 코드 내에서 투사체를 생성할 것이기 때문에 중복으로 생성하지 않기 위해 클라이언트 코드에서는 생성하지 않습니다.
+
+                        // 투사체를 날립니다.
+
+                        var _projectileDirections =
+                            GetDirectionsByRotationY(
+                                m_AttackQueueRotationY,
+                                projectileCountPerShot,
+                                projectileShotAngleRange);
+
+                        _projectileDirections.ForEach(_direction =>
+                        {
+                            // 로컬에서 발사하고 즉시 생성하는 총알이기 때문에,
+                            // 클라이언트에서 총알이 이동하는 위치가 곧 실제 위치입니다.
+                            // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
+                            var _projectile = SpawnProjectile(
+                                base.OwnerId, 0.0f,
+                                m_AttackQueuePosition, _direction);
+                        });
+                    }
 
                     // 서버에게 발사 사실을 알립니다.
                     ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
@@ -229,14 +236,7 @@ namespace MyProject
             if (_param.isProjectileAttack)
             {
                 // 검기 발사체를 날립니다.
-
-                if (base.IsOwner == false)
-                {
-                    // 공격한 자신이 서버이기도 한 경우,
-                    // 이미 클라이언트 코드 내에서 투사체를 생성했기 때문에 중복으로 생성하지 않습니다.
-                    // 충돌 판정은 Projectile 클래스 내에서 하기 때문에 무기 내 Server 함수 내에서 정의하지 않아도 괜찮습니다.
-                    Server_ProjectileAttack(_param, _passedTime);
-                }
+                Server_ProjectileAttack(_param, _passedTime);
             }
             else
             {

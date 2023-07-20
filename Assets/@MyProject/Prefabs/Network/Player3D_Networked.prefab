@@ -258,7 +258,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7878969113253120864}
   - component: {fileID: 1705116974855221427}
-  - component: {fileID: 2399339441572992192}
+  - component: {fileID: 6562644641842848506}
   m_Layer: 6
   m_Name: Weapon_MagicSword
   m_TagString: Untagged
@@ -300,7 +300,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 1794637739313597232}
   m_Prefab_Projectile: {fileID: 9010814782493167470, guid: 37e77968a261ed34884a45c4f1db505a, type: 3}
   m_AttackRangeCollider: {fileID: 5218512765489629898}
---- !u!114 &2399339441572992192
+--- !u!114 &6562644641842848506
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -309,11 +309,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3345809666150506678}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c33e8f8895b249f68df4c94aa01fca9e, type: 3}
+  m_Script: {fileID: 11500000, guid: 13a596f9c1ee3394d83d80f560868151, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Prefab_OnAttackParticle: {fileID: 8022225218783064197, guid: 9e71293bc89123d4aa6f162b1ed4ee62, type: 3}
   m_Prefab_OnAttackHitParticle: {fileID: 2528468186685660616, guid: 2fcc77c9a9d95c7478dc18af5a733cca, type: 3}
+  m_Prefab_OnProjectileHitParticle: {fileID: 7577613614646516515, guid: 06ce42d28bad36c4abe1b44f52c8f48b, type: 3}
   m_OnAttackParticleSpawnPoint: {fileID: 4232228382695286605}
 --- !u!1 &3375973524908030748
 GameObject:
