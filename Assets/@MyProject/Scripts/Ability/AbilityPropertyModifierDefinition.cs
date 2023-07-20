@@ -5,6 +5,8 @@ namespace MyProject
     [CreateAssetMenu(menuName = "MyProject/AbilityPropertyModifierDefinition")]
     public class AbilityPropertyModifierDefinition : ScriptableObject
     {
+        /* gun attack */
+
         [SerializeField] private float m_ReloadDurationMultiplier = 1.0f;
         public float reloadDurationMultiplier => m_ReloadDurationMultiplier;
 
@@ -28,5 +30,13 @@ namespace MyProject
 
         [SerializeField] private float m_ProjectileSpreadAngleMultiplier = 1.0f;
         public float projectileSpreadAngleMultiplier => m_ProjectileSpreadAngleMultiplier;
+
+        /* melee attack */
+
+        [SerializeField] private float m_MeleeAttackDelayMultiplier = 1.0f;
+        public float meleeAttackDelayMultiplier => m_MeleeAttackDelayMultiplier;
+
+        [SerializeField] private float m_MeleeAttackDamageMagnitudeMultiplier = 1.0f;
+        public float meleeAttackDamageMagnitudeMultiplier => m_MeleeAttackDamageMagnitudeMultiplier;
     }
 }

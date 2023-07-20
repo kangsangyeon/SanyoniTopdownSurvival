@@ -196,6 +196,8 @@ namespace MyProject
             AbilityProperty _abilityProperty,
             AbilityPropertyModifierDefinition _modifierDefinition)
         {
+            /* gun attack */
+
             _abilityProperty.reloadDurationMultiplier =
                 _abilityProperty.reloadDurationMultiplier * _modifierDefinition.reloadDurationMultiplier;
             _abilityProperty.fireDelayMultiplier =
@@ -212,6 +214,14 @@ namespace MyProject
                 _abilityProperty.projectileCountPerShot + _modifierDefinition.projectileCountPerShotAdditional;
             _abilityProperty.projectileShotAngleRange =
                 _abilityProperty.projectileShotAngleRange + _modifierDefinition.projectileSpreadAngleMultiplier;
+
+            /* melee attack */
+
+            _abilityProperty.meleeAttackDelayMultiplier =
+                _abilityProperty.meleeAttackDelayMultiplier * _modifierDefinition.meleeAttackDelayMultiplier;
+            _abilityProperty.meleeAttackDamageMagnitudeMultiplier =
+                _abilityProperty.meleeAttackDamageMagnitudeMultiplier
+                * _modifierDefinition.meleeAttackDamageMagnitudeMultiplier;
         }
 
         #region Events
