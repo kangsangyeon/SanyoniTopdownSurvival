@@ -423,14 +423,17 @@ namespace MyProject
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (base.IsOwner)
             {
-                m_Weapon.QueueAttack();
-            }
+                if (Input.GetKey(KeyCode.Mouse0))
+                {
+                    m_Weapon.QueueAttack();
+                }
 
-            if (Input.GetKeyDown(KeyCode.R) && m_Weapon is IGunWeapon _gunWeapon)
-            {
-                _gunWeapon.QueueReload();
+                if (Input.GetKeyDown(KeyCode.R) && m_Weapon is IGunWeapon _gunWeapon)
+                {
+                    _gunWeapon.QueueReload();
+                }
             }
         }
     }
