@@ -27,20 +27,21 @@ namespace MyProject
             m_OnAttackAction = _param =>
             {
                 ParticleSystem _particle =
-                    GameObject.Instantiate(m_Prefab_OnAttackParticle,
+                    GameObject.Instantiate(
+                        m_Prefab_OnAttackParticle,
                         m_CachedOnAttackParticleSpawnPosition,
                         m_CachedOnAttackParticleSpawnRotation);
                 Destroy(_particle, 2.0f);
-                Debug.Log(
-                    $"particle position {_particle.transform.position}, spawn point: {m_CachedOnAttackParticleSpawnPosition}");
-                this.Invoke(() => Debug.Log(_particle.transform.position), 0.5f);
             };
             _meleeWeapon.onAttack += m_OnAttackAction;
 
             m_OnAttackHitAction = _param =>
             {
                 ParticleSystem _particle =
-                    GameObject.Instantiate(m_Prefab_OnAttackHitParticle, _param.hitPoint, _param.hitRotation);
+                    GameObject.Instantiate(
+                        m_Prefab_OnAttackHitParticle,
+                        _param.hitPoint,
+                        _param.hitRotation);
                 Destroy(_particle, 2.0f);
             };
             _meleeWeapon.onAttackHit += m_OnAttackHitAction;
