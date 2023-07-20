@@ -13,8 +13,9 @@ namespace MyProject
 
         private void InitializeGunWeaponEvents(IGunWeapon _gunWeapon)
         {
-            _gunWeapon.onFire += () =>
+            _gunWeapon.onAttack += (_param) =>
                 m_AudioSource.PlayOneShot(m_FireClip);
+
             _gunWeapon.onReloadStart += () =>
             {
                 if (m_AudioSource.isPlaying)

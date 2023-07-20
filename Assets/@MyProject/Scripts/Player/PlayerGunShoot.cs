@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FishNet.Object;
 using MyProject.Event;
@@ -35,11 +36,16 @@ namespace MyProject
 
         #region IGunWeapon
 
-        public int damageMagnitude =>
+        public object owner => player;
+
+        public int ownerConnectionId => player.OwnerId;
+
+        public int attackDamageMagnitude =>
             Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage *
                              m_Player.abilityProperty.projectileDamageMultiplier);
 
-        public object owner => player;
+        public float attackDelay =>
+            m_Player.abilityProperty.fireDelay * m_Player.abilityProperty.fireDelayMultiplier;
 
         public int currentMagazineCount
         {
@@ -76,7 +82,7 @@ namespace MyProject
             m_Player.abilityProperty.projectileShotAngleRange;
 
         public event System.Action onCurrentMagazineCountChanged;
-        public event System.Action onFire;
+        public event Action<IWeapon_OnAttack_EventParam> onAttack;
         public event System.Action onReloadStart;
         public event System.Action onReloadFinished;
 
@@ -133,14 +139,20 @@ namespace MyProject
                 ServerRpcFire(new PlayerGunShoot_Fire_EventParam()
                 {
                     tick = base.TimeManager.Tick,
-                    ownerConnectionId = base.LocalConnection.ClientId,
+                    ownerConnectionId = base.OwnerId,
                     position = m_ShotQueuePosition,
                     rotationY = m_ShotQueueRotationY
                 });
 
                 m_LastFireTime = Time.time;
                 --currentMagazineCount;
-                onFire?.Invoke();
+                onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
+                {
+                    tick = base.TimeManager.Tick,
+                    ownerConnectionId = base.OwnerId,
+                    position = m_ShotQueuePosition,
+                    rotationY = m_ShotQueueRotationY
+                });
             }
         }
 

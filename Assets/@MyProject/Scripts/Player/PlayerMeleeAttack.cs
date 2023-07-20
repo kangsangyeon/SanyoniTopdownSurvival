@@ -1,3 +1,4 @@
+using System;
 using FishNet.Object;
 using MyProject.Event;
 using MyProject.Struct;
@@ -5,7 +6,7 @@ using UnityEngine;
 
 namespace MyProject
 {
-    public class PlayerMeleeAttack : NetworkBehaviour
+    public class PlayerMeleeAttack : NetworkBehaviour, IMeleeWeapon
     {
         /// <summary>
         /// 발사체가 가질 수 있는 최대 경과 시간입니다.
@@ -28,29 +29,26 @@ namespace MyProject
         private float m_AttackQueueRotationY;
         private bool m_CanAttack;
 
-        private float fireDelay = 0.5f;
-        private int attackDamage = -10;
+        #region IMeleeWeapon
+
+        public object owner => player;
+
+        public int ownerConnectionId => player.OwnerId;
+
+        public int attackDamageMagnitude => Mathf.RoundToInt(
+            player.abilityProperty.meleeAttackDamageMagnitude
+            * player.abilityProperty.meleeAttackDamageMagnitudeMultiplier);
+
+        public float attackDelay =>
+            player.abilityProperty.meleeAttackDelay * player.abilityProperty.meleeAttackDelayMultiplier;
+
+        public event Action<IWeapon_OnAttack_EventParam> onAttack;
+
+        #endregion
 
         #region Events
 
-        public event System.Action<PlayerMeleeAttack_OnAttack_EventParam> onAttack_OnClient_Pred;
-        public event System.Action<PlayerMeleeAttack_OnAttack_EventParam> onAttack_OnClient_Success;
         public event System.Action<PlayerMeleeAttack_OnAttackHit_EventParam> onAttackHit_OnClient;
-
-        [Server]
-        private void Server_OnAttack(Vector3 _position, float _rotationY, uint _tick)
-        {
-            onAttack_OnClient_Pred?.Invoke(new PlayerMeleeAttack_OnAttack_EventParam()
-                { ownerConnectionId = base.OwnerId, position = _position, rotationY = _rotationY, tick = _tick });
-            ObserversRpc_OnAttack(new PlayerMeleeAttack_OnAttack_EventParam()
-                { ownerConnectionId = base.OwnerId, position = _position, rotationY = _rotationY, tick = _tick });
-        }
-
-        [ObserversRpc(ExcludeServer = true, ExcludeOwner = true)]
-        private void ObserversRpc_OnAttack(PlayerMeleeAttack_OnAttack_EventParam _param)
-        {
-            onAttack_OnClient_Pred?.Invoke(_param);
-        }
 
         [Server]
         private void Server_OnAttackHit(Vector3 _hitPoint, Vector3 _hitDirection)
@@ -77,12 +75,12 @@ namespace MyProject
             float _elapsedTimeSinceLastFire = Time.time - m_LastAttackTime;
 
             // 가장 마지막으로 발사한 뒤 일정 시간 뒤에 다시 발사할 수 있습니다.
-            bool _canShoot = _elapsedTimeSinceLastFire >= fireDelay;
+            bool _canShoot = _elapsedTimeSinceLastFire >= attackDelay;
 
             if (_canShoot)
             {
                 m_LastAttackTime = Time.time;
-                onAttack_OnClient_Pred?.Invoke(new PlayerMeleeAttack_OnAttack_EventParam()
+                onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
                 {
                     tick = base.TimeManager.Tick,
                     ownerConnectionId = base.OwnerId,
@@ -113,7 +111,7 @@ namespace MyProject
             // 이미 pred 이벤트를 클라이언트 코드 내에서 실행했기 때문에 중복으로 실행하지 않습니다.
             if (base.IsOwner == false)
             {
-                onAttack_OnClient_Pred?.Invoke(new PlayerMeleeAttack_OnAttack_EventParam()
+                onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
                 {
                     tick = _param.tick,
                     ownerConnectionId = _param.ownerConnectionId,
@@ -122,10 +120,10 @@ namespace MyProject
                 });
             }
 
-            Server_Attack(_param, attackDamage);
+            Server_Attack(_param, attackDamageMagnitude);
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
-            ObserversRpc_Fire(_param);
+            ObserversRpc_Attack(_param);
         }
 
         [Server]
@@ -178,14 +176,14 @@ namespace MyProject
         }
 
         [ObserversRpc(ExcludeOwner = true, ExcludeServer = true)]
-        private void ObserversRpc_Fire(PlayerMeleeAttack_Attack_EventParam _param)
+        private void ObserversRpc_Attack(PlayerMeleeAttack_Attack_EventParam _param)
         {
             // 총을 발사한 클라이언트가 총알을 발사한 tick으로부터
             // 이 클라이언트의 현재 tick까지 얼만큼의 시간이 걸렸는지 얻습니다.
             float passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
             passedTime = Mathf.Min(MAX_PASSED_TIME, passedTime);
 
-            onAttack_OnClient_Pred?.Invoke(new PlayerMeleeAttack_OnAttack_EventParam()
+            onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
             {
                 tick = _param.tick,
                 ownerConnectionId = _param.ownerConnectionId,
