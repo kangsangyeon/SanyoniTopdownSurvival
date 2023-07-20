@@ -144,10 +144,15 @@ namespace MyProject
         [Server]
         private void Server_Attack(in PlayerMeleeAttack_Attack_EventParam _param, int _attackDamage)
         {
+            // 클라이언트가 총알을 발사한 tick으로부터 현재 서버 tick까지
+            // 얼만큼의 시간이 걸렸는지 얻습니다.
+            float _passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
+            _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
+
             var _others = Physics.OverlapBox(
-                m_AttackRangeCollider.transform.position,
+                _param.position,
                 m_AttackRangeCollider.bounds.extents,
-                m_AttackRangeCollider.transform.rotation);
+                Quaternion.Euler(0, _param.rotationY, 0));
 
             foreach (var _collider in _others)
             {
