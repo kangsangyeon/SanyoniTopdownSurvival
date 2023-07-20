@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace MyProject
 {
-    public class Sound_GunWeapon : MonoBehaviour
+    public class GunWeapon_Sound : MonoBehaviour
     {
         [SerializeField] private Player m_Player;
         [SerializeField] private AudioSource m_AudioSource;
@@ -11,12 +12,16 @@ namespace MyProject
         [SerializeField] private AudioClip m_ReloadStartClip;
         [SerializeField] private AudioClip m_ReloadFinishClip;
 
+        private Action<IWeapon_OnAttack_EventParam> m_OnAttackAction;
+        private Action m_OnReloadStartAction;
+
         private void InitializeGunWeaponEvents(IGunWeapon _gunWeapon)
         {
-            _gunWeapon.onAttack += (_param) =>
+            m_OnAttackAction = (_param) =>
                 m_AudioSource.PlayOneShot(m_FireClip);
+            _gunWeapon.onAttack += m_OnAttackAction;
 
-            _gunWeapon.onReloadStart += () =>
+            m_OnReloadStartAction = () =>
             {
                 if (m_AudioSource.isPlaying)
                     m_AudioSource.Stop();
@@ -34,14 +39,28 @@ namespace MyProject
                     m_AudioSource.Play();
                 }, _waitForPlayReloadFinish);
             };
+            _gunWeapon.onReloadStart += m_OnReloadStartAction;
+        }
+
+        private void UninitializeGunWeaponEvents(IGunWeapon _gunWeapon)
+        {
+            _gunWeapon.onAttack -= m_OnAttackAction;
+            m_OnAttackAction = null;
+
+            _gunWeapon.onReloadStart -= m_OnReloadStartAction;
+            m_OnReloadStartAction = null;
         }
 
         private void Start()
         {
             if (m_Player.weapon is IGunWeapon _gunWeapon)
                 InitializeGunWeaponEvents(_gunWeapon);
-            m_Player.onWeaponChanged_OnServer += () =>
+
+            m_Player.onWeaponChanged_OnServer += (_prevWeapon) =>
             {
+                if (_prevWeapon is IGunWeapon _prevGunWeapon)
+                    UninitializeGunWeaponEvents(_prevGunWeapon);
+
                 if (m_Player.weapon is IGunWeapon _gunWeapon)
                     InitializeGunWeaponEvents(_gunWeapon);
             };

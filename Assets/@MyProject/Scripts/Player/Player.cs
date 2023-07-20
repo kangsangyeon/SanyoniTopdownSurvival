@@ -34,8 +34,9 @@ namespace MyProject
             {
                 if (m_Weapon != value)
                 {
+                    var _prevWeapon = m_Weapon;
                     m_Weapon = value;
-                    Server_OnWeaponChanged();
+                    Server_OnWeaponChanged(_prevWeapon);
                 }
             }
         }
@@ -288,13 +289,13 @@ namespace MyProject
             onRespawn_OnClient?.Invoke();
         }
 
-        public event System.Action onWeaponChanged_OnServer;
+        public event System.Action<IWeapon> onWeaponChanged_OnServer; // param: <prevWeapon>
         public event System.Action onWeaponChanged_OnClient;
 
         [Server]
-        private void Server_OnWeaponChanged()
+        private void Server_OnWeaponChanged(IWeapon _prevWeapon)
         {
-            onWeaponChanged_OnServer?.Invoke();
+            onWeaponChanged_OnServer?.Invoke(_prevWeapon);
             onWeaponChanged_OnClient?.Invoke();
             ObserversRpc_OnWeaponChanged();
         }
