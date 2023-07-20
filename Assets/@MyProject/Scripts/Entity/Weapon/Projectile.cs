@@ -8,10 +8,12 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float m_LiveDuration = 1f;
 
     private float m_ScaleOrigin;
-    private Vector3 m_Direction;
     private bool m_AlreadyHit = false;
     private float m_PassedTime;
     private float m_ActualLiveDuration;
+
+    private Vector3 m_Direction;
+    public Vector3 direction => m_Direction;
 
     private float m_ScaleMultiplier;
 
@@ -27,6 +29,7 @@ public class Projectile : MonoBehaviour
 
     public float m_StartTime;
     public float m_Speed = 10f;
+    public int m_DamageMagnitude = -10;
 
     public int m_OwnerConnectionId;
 
@@ -103,7 +106,7 @@ public class Projectile : MonoBehaviour
                         time = Time.time,
                         healthModifier = new HealthModifier()
                         {
-                            magnitude = -10,
+                            magnitude = m_DamageMagnitude,
                             source = this,
                             time = Time.time
                         }

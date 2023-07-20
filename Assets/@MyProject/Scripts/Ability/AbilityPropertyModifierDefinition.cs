@@ -38,5 +38,10 @@ namespace MyProject
 
         [SerializeField] private float m_MeleeAttackDamageMagnitudeMultiplier = 1.0f;
         public float meleeAttackDamageMagnitudeMultiplier => m_MeleeAttackDamageMagnitudeMultiplier;
+
+        /* sword */
+
+        [SerializeField] private int m_SwordProjectileRequiredStackAddition = 0;
+        public int swordProjectileRequiredStackAddition => m_SwordProjectileRequiredStackAddition;
     }
 }

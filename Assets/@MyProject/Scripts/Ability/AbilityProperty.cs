@@ -33,5 +33,9 @@ namespace MyProject
 
         public readonly int meleeAttackDamageMagnitude = 40;
         public float meleeAttackDamageMagnitudeMultiplier = 1.0f;
+
+        /* sword */
+
+        public int swordProjectileRequiredStack = 3;
     }
 }
