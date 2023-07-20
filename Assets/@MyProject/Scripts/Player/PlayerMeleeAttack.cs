@@ -43,26 +43,33 @@ namespace MyProject
             player.abilityProperty.meleeAttackDelay * player.abilityProperty.meleeAttackDelayMultiplier;
 
         public event Action<IWeapon_OnAttack_EventParam> onAttack;
+        public event Action<IMeleeWeapon_OnAttackHit_EventParam> onAttackHit;
 
         #endregion
 
         #region Events
 
-        public event System.Action<PlayerMeleeAttack_OnAttackHit_EventParam> onAttackHit_OnClient;
-
         [Server]
-        private void Server_OnAttackHit(Vector3 _hitPoint, Vector3 _hitDirection)
+        private void Server_OnAttackHit(Vector3 _hitPoint, Vector3 _hitDirection, in DamageParam _hitDamage, uint _tick)
         {
-            onAttackHit_OnClient?.Invoke(new PlayerMeleeAttack_OnAttackHit_EventParam()
-                { hitPoint = _hitPoint, hitDirection = _hitDirection });
-            ObserversRpc_OnAttackHit(new PlayerMeleeAttack_OnAttackHit_EventParam()
-                { hitPoint = _hitPoint, hitDirection = _hitDirection });
+            var _param = new IMeleeWeapon_OnAttackHit_EventParam()
+            {
+                tick = _tick,
+                ownerConnectionId = base.OwnerId,
+                hitPoint = _hitPoint,
+                hitDirection = _hitDirection,
+                hitRotation = Quaternion.FromToRotation(Vector3.right, _hitDirection),
+                hitDamage = _hitDamage
+            };
+
+            onAttackHit?.Invoke(_param);
+            ObserversRpc_OnAttackHit(_param);
         }
 
         [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_OnAttackHit(PlayerMeleeAttack_OnAttackHit_EventParam _param)
+        private void ObserversRpc_OnAttackHit(IMeleeWeapon_OnAttackHit_EventParam _param)
         {
-            onAttackHit_OnClient?.Invoke(_param);
+            onAttackHit?.Invoke(_param);
         }
 
         #endregion
@@ -149,28 +156,30 @@ namespace MyProject
 
                     Vector3 _attackDirection = GetDirectionsByRotationY(_param.rotationY);
 
-                    _damageableEntity.TakeDamage(
-                        new DamageParam()
+                    var _damageParam = new DamageParam()
+                    {
+                        direction = _attackDirection,
+                        point = _collider.ClosestPoint(transform.position),
+                        force = 10f,
+                        time = Time.time,
+                        healthModifier = new HealthModifier()
                         {
-                            direction = _attackDirection,
-                            point = _collider.ClosestPoint(transform.position),
-                            force = 10f,
-                            time = Time.time,
-                            healthModifier = new HealthModifier()
-                            {
-                                magnitude = _attackDamage,
-                                source = this,
-                                time = Time.time
-                            }
-                        }, out int _appliedDamage);
+                            magnitude = _attackDamage,
+                            source = this,
+                            time = Time.time
+                        }
+                    };
 
-                    Debug.Log(_appliedDamage);
+                    _damageableEntity.TakeDamage(
+                        _damageParam, out int _appliedDamage);
 
                     Vector3 _hitDirection = _collider.transform.position - _param.position;
                     _hitDirection.y = 0;
                     _hitDirection.Normalize();
 
-                    Server_OnAttackHit(_collider.ClosestPoint(_param.position), _hitDirection);
+                    Server_OnAttackHit(
+                        _collider.ClosestPoint(_param.position), _hitDirection,
+                        _damageParam, _param.tick);
                 }
             }
         }

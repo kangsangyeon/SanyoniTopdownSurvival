@@ -1,4 +1,5 @@
 using System;
+using FishNet;
 using UnityEngine;
 
 namespace MyProject
@@ -56,10 +57,15 @@ namespace MyProject
             if (m_Player.weapon is IGunWeapon _gunWeapon)
                 InitializeGunWeaponEvents(_gunWeapon);
 
-            m_Player.onWeaponChanged_OnServer += (_prevWeapon) =>
+            m_Player.onWeaponChanged_OnServer += (_prevWeaponId) =>
             {
-                if (_prevWeapon is IGunWeapon _prevGunWeapon)
-                    UninitializeGunWeaponEvents(_prevGunWeapon);
+                if (_prevWeaponId.HasValue)
+                {
+                    IWeapon _prevWeapon = InstanceFinder.ClientManager.Objects.Spawned[_prevWeaponId.Value] as IWeapon;
+
+                    if (_prevWeapon is IGunWeapon _prevGunWeapon)
+                        UninitializeGunWeaponEvents(_prevGunWeapon);
+                }
 
                 if (m_Player.weapon is IGunWeapon _gunWeapon)
                     InitializeGunWeaponEvents(_gunWeapon);

@@ -1,4 +1,5 @@
 using System;
+using FishNet;
 using Shapes;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -152,15 +153,20 @@ namespace MyProject
         private void Start()
         {
             if (m_Player.weapon is IGunWeapon _gunWeapon)
-                InitializeGunWeapon(_gunWeapon);
+                InitializeGunWeaponEvents(_gunWeapon);
 
-            m_Player.onWeaponChanged_OnServer += (_prevWeapon) =>
+            m_Player.onWeaponChanged_OnServer += (_prevWeaponId) =>
             {
-                if (_prevWeapon is IGunWeapon _prevGunWeapon)
-                    UninitializeGunWeapon(_prevGunWeapon);
+                if (_prevWeaponId.HasValue)
+                {
+                    IWeapon _prevWeapon = InstanceFinder.ClientManager.Objects.Spawned[_prevWeaponId.Value] as IWeapon;
+
+                    if (_prevWeapon is IGunWeapon _prevGunWeapon)
+                        UninitializeGunWeaponEvents(_prevGunWeapon);
+                }
 
                 if (m_Player.weapon is IGunWeapon _gunWeapon)
-                    InitializeGunWeapon(_gunWeapon);
+                    InitializeGunWeaponEvents(_gunWeapon);
             };
 
             m_Player.health.onHealthIsZero_OnSync += () => { m_ShouldDraw = false; };
@@ -172,7 +178,7 @@ namespace MyProject
             };
         }
 
-        private void InitializeGunWeapon(IGunWeapon _gunWeapon)
+        private void InitializeGunWeaponEvents(IGunWeapon _gunWeapon)
         {
             m_GunWeapon = _gunWeapon;
 
@@ -190,7 +196,7 @@ namespace MyProject
             m_GunWeapon.onCurrentMagazineCountChanged += m_GunWeapon_OnCurrentMagazineCountChangedAction;
         }
 
-        private void UninitializeGunWeapon(IGunWeapon _gunWeapon)
+        private void UninitializeGunWeaponEvents(IGunWeapon _gunWeapon)
         {
             _gunWeapon.onCurrentMagazineCountChanged -= m_GunWeapon_OnCurrentMagazineCountChangedAction;
             m_GunWeapon_OnCurrentMagazineCountChangedAction = null;

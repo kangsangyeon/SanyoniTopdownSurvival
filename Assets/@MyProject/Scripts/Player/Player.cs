@@ -34,9 +34,12 @@ namespace MyProject
             {
                 if (m_Weapon != value)
                 {
-                    var _prevWeapon = m_Weapon;
+                    int? _prevWeaponId = null;
+                    if (m_Weapon != null)
+                        _prevWeaponId = (m_Weapon as NetworkBehaviour).ObjectId;
+
                     m_Weapon = value;
-                    Server_OnWeaponChanged(_prevWeapon);
+                    Server_OnWeaponChanged(_prevWeaponId);
                 }
             }
         }
@@ -289,21 +292,21 @@ namespace MyProject
             onRespawn_OnClient?.Invoke();
         }
 
-        public event System.Action<IWeapon> onWeaponChanged_OnServer; // param: <prevWeapon>
-        public event System.Action onWeaponChanged_OnClient;
+        public event System.Action<int?> onWeaponChanged_OnServer; // param: <prevWeaponObjectId>
+        public event System.Action<int?> onWeaponChanged_OnClient; // param: <prevWeaponObjectId>
 
         [Server]
-        private void Server_OnWeaponChanged(IWeapon _prevWeapon)
+        private void Server_OnWeaponChanged(int? _prevWeaponId)
         {
-            onWeaponChanged_OnServer?.Invoke(_prevWeapon);
-            onWeaponChanged_OnClient?.Invoke();
-            ObserversRpc_OnWeaponChanged();
+            onWeaponChanged_OnServer?.Invoke(_prevWeaponId);
+            onWeaponChanged_OnClient?.Invoke(_prevWeaponId);
+            ObserversRpc_OnWeaponChanged(_prevWeaponId);
         }
 
         [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_OnWeaponChanged()
+        private void ObserversRpc_OnWeaponChanged(int? _prevWeaponId)
         {
-            onWeaponChanged_OnClient?.Invoke();
+            onWeaponChanged_OnClient?.Invoke(_prevWeaponId);
         }
 
         #endregion
