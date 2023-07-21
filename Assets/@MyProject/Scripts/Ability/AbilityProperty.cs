@@ -31,7 +31,7 @@ namespace MyProject
         public readonly float meleeAttackDelay = 0.5f;
         public float meleeAttackDelayMultiplier = 1.0f;
 
-        public readonly int meleeAttackDamageMagnitude = 40;
+        public readonly int meleeAttackDamageMagnitude = -40;
         public float meleeAttackDamageMagnitudeMultiplier = 1.0f;
 
         /* sword */
