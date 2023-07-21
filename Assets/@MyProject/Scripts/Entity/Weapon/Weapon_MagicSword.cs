@@ -41,7 +41,8 @@ namespace MyProject
         public int ownerConnectionId => m_Player.OwnerId;
 
         public int attackDamageMagnitude =>
-            m_Player.abilityProperty.swordProjectileRequiredStack;
+            Mathf.RoundToInt(m_Player.abilityProperty.meleeAttackDamageMagnitude
+                             * m_Player.abilityProperty.meleeAttackDamageMagnitudeMultiplier);
 
         public float attackDelay =>
             m_Player.abilityProperty.meleeAttackDelay;
