@@ -24,14 +24,16 @@ namespace MyProject
         public event Action<ILevelable_CurrentExperienceOrLevelChanged_EventParam> onCurrentExperienceOrLevelChanged;
 
         [Server]
-        private void Server_OnCurrentExperienceOrLevelChanged(in ILevelable_CurrentExperienceOrLevelChanged_EventParam _param)
+        private void Server_OnCurrentExperienceOrLevelChanged(
+            in ILevelable_CurrentExperienceOrLevelChanged_EventParam _param)
         {
             onCurrentExperienceOrLevelChanged?.Invoke(_param);
             ObserversRpc_OnCurrentExperienceOrLevelChanged(_param);
         }
 
         [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_OnCurrentExperienceOrLevelChanged(ILevelable_CurrentExperienceOrLevelChanged_EventParam _param)
+        private void ObserversRpc_OnCurrentExperienceOrLevelChanged(
+            ILevelable_CurrentExperienceOrLevelChanged_EventParam _param)
         {
             onCurrentExperienceOrLevelChanged?.Invoke(_param);
         }
@@ -59,7 +61,8 @@ namespace MyProject
             {
                 _becomeNewLevel = true;
                 ++m_CurrentLevel;
-                Debug.Log($"player level up! become lv {m_CurrentLevel}");
+                Debug.Log(
+                    $"player level up! become lv {m_CurrentLevel} (exp {m_CurrentExperience}/{m_RequiredExperienceToNextLevel})");
 
                 if (m_CurrentLevel == m_MaxLevel)
                 {
