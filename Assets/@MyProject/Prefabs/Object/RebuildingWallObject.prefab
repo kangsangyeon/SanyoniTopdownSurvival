@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6998648677235887737}
   - component: {fileID: 8454728915752237883}
   - component: {fileID: 3595343269274469582}
+  - component: {fileID: -8717238241498966416}
   m_Layer: 0
   m_Name: RebuildingWallObject
   m_TagString: Untagged
@@ -230,3 +231,16 @@ MonoBehaviour:
   m_MaxTakableDamage: 2147483647
   m_UseConstantDamage: 1
   m_ConstantDamage: -1
+--- !u!114 &-8717238241498966416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8167257867585130240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fdaee319e9abe44285ce84d407879a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ExperienceAmount: 10

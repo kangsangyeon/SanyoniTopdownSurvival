@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8743477178912046498}
   - component: {fileID: 5573045624875293450}
   - component: {fileID: 4484104424982126933}
+  - component: {fileID: 2880525496960582813}
   m_Layer: 0
   m_Name: BreakableWallObject
   m_TagString: Untagged
@@ -225,3 +226,15 @@ MonoBehaviour:
   m_MaxTakableDamage: 2147483647
   m_UseConstantDamage: 1
   m_ConstantDamage: -1
+--- !u!114 &2880525496960582813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8156851594774173612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fdaee319e9abe44285ce84d407879a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

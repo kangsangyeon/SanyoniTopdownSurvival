@@ -32,6 +32,7 @@ public class Projectile : MonoBehaviour
     public int m_DamageMagnitude = -10;
 
     public int m_OwnerConnectionId;
+    public object m_OwnerObject;
 
     public event System.Action onLifeEnd;
     public event System.Action<Collider> onHit;
@@ -108,6 +109,7 @@ public class Projectile : MonoBehaviour
                         {
                             magnitude = m_DamageMagnitude,
                             source = this,
+                            sourceOwnerObject = m_OwnerObject,
                             time = Time.time
                         }
                     }, out int _appliedDamage);

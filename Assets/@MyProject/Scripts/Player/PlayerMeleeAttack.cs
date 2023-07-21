@@ -179,6 +179,7 @@ namespace MyProject
                         {
                             magnitude = _attackDamage,
                             source = this,
+                            sourceOwnerObject = player,
                             time = Time.time
                         }
                     };

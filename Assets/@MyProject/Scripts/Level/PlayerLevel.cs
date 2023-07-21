@@ -1,6 +1,7 @@
 using System;
 using FishNet.Object;
 using MyProject.Event;
+using UnityEngine;
 
 namespace MyProject
 {
@@ -8,10 +9,10 @@ namespace MyProject
     {
         #region ILevelable
 
-        private int m_CurrentLevel;
+        private int m_CurrentLevel = 1;
         public int currentLevel => m_CurrentLevel;
 
-        private int m_MaxLevel;
+        private int m_MaxLevel = 10;
         public int maxLevel => m_MaxLevel;
 
         private int m_CurrentExperience;
@@ -67,7 +68,7 @@ namespace MyProject
                 else
                 {
                     // todo: required experience to next level을 다음 레벨까지의 경험치로 올바르게 초기화해주어야 합니다.
-                    m_RequiredExperienceToNextLevel = m_CurrentLevel * 50;
+                    UpdateRequiredExperienceToNextLevel();
                 }
             }
 
@@ -78,8 +79,20 @@ namespace MyProject
                 addedExperience = _addedExperience,
                 becomeNewLevel = _becomeNewLevel
             });
+
+            Debug.Log($"PlayerLevel: player gain {_addedExperience}!");
         }
 
         #endregion
+
+        private void UpdateRequiredExperienceToNextLevel()
+        {
+            m_RequiredExperienceToNextLevel = m_CurrentLevel * 50;
+        }
+
+        private void Start()
+        {
+            UpdateRequiredExperienceToNextLevel();
+        }
     }
 }
