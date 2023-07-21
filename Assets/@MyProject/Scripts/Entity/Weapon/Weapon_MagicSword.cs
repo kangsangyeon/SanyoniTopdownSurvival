@@ -288,7 +288,7 @@ namespace MyProject
                 var _damageableEntity = _collider.GetComponent<IDamageableEntity>();
                 if (_damageableEntity != null)
                 {
-                    if (_collider.gameObject.CompareTag("Player"))
+                    if (_collider.gameObject.CompareTag("Character"))
                     {
                         // 나 자신이 내 공격에 데미지를 받지 않습니다.
                         var _player = _collider.GetComponent<Player>();

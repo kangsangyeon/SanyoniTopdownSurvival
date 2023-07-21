@@ -549,7 +549,7 @@ GameObject:
   - component: {fileID: 7619317504975594832}
   m_Layer: 6
   m_Name: Player3D_Networked
-  m_TagString: Player
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
