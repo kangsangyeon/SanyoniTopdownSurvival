@@ -15,10 +15,10 @@ TagManager:
   - Water
   - UI
   - Character
-  - MyPlayer
+  - 
   - IgnoreCollisionCharacter
   - BlockMovement
-  - 
+  - Projectile
   - 
   - 
   - 
