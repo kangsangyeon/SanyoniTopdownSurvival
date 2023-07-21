@@ -87,7 +87,7 @@ public class Projectile : MonoBehaviour
         var _damageableEntity = col.GetComponent<IDamageableEntity>();
         if (_damageableEntity != null)
         {
-            if (col.gameObject.CompareTag("Player"))
+            if (col.gameObject.CompareTag("Character"))
             {
                 // 발사한 총알이 나 자신이 발사한 총알이라면 무시합니다.
                 var _player = col.GetComponent<Player>();

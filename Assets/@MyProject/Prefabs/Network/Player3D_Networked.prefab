@@ -549,7 +549,7 @@ GameObject:
   - component: {fileID: 7619317504975594832}
   m_Layer: 6
   m_Name: Player3D_Networked
-  m_TagString: Player
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -635,7 +635,18 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 1794637739313597232}
   _networkObjectCache: {fileID: 1794637739313597232}
+  m_CharacterLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  m_IgnoreCollisionCharacterLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  m_BlockMovementLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  m_GravityMultiplier: 3
   m_MoveSpeed: 4
+  m_JumpVelocity: 10
   m_Player: {fileID: 4764942256557422283}
 --- !u!114 &4941231546294391343
 MonoBehaviour:
