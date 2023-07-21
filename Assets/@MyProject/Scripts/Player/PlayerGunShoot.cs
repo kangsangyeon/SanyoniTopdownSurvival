@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FishNet.Object;
 using MyProject.Event;
@@ -35,11 +36,16 @@ namespace MyProject
 
         #region IGunWeapon
 
-        public int damageMagnitude =>
+        public object owner => player;
+
+        public int ownerConnectionId => player.OwnerId;
+
+        public int attackDamageMagnitude =>
             Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage *
                              m_Player.abilityProperty.projectileDamageMultiplier);
 
-        public object owner => player;
+        public float attackDelay =>
+            m_Player.abilityProperty.fireDelay * m_Player.abilityProperty.fireDelayMultiplier;
 
         public int currentMagazineCount
         {
@@ -76,9 +82,30 @@ namespace MyProject
             m_Player.abilityProperty.projectileShotAngleRange;
 
         public event System.Action onCurrentMagazineCountChanged;
-        public event System.Action onFire;
+        public event Action<IWeapon_OnAttack_EventParam> onAttack;
         public event System.Action onReloadStart;
         public event System.Action onReloadFinished;
+
+        [Client(RequireOwnership = true)]
+        public void QueueAttack()
+        {
+            m_ShootQueue = true;
+            m_ShotQueuePosition = m_FirePoint.position;
+            m_ShotQueueRotationY = transform.eulerAngles.y;
+        }
+
+        [Client(RequireOwnership = true)]
+        public void QueueReload()
+        {
+            m_LastReloadStartTime = Time.time;
+            onReloadStart?.Invoke();
+
+            this.Invoke(() =>
+            {
+                currentMagazineCount = maxMagazineCount;
+                onReloadFinished?.Invoke();
+            }, reloadDuration);
+        }
 
         #endregion
 
@@ -133,14 +160,20 @@ namespace MyProject
                 ServerRpcFire(new PlayerGunShoot_Fire_EventParam()
                 {
                     tick = base.TimeManager.Tick,
-                    ownerConnectionId = base.LocalConnection.ClientId,
+                    ownerConnectionId = base.OwnerId,
                     position = m_ShotQueuePosition,
                     rotationY = m_ShotQueueRotationY
                 });
 
                 m_LastFireTime = Time.time;
                 --currentMagazineCount;
-                onFire?.Invoke();
+                onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
+                {
+                    tick = base.TimeManager.Tick,
+                    ownerConnectionId = base.OwnerId,
+                    position = m_ShotQueuePosition,
+                    rotationY = m_ShotQueueRotationY
+                });
             }
         }
 
@@ -284,31 +317,6 @@ namespace MyProject
         private void OnReleaseProjectile(Projectile _projectile)
         {
             _projectile.gameObject.SetActive(false);
-        }
-
-        private void Update()
-        {
-            if (base.IsOwner == false)
-                return;
-
-            if (Input.GetMouseButton(0) && m_CanShoot)
-            {
-                m_ShootQueue = true;
-                m_ShotQueuePosition = m_FirePoint.position;
-                m_ShotQueueRotationY = transform.eulerAngles.y;
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                m_LastReloadStartTime = Time.time;
-                onReloadStart?.Invoke();
-
-                this.Invoke(() =>
-                {
-                    currentMagazineCount = maxMagazineCount;
-                    onReloadFinished?.Invoke();
-                }, reloadDuration);
-            }
         }
     }
 }

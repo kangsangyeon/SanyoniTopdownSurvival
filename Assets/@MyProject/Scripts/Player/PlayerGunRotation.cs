@@ -56,7 +56,7 @@ namespace MyProject
             RotationData _rotationData,
             bool _asServer, Channel _channel = Channel.Unreliable, bool _replaying = false)
         {
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, _rotationData.angle));
+            transform.rotation = Quaternion.Euler(new Vector3(0, _rotationData.angle, 0));
         }
 
         [Reconcile]
@@ -64,7 +64,7 @@ namespace MyProject
             ReconcileData _reconcileData,
             bool _asServer, Channel _channel = Channel.Unreliable)
         {
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, _reconcileData.angle));
+            transform.rotation = Quaternion.Euler(new Vector3(0, _reconcileData.angle, 0));
         }
 
         public override void OnStartNetwork()
@@ -128,8 +128,8 @@ namespace MyProject
             {
                 Vector3 _positionDiff = _mousePositionWorld - _position;
                 _positionDiff.y = 0.0f;
-                m_Angle = Mathf.Atan2(_positionDiff.z, _positionDiff.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.Euler(new Vector3(0, -m_Angle, 0));
+                m_Angle = Mathf.Atan2(_positionDiff.z, _positionDiff.x) * Mathf.Rad2Deg * -1;
+                transform.rotation = Quaternion.Euler(new Vector3(0, m_Angle, 0));
             }
         }
     }

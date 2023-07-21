@@ -22,7 +22,7 @@ namespace MyProject
         [SerializeField] private List<SpriteRenderer> m_SpriteRenderers;
         public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
 
-        [SerializeField] private HealthBar m_HealthBar;
+        [SerializeField] private UI_HealthBar m_HealthBar;
         [SerializeField] private UI_PlayerAmmo m_UI_PlayerAmmo;
 
         private IWeapon m_Weapon;
@@ -34,8 +34,12 @@ namespace MyProject
             {
                 if (m_Weapon != value)
                 {
+                    int? _prevWeaponId = null;
+                    if (m_Weapon != null)
+                        _prevWeaponId = (m_Weapon as NetworkBehaviour).ObjectId;
+
                     m_Weapon = value;
-                    Server_OnWeaponChanged();
+                    Server_OnWeaponChanged(_prevWeaponId);
                 }
             }
         }
@@ -192,6 +196,8 @@ namespace MyProject
             AbilityProperty _abilityProperty,
             AbilityPropertyModifierDefinition _modifierDefinition)
         {
+            /* gun attack */
+
             _abilityProperty.reloadDurationMultiplier =
                 _abilityProperty.reloadDurationMultiplier * _modifierDefinition.reloadDurationMultiplier;
             _abilityProperty.fireDelayMultiplier =
@@ -208,6 +214,14 @@ namespace MyProject
                 _abilityProperty.projectileCountPerShot + _modifierDefinition.projectileCountPerShotAdditional;
             _abilityProperty.projectileShotAngleRange =
                 _abilityProperty.projectileShotAngleRange + _modifierDefinition.projectileSpreadAngleMultiplier;
+
+            /* melee attack */
+
+            _abilityProperty.meleeAttackDelayMultiplier =
+                _abilityProperty.meleeAttackDelayMultiplier * _modifierDefinition.meleeAttackDelayMultiplier;
+            _abilityProperty.meleeAttackDamageMagnitudeMultiplier =
+                _abilityProperty.meleeAttackDamageMagnitudeMultiplier
+                * _modifierDefinition.meleeAttackDamageMagnitudeMultiplier;
         }
 
         #region Events
@@ -288,21 +302,21 @@ namespace MyProject
             onRespawn_OnClient?.Invoke();
         }
 
-        public event System.Action onWeaponChanged_OnServer;
-        public event System.Action onWeaponChanged_OnClient;
+        public event System.Action<int?> onWeaponChanged_OnServer; // param: <prevWeaponObjectId>
+        public event System.Action<int?> onWeaponChanged_OnClient; // param: <prevWeaponObjectId>
 
         [Server]
-        private void Server_OnWeaponChanged()
+        private void Server_OnWeaponChanged(int? _prevWeaponId)
         {
-            onWeaponChanged_OnServer?.Invoke();
-            onWeaponChanged_OnClient?.Invoke();
-            ObserversRpc_OnWeaponChanged();
+            onWeaponChanged_OnServer?.Invoke(_prevWeaponId);
+            onWeaponChanged_OnClient?.Invoke(_prevWeaponId);
+            ObserversRpc_OnWeaponChanged(_prevWeaponId);
         }
 
         [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_OnWeaponChanged()
+        private void ObserversRpc_OnWeaponChanged(int? _prevWeaponId)
         {
-            onWeaponChanged_OnClient?.Invoke();
+            onWeaponChanged_OnClient?.Invoke(_prevWeaponId);
         }
 
         #endregion
@@ -405,6 +419,22 @@ namespace MyProject
                 if (m_HealthBar)
                     m_HealthBar.enabled = true;
             };
+        }
+
+        private void Update()
+        {
+            if (base.IsOwner)
+            {
+                if (Input.GetKey(KeyCode.Mouse0))
+                {
+                    m_Weapon.QueueAttack();
+                }
+
+                if (Input.GetKeyDown(KeyCode.R) && m_Weapon is IGunWeapon _gunWeapon)
+                {
+                    _gunWeapon.QueueReload();
+                }
+            }
         }
     }
 }

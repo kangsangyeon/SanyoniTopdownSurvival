@@ -3,6 +3,8 @@ namespace MyProject
     [System.Serializable]
     public class AbilityProperty
     {
+        /* gun attack */
+
         public readonly float reloadDuration = 3.0f;
         public float reloadDurationMultiplier = 1.0f;
 
@@ -23,5 +25,17 @@ namespace MyProject
         public int projectileCountPerShot = 1;
 
         public float projectileShotAngleRange = 20.0f;
+
+        /* melee attack */
+
+        public readonly float meleeAttackDelay = 0.5f;
+        public float meleeAttackDelayMultiplier = 1.0f;
+
+        public readonly int meleeAttackDamageMagnitude = 40;
+        public float meleeAttackDamageMagnitudeMultiplier = 1.0f;
+
+        /* sword */
+
+        public int swordProjectileRequiredStack = 3;
     }
 }

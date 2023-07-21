@@ -1,3 +1,5 @@
+using System;
+using FishNet;
 using Shapes;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -42,6 +44,7 @@ namespace MyProject
         private int m_LastFiredBulletIndex = 15;
         private float[] m_BulletFireTimes;
         private bool m_ShouldDraw = true;
+        private Action m_GunWeapon_OnCurrentMagazineCountChangedAction;
 
         public void DrawBar()
         {
@@ -73,7 +76,8 @@ namespace MyProject
                     float _tFade = Mathf.Clamp01(_timePassed / m_BulletDisappearTime);
                     _alpha = 1f - _tFade;
                     _origin = GetBulletEjectPos(_origin, _tFade);
-                    float _angle = _timePassed * (m_BulletEjectAngSpeed + Mathf.Cos(_i * 92372.8f) * m_EjectRotSpeedVariance);
+                    float _angle =
+                        _timePassed * (m_BulletEjectAngSpeed + Mathf.Cos(_i * 92372.8f) * m_EjectRotSpeedVariance);
                     _offset = ShapesMath.Rotate(_offset, _angle);
                 }
 
@@ -102,19 +106,26 @@ namespace MyProject
             float _angStart, float _angEnd,
             Color _color)
         {
-            DiscColors _colors = new DiscColors() { innerStart = _color, innerEnd = _color, outerStart = _color, outerEnd = _color };
+            DiscColors _colors = new DiscColors()
+                { innerStart = _color, innerEnd = _color, outerStart = _color, outerEnd = _color };
 
             // inner / outer
             float _innerRadius = _radius - _thickness / 2;
             float _outerRadius = _radius + _thickness / 2;
             const float AA_MARGIN = 0.01f;
-            Draw.Arc(_origin, _innerRadius, _outlineThickness, _angStart - AA_MARGIN, _angEnd + AA_MARGIN, _colors);
-            Draw.Arc(_origin, _outerRadius, _outlineThickness, _angStart - AA_MARGIN, _angEnd + AA_MARGIN, _colors);
+            Draw.Arc(_origin, _innerRadius, _outlineThickness,
+                _angStart - AA_MARGIN, _angEnd + AA_MARGIN,
+                _colors);
+            Draw.Arc(_origin, _outerRadius, _outlineThickness,
+                _angStart - AA_MARGIN, _angEnd + AA_MARGIN,
+                _colors);
 
             // rounded caps
             Vector2 _originBottom = _origin + ShapesMath.AngToDir(_angStart) * _radius;
             Vector2 _originTop = _origin + ShapesMath.AngToDir(_angEnd) * _radius;
-            Draw.Arc(_originBottom, _thickness / 2, _outlineThickness, _angStart, _angStart - ShapesMath.TAU / 2, _colors);
+            Draw.Arc(_originBottom, _thickness / 2, _outlineThickness,
+                _angStart, _angStart - ShapesMath.TAU / 2,
+                _colors);
             Draw.Arc(_originTop, _thickness / 2, _outlineThickness, _angEnd, _angEnd + ShapesMath.TAU / 2, _colors);
         }
 
@@ -141,13 +152,21 @@ namespace MyProject
 
         private void Start()
         {
-            if (m_Player.weapon is IGunWeapon _weapon)
-                InitializeGunWeapon(_weapon);
+            if (m_Player.weapon is IGunWeapon _gunWeapon)
+                InitializeGunWeaponEvents(_gunWeapon);
 
-            m_Player.onWeaponChanged_OnServer += () =>
+            m_Player.onWeaponChanged_OnServer += (_prevWeaponId) =>
             {
-                if (m_Player.weapon is IGunWeapon _weapon)
-                    InitializeGunWeapon(_weapon);
+                if (_prevWeaponId.HasValue)
+                {
+                    IWeapon _prevWeapon = InstanceFinder.ClientManager.Objects.Spawned[_prevWeaponId.Value] as IWeapon;
+
+                    if (_prevWeapon is IGunWeapon _prevGunWeapon)
+                        UninitializeGunWeaponEvents(_prevGunWeapon);
+                }
+
+                if (m_Player.weapon is IGunWeapon _gunWeapon)
+                    InitializeGunWeaponEvents(_gunWeapon);
             };
 
             m_Player.health.onHealthIsZero_OnSync += () => { m_ShouldDraw = false; };
@@ -159,7 +178,7 @@ namespace MyProject
             };
         }
 
-        private void InitializeGunWeapon(IGunWeapon _gunWeapon)
+        private void InitializeGunWeaponEvents(IGunWeapon _gunWeapon)
         {
             m_GunWeapon = _gunWeapon;
 
@@ -168,11 +187,21 @@ namespace MyProject
             //     m_BulletFireTimes = new float[m_GunWeapon.maxMagazineCount + 1];
 
             m_LastFiredBulletIndex = m_GunWeapon.currentMagazineCount;
-            m_GunWeapon.onCurrentMagazineCountChanged += () =>
+
+            m_GunWeapon_OnCurrentMagazineCountChangedAction = () =>
             {
                 m_LastFiredBulletIndex = m_GunWeapon.currentMagazineCount;
                 m_BulletFireTimes[m_LastFiredBulletIndex] = Time.time;
             };
+            m_GunWeapon.onCurrentMagazineCountChanged += m_GunWeapon_OnCurrentMagazineCountChangedAction;
+        }
+
+        private void UninitializeGunWeaponEvents(IGunWeapon _gunWeapon)
+        {
+            _gunWeapon.onCurrentMagazineCountChanged -= m_GunWeapon_OnCurrentMagazineCountChangedAction;
+            m_GunWeapon_OnCurrentMagazineCountChangedAction = null;
+
+            m_GunWeapon = null;
         }
     }
 }
