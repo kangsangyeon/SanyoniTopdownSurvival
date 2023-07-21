@@ -11,6 +11,7 @@ namespace MyProject
         public struct MoveData : IReplicateData
         {
             public Vector3 movement;
+            public bool queueJump;
 
             /* Everything below this is required for
             * the interface. You do not need to implement
@@ -29,6 +30,7 @@ namespace MyProject
         public struct ReconcileData : IReconcileData
         {
             public Vector3 position;
+            public float verticalVelocity;
 
             /* Everything below this is required for
             * the interface. You do not need to implement
@@ -44,11 +46,16 @@ namespace MyProject
             public void SetTick(uint value) => tick = value;
         }
 
+        [SerializeField] private float m_GravityMultiplier = 3f;
+        [SerializeField] private float m_MinVerticalVelocity = -20f;
         [SerializeField] private float m_MoveSpeed = 4f;
+        [SerializeField] private float m_JumpVelocity = 7f;
         [SerializeField] private Player m_Player;
 
         private CharacterController m_CharacterController;
         private Vector3 m_Movement;
+        private float m_VerticalVelocity;
+        private bool m_QueueJump = false;
         private bool m_CanMove = true;
         private bool m_TeleportQueue;
         private Vector3 m_TeleportPosition;
@@ -57,6 +64,9 @@ namespace MyProject
         {
             _moveData = default;
             _moveData.movement = m_Movement;
+            _moveData.queueJump = m_QueueJump;
+
+            m_QueueJump = false;
         }
 
         [TargetRpc(RunLocally = true)]
@@ -81,8 +91,30 @@ namespace MyProject
             // 이것이 클라이언트 액션이 클라이언트에서 거의 확실하게 여러 번 수행되는 이유입니다.
             // 로컬에서 처리될 때 한 번, 그리고 replay 될 때마다 다시 한 번 수행됩니다.
 
-            Vector3 _positionDelta = _moveData.movement * m_MoveSpeed * (float)base.TimeManager.TickDelta;
-            m_CharacterController.Move(_positionDelta);
+            float _delta = (float)base.TimeManager.TickDelta;
+
+            Vector3 _movement = _moveData.movement * m_MoveSpeed;
+
+            if (_moveData.queueJump && m_CharacterController.isGrounded)
+            {
+                // 땅에 붙어있을 때 점프를 하여 vertical velocity를 위로 올릴 수 있습니다.
+                m_VerticalVelocity = m_JumpVelocity;
+            }
+            // else if (m_CharacterController.isGrounded && m_VerticalVelocity < 0.0f)
+            // {
+            //     // 땅에 붙어있을 때 vertical velocity를 -1로 고정합니다.
+            //     // 점프한 프레임에는 이 처리를 실시하지 않습니다.
+            //     m_VerticalVelocity = -1.0f;
+            // }
+
+            // vertical velocity를 적용합니다.
+
+            m_VerticalVelocity = m_VerticalVelocity + Physics.gravity.y * m_GravityMultiplier * _delta;
+            m_VerticalVelocity = Mathf.Max(m_MinVerticalVelocity, m_VerticalVelocity);
+
+            _movement = _movement + Vector3.up * m_VerticalVelocity;
+
+            m_CharacterController.Move(_movement * _delta);
         }
 
         [Reconcile]
@@ -91,6 +123,7 @@ namespace MyProject
             bool _asServer, Channel _channel = Channel.Unreliable)
         {
             transform.position = _reconcileData.position;
+            m_VerticalVelocity = _reconcileData.verticalVelocity;
         }
 
         private void Awake()
@@ -162,7 +195,11 @@ namespace MyProject
         {
             if (base.IsServer)
             {
-                ReconcileData _reconcileData = new ReconcileData() { position = transform.position };
+                ReconcileData _reconcileData = new ReconcileData()
+                {
+                    position = transform.position,
+                    verticalVelocity = m_VerticalVelocity
+                };
                 Reconcile(_reconcileData, true);
             }
         }
@@ -178,6 +215,9 @@ namespace MyProject
                 m_Movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
                 if (m_Movement.magnitude >= 1.0f)
                     m_Movement.Normalize();
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                    m_QueueJump = true;
             }
             else
             {

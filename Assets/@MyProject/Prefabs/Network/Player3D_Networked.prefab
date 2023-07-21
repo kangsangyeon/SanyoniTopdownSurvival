@@ -635,7 +635,10 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 1794637739313597232}
   _networkObjectCache: {fileID: 1794637739313597232}
+  m_GravityMultiplier: 3
+  m_MinVerticalVelocity: -20
   m_MoveSpeed: 4
+  m_JumpVelocity: 10
   m_Player: {fileID: 4764942256557422283}
 --- !u!114 &4941231546294391343
 MonoBehaviour:

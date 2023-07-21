@@ -1151,12 +1151,12 @@ GameObject:
   - component: {fileID: 814842073}
   - component: {fileID: 814842074}
   - component: {fileID: 814842075}
-  - component: {fileID: 814842078}
   - component: {fileID: 814842077}
   - component: {fileID: 814842076}
-  - component: {fileID: 814842079}
   - component: {fileID: 814842080}
+  - component: {fileID: 814842078}
   - component: {fileID: 814842081}
+  - component: {fileID: 814842079}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
