@@ -59,6 +59,7 @@ namespace MyProject
             {
                 _becomeNewLevel = true;
                 ++m_CurrentLevel;
+                Debug.Log($"player level up! become lv {m_CurrentLevel}");
 
                 if (m_CurrentLevel == m_MaxLevel)
                 {
