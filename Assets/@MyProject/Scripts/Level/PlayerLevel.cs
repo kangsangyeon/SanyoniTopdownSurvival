@@ -7,19 +7,23 @@ namespace MyProject
 {
     public class PlayerLevel : NetworkBehaviour, ILevelable
     {
+        [SerializeField] private PlayerLevelPropertyDefinition m_Definition;
+
         #region ILevelable
 
         private int m_CurrentLevel = 1;
         public int currentLevel => m_CurrentLevel;
 
-        private int m_MaxLevel = 10;
-        public int maxLevel => m_MaxLevel;
+        public int maxLevel =>
+            m_Definition.maxLevel;
 
         private int m_CurrentExperience;
         public int currentExperience => m_CurrentExperience;
 
-        private int m_RequiredExperienceToNextLevel;
-        public int requiredExperienceToNextLevel => m_RequiredExperienceToNextLevel;
+        public int requiredExperienceToNextLevel =>
+            currentLevel >= maxLevel
+                ? 0
+                : m_Definition.requiredExperienceArray[currentLevel + 1];
 
         public event Action<ILevelable_CurrentExperienceOrLevelChanged_EventParam> onCurrentExperienceOrLevelChanged;
 
@@ -47,7 +51,7 @@ namespace MyProject
                 return;
             }
 
-            if (m_CurrentLevel > m_MaxLevel)
+            if (m_CurrentLevel > maxLevel)
             {
                 _addedExperience = 0;
                 return;
@@ -57,22 +61,16 @@ namespace MyProject
             _addedExperience = _param.experience;
 
             bool _becomeNewLevel = false;
-            if (m_CurrentExperience >= m_RequiredExperienceToNextLevel)
+            if (m_CurrentExperience >= requiredExperienceToNextLevel)
             {
                 _becomeNewLevel = true;
                 ++m_CurrentLevel;
                 Debug.Log(
-                    $"player level up! become lv {m_CurrentLevel} (exp {m_CurrentExperience}/{m_RequiredExperienceToNextLevel})");
+                    $"player level up! become lv {m_CurrentLevel} (exp {m_CurrentExperience}/{requiredExperienceToNextLevel})");
 
-                if (m_CurrentLevel == m_MaxLevel)
+                if (m_CurrentLevel == maxLevel)
                 {
-                    _addedExperience = m_RequiredExperienceToNextLevel;
-                    m_RequiredExperienceToNextLevel = 0;
-                }
-                else
-                {
-                    // todo: required experience to next level을 다음 레벨까지의 경험치로 올바르게 초기화해주어야 합니다.
-                    UpdateRequiredExperienceToNextLevel();
+                    _addedExperience = requiredExperienceToNextLevel;
                 }
             }
 
@@ -88,15 +86,5 @@ namespace MyProject
         }
 
         #endregion
-
-        private void UpdateRequiredExperienceToNextLevel()
-        {
-            m_RequiredExperienceToNextLevel = m_CurrentLevel * 50;
-        }
-
-        private void Start()
-        {
-            UpdateRequiredExperienceToNextLevel();
-        }
     }
 }

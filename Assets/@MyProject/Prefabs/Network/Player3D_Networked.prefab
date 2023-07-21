@@ -567,6 +567,7 @@ GameObject:
   - component: {fileID: 3371905637330230956}
   - component: {fileID: 7940152513494476753}
   - component: {fileID: 9102785744386135055}
+  - component: {fileID: 7450026796763446544}
   m_Layer: 6
   m_Name: Player3D_Networked
   m_TagString: Character
@@ -855,6 +856,7 @@ MonoBehaviour:
   _componentIndexCache: 5
   _addedNetworkObject: {fileID: 1794637739313597232}
   _networkObjectCache: {fileID: 1794637739313597232}
+  m_Definition: {fileID: 11400000, guid: 7d617ce90742cf0409f10e3af5762dfd, type: 2}
 --- !u!114 &7940152513494476753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -883,6 +885,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Player: {fileID: 4764942256557422283}
   m_ExperienceAmount: 1
+--- !u!114 &7450026796763446544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4020802814622884090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21cae2f83ef07374db397de6d2f269a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Player: {fileID: 4764942256557422283}
+  m_ExperienceAmount: 30
 --- !u!1 &5332182275038304004
 GameObject:
   m_ObjectHideFlags: 0
