@@ -548,6 +548,7 @@ GameObject:
   - component: {fileID: 113317106724916382}
   - component: {fileID: 7619317504975594832}
   - component: {fileID: 3371905637330230956}
+  - component: {fileID: 7940152513494476753}
   m_Layer: 6
   m_Name: Player3D_Networked
   m_TagString: Character
@@ -860,6 +861,20 @@ MonoBehaviour:
   _componentIndexCache: 5
   _addedNetworkObject: {fileID: 1794637739313597232}
   _networkObjectCache: {fileID: 1794637739313597232}
+--- !u!114 &7940152513494476753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4020802814622884090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92dd716c84230d645b9fc5523ae6f0ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Player: {fileID: 4764942256557422283}
+  m_ExperienceAmount: 50
 --- !u!1 &5332182275038304004
 GameObject:
   m_ObjectHideFlags: 0
