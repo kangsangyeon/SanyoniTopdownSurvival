@@ -17,8 +17,6 @@ namespace MyProject
         [SerializeField] private PlayerMovement m_Movement;
         public PlayerMovement movement => m_Movement;
 
-        [SerializeField] private Collider m_Collider;
-
         [SerializeField] private List<SpriteRenderer> m_SpriteRenderers;
         public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
 
@@ -404,7 +402,7 @@ namespace MyProject
 
             health.onHealthIsZero_OnSync += () =>
             {
-                m_Collider.enabled = false;
+                m_Movement.characterController.enabled = false;
                 foreach (SpriteRenderer _renderer in m_SpriteRenderers)
                     _renderer.enabled = false;
                 if (m_HealthBar)
@@ -413,7 +411,7 @@ namespace MyProject
 
             onRespawn_OnClient += () =>
             {
-                m_Collider.enabled = true;
+                m_Movement.characterController.enabled = true;
                 foreach (SpriteRenderer _renderer in m_SpriteRenderers)
                     _renderer.enabled = true;
                 if (m_HealthBar)

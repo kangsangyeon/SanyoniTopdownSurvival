@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 8454728915752237883}
   - component: {fileID: 3595343269274469582}
   - component: {fileID: -8717238241498966416}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RebuildingWallObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}

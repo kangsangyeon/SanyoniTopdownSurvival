@@ -300,6 +300,15 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 1794637739313597232}
   m_Prefab_Projectile: {fileID: 9010814782493167470, guid: 37e77968a261ed34884a45c4f1db505a, type: 3}
   m_AttackRangeCollider: {fileID: 5218512765489629898}
+  m_CharacterLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  m_IgnoreCollisionCharacterLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  m_DamageableLayer:
+    serializedVersion: 2
+    m_Bits: 576
 --- !u!114 &6562644641842848506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,6 +376,15 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1794637739313597232}
   _networkObjectCache: {fileID: 1794637739313597232}
   m_AttackRangeCollider: {fileID: 59308157845106533}
+  m_CharacterLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  m_IgnoreCollisionCharacterLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  m_DamageableLayer:
+    serializedVersion: 2
+    m_Bits: 576
 --- !u!114 &761880860104288248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -537,7 +555,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1274966205073429014}
-  - component: {fileID: 7782831415759233166}
   - component: {fileID: 6546739644535089527}
   - component: {fileID: 2338780143283138286}
   - component: {fileID: 4941231546294391343}
@@ -573,29 +590,6 @@ Transform:
   - {fileID: 7011007498296026548}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &7782831415759233166
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4020802814622884090}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!143 &6546739644535089527
 CharacterController:
   m_ObjectHideFlags: 0
@@ -698,7 +692,6 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 1794637739313597232}
   m_Health: {fileID: 4941231546294391343}
   m_Movement: {fileID: 2338780143283138286}
-  m_Collider: {fileID: 7782831415759233166}
   m_SpriteRenderers: []
   m_HealthBar: {fileID: 8866016524169640324}
   m_UI_PlayerAmmo: {fileID: 5851901156016549447}
