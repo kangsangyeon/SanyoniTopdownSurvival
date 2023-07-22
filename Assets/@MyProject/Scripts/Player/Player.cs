@@ -15,8 +15,14 @@ namespace MyProject
 
         [SerializeField] private PlayerMovement m_Movement;
         public PlayerMovement movement => m_Movement;
-        
-        
+
+        private Camera m_Camera;
+
+        public Camera camera
+        {
+            get => m_Camera;
+            set => m_Camera = value;
+        }
 
         [SerializeField] private UI_HealthBar m_HealthBar;
 
@@ -47,6 +53,27 @@ namespace MyProject
 
         private DamageParam m_LastDamage;
         public DamageParam lastDamage => m_LastDamage;
+
+        #region NetworkBehaviour Events
+
+        public event System.Action onStartServer;
+        public event System.Action onStopServer;
+        public event System.Action onStartClient;
+        public event System.Action onStopClient;
+
+        private bool m_OnStartServerCalled;
+        public bool onStartServerCalled => m_OnStartServerCalled;
+
+        private bool m_OnStopServerCalled;
+        public bool onStopServerCalled => m_OnStopServerCalled;
+
+        private bool m_OnStartClientCalled;
+        public bool onStartClientCalled => m_OnStartClientCalled;
+
+        private bool m_OnStopClientCalled;
+        public bool onStopClientCalled => m_OnStopClientCalled;
+
+        #endregion
 
         #region IDamageableEntity
 
@@ -374,12 +401,34 @@ namespace MyProject
                 health.ApplyModifier(new HealthModifier()
                     { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
             };
+
+            m_OnStartServerCalled = true;
+            onStartServer?.Invoke();
         }
 
         public override void OnStopServer()
         {
             base.OnStopServer();
             Scene_Game.Instance.Server_RemovePlayer(this);
+
+            m_OnStopServerCalled = true;
+            onStopServer?.Invoke();
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            m_OnStartClientCalled = true;
+            onStartClient?.Invoke();
+        }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+
+            m_OnStopClientCalled = true;
+            onStopClient?.Invoke();
         }
 
         public override void OnStartNetwork()

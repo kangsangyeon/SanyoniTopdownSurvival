@@ -245,6 +245,7 @@ MonoBehaviour:
   _componentIndexCache: 7
   _addedNetworkObject: {fileID: 1794637739313597232}
   _networkObjectCache: {fileID: 1794637739313597232}
+  m_Player: {fileID: 4764942256557422283}
 --- !u!1 &2357627702543534074
 GameObject:
   m_ObjectHideFlags: 0
@@ -808,7 +809,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 1794637739313597232}
   m_Health: {fileID: 4941231546294391343}
   m_Movement: {fileID: 2338780143283138286}
-  m_SpriteRenderers: []
+  m_Camera: {fileID: 0}
   m_HealthBar: {fileID: 8866016524169640324}
 --- !u!114 &5459516650891071884
 MonoBehaviour:
@@ -863,11 +864,22 @@ MonoBehaviour:
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 2
   <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 0
+  _scenePathHash: 3562130460
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 18431371148239109002
   _sceneNetworkObjects:
   - {fileID: 1794637739313597232}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}
 --- !u!114 &113317106724916382
 MonoBehaviour:

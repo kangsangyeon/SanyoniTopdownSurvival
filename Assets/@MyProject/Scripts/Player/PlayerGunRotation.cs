@@ -43,6 +43,9 @@ namespace MyProject
             public void SetTick(uint value) => tick = value;
         }
 
+        [SerializeField] private Player m_Player;
+        public Player player => m_Player;
+
         private float m_Angle;
 
         private void BuildData(out RotationData _moveData)
@@ -118,7 +121,7 @@ namespace MyProject
             Vector3 _position = transform.position;
             Vector3 _mousePositionWorld = _position;
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = m_Player.camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 _mousePositionWorld = hit.point;
