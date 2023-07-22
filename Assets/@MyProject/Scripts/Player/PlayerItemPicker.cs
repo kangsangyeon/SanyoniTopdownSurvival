@@ -1,24 +1,29 @@
+using FishNet;
 using UnityEngine;
 
 namespace MyProject
 {
     public class PlayerItemPicker : MonoBehaviour
     {
-        private Player m_Player;
-        public Player player => m_Player;
+        [SerializeField] private Player m_Player;
 
         private void Awake()
         {
-            m_Player = GetComponentInParent<Player>();
+            if (InstanceFinder.IsServer == false)
+            {
+                enabled = false;
+                return;
+            }
         }
 
         private void OnTriggerStay(Collider _other)
         {
-            if (_other is IObtainableItem _item)
+            if (_other.GetComponent<IObtainableItem>() is IObtainableItem _item)
             {
                 if (_item.canObtain)
                 {
-                    _item.OnObtain(m_Player);
+                    _item.Obtain(m_Player);
+                    Debug.Log($"obtain item! {_other.gameObject.name}");
                 }
             }
         }

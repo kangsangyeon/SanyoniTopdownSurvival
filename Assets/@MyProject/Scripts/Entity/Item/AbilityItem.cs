@@ -1,9 +1,10 @@
+using System;
 using FishNet.Object;
 using UnityEngine;
 
 namespace MyProject
 {
-    public class GetAbilityItem : MonoBehaviour, IObtainableItem
+    public class AbilityItem : NetworkBehaviour, IObtainableItem
     {
         [SerializeField] private AbilityDefinition m_Ability;
         [SerializeField] private float m_CanObtainDelay = 1.0f;
@@ -20,12 +21,15 @@ namespace MyProject
         public bool canObtain =>
             m_AlreadyClaimed == false && Time.time - m_SpawnTime >= m_CanObtainDelay;
 
+        public event Action<Player> onObtain;
+
         [Server]
-        public void OnObtain(Player _player)
+        public void Obtain(Player _player)
         {
             m_AlreadyClaimed = true;
             m_Collider.enabled = false;
             _player.Server_AddAbility(m_Ability);
+            onObtain?.Invoke(_player);
         }
 
         #endregion

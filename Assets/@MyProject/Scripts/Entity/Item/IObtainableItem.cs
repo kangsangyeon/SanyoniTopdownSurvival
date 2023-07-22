@@ -3,7 +3,9 @@ namespace MyProject
     public interface IObtainableItem
     {
         bool canObtain { get; }
+
+        event System.Action<Player> onObtain;
         
-        void OnObtain(Player _player);
+        void Obtain(Player _player);
     }
 }
