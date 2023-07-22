@@ -65,8 +65,6 @@ namespace MyProject
             {
                 _becomeNewLevel = true;
                 ++m_CurrentLevel;
-                Debug.Log(
-                    $"player level up! become lv {m_CurrentLevel} (exp {m_CurrentExperience}/{requiredExperienceToNextLevel})");
 
                 if (m_CurrentLevel == maxLevel)
                 {
@@ -81,8 +79,6 @@ namespace MyProject
                 addedExperience = _addedExperience,
                 becomeNewLevel = _becomeNewLevel
             });
-
-            Debug.Log($"PlayerLevel: player gain {_addedExperience}!");
         }
 
         #endregion
