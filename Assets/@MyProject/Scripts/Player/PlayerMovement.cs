@@ -58,6 +58,8 @@ namespace MyProject
         [SerializeField] private Player m_Player;
 
         private CharacterController m_CharacterController;
+        public CharacterController characterController => m_CharacterController;
+        
         private Vector3 m_Movement;
         private float m_VerticalVelocity;
         private bool m_QueueJump = false; // client only

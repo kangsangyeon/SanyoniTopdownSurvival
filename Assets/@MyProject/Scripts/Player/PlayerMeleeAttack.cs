@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FishNet.Object;
 using MyProject.Event;
 using MyProject.Struct;
@@ -14,6 +15,10 @@ namespace MyProject
         private const float MAX_PASSED_TIME = 0.3f;
 
         [SerializeField] private Collider m_AttackRangeCollider;
+
+        [SerializeField] private LayerMask m_CharacterLayer;
+        [SerializeField] private LayerMask m_IgnoreCollisionCharacterLayer;
+        [SerializeField] private LayerMask m_DamageableLayer;
 
         private Player m_Player;
 
@@ -149,26 +154,31 @@ namespace MyProject
             float _passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
             _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
 
+            List<IDamageableEntity> _alreadyDamagedList = new List<IDamageableEntity>();
+
+            SetCharacterLayer(true);
+
             var _others = Physics.OverlapBox(
                 _param.position,
                 m_AttackRangeCollider.bounds.extents,
-                Quaternion.Euler(0, _param.rotationY, 0));
+                Quaternion.Euler(0, _param.rotationY, 0),
+                m_DamageableLayer);
 
             foreach (var _collider in _others)
             {
                 var _damageableEntity = _collider.GetComponent<IDamageableEntity>();
                 if (_damageableEntity != null)
                 {
-                    if (_collider.gameObject.CompareTag("Character"))
+                    if (_alreadyDamagedList.Contains(_damageableEntity))
                     {
-                        // 나 자신이 내 공격에 데미지를 받지 않습니다.
-                        var _player = _collider.GetComponent<Player>();
-                        if (_player.OwnerId == base.OwnerId)
-                            continue;
+                        // 이미 동일한 공격에 피격된 대상이라면
+                        // 피격 처리를 중복으로 하지 않습니다.
+                        continue;
                     }
 
-                    Vector3 _attackDirection = GetDirectionsByRotationY(_param.rotationY);
+                    _alreadyDamagedList.Add(_damageableEntity);
 
+                    Vector3 _attackDirection = GetDirectionsByRotationY(_param.rotationY);
                     var _damageParam = new DamageParam()
                     {
                         direction = _attackDirection,
@@ -179,6 +189,7 @@ namespace MyProject
                         {
                             magnitude = _attackDamage,
                             source = this,
+                            sourceOwnerObject = player,
                             time = Time.time
                         }
                     };
@@ -195,6 +206,8 @@ namespace MyProject
                         _damageParam, _param.tick);
                 }
             }
+
+            SetCharacterLayer(false);
         }
 
         [ObserversRpc(ExcludeOwner = true, ExcludeServer = true)]
@@ -221,6 +234,20 @@ namespace MyProject
                 * Vector3.forward;
 
             return _rangeCenterDirection;
+        }
+
+        /// <summary>
+        /// 캐릭터의 레이어를 설정합니다.
+        /// 이는 캐릭터의 히트박스가 어떤 레이어 오브젝트와의 충돌을 허용할 것인지 설정합니다.
+        /// </summary>
+        /// <param name="_toIgnoreCollision">true를 건네주면 character간 충돌을 중단합니다.</param>
+        private void SetCharacterLayer(bool _toIgnoreCollision)
+        {
+            int _layer = _toIgnoreCollision
+                ? LayerMaskHelper.LayerMaskToLayerNumber(m_IgnoreCollisionCharacterLayer)
+                : LayerMaskHelper.LayerMaskToLayerNumber(m_CharacterLayer);
+
+            m_Player.gameObject.layer = _layer;
         }
 
         private void Awake()

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3777479467466773989}
   - component: {fileID: 5847871430479415379}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7657988648982063192}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8106772714213179776}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &5847871430479415379
 SpriteRenderer:
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 4410583074850185016}
   - component: {fileID: 6067862448787253388}
   - component: {fileID: 9010814782493167470}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,6 +110,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8890594909263796449}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.107, y: -2.756244, z: 0}
   m_LocalScale: {x: 0.18, y: 0.18, z: 0.18}
@@ -117,7 +118,6 @@ Transform:
   m_Children:
   - {fileID: 3777479467466773989}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &4410583074850185016
 SphereCollider:
@@ -182,4 +182,5 @@ MonoBehaviour:
   m_LiveDuration: 1
   m_StartTime: 0
   m_Speed: 8
+  m_DamageMagnitude: -10
   m_OwnerConnectionId: 0
