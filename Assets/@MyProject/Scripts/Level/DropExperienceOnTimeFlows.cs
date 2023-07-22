@@ -10,7 +10,7 @@ namespace MyProject
 {
     public class DropExperienceOnTimeFlows : MonoBehaviour, IDropExperience
     {
-        [SerializeField] private float m_TimeInterval;
+        [SerializeField] private float m_TimeInterval = 1.0f;
 
         private Coroutine m_Coroutine;
         private List<ILevelable> m_PlayerLevelableList;
@@ -39,7 +39,7 @@ namespace MyProject
                         experience = experienceAmount
                     }, out int _addedExperience)
                 );
-                yield return new WaitForSeconds(1.0f);
+                yield return new WaitForSeconds(m_TimeInterval);
             }
         }
 
