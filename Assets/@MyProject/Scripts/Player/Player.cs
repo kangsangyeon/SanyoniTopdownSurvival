@@ -21,7 +21,6 @@ namespace MyProject
         public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
 
         [SerializeField] private UI_HealthBar m_HealthBar;
-        [SerializeField] private UI_PlayerAmmo m_UI_PlayerAmmo;
 
         private IWeapon m_Weapon;
 
@@ -394,10 +393,6 @@ namespace MyProject
             if (base.Owner.IsLocalClient)
             {
                 OfflineGameplayDependencies.gameScene.myPlayer = this;
-            }
-            else
-            {
-                m_UI_PlayerAmmo.enabled = false;
             }
 
             health.onHealthIsZero_OnSync += () =>

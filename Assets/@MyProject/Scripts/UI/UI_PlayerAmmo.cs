@@ -152,6 +152,12 @@ namespace MyProject
 
         private void Start()
         {
+            if (m_Player.IsOwner == false)
+            {
+                this.enabled = false;
+                return;
+            }
+
             if (m_Player.weapon is IGunWeapon _gunWeapon)
                 InitializeGunWeaponEvents(_gunWeapon);
 
