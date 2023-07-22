@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace MyProject
 {
-    public class AbilityItem : NetworkBehaviour, IObtainableItem
+    public class AbilityItem : NetworkBehaviour, IPickupItem
     {
         [SerializeField] private AbilityDefinition m_Ability;
-        [SerializeField] private float m_CanObtainDelay = 1.0f;
+        [SerializeField] private float m_CanPickupDelay = 1.0f;
 
         [SerializeField] private Collider m_Collider;
 
@@ -19,19 +19,19 @@ namespace MyProject
 
         #region IObtainableItem
 
-        public bool canObtain =>
-            m_AlreadyClaimed == false && Time.time - m_SpawnTime >= m_CanObtainDelay;
+        public bool canPickup =>
+            m_AlreadyClaimed == false && Time.time - m_SpawnTime >= m_CanPickupDelay;
 
-        public event Action<Player> onObtain;
+        public event Action<Player> onPickup;
 
         [Server]
-        public void Obtain(Player _player)
+        public void Pickup(Player _player)
         {
             m_AlreadyClaimed = true;
             m_Collider.enabled = false;
 
             _player.Server_AddAbility(m_Ability);
-            onObtain?.Invoke(_player);
+            onPickup?.Invoke(_player);
             InstanceFinder.ServerManager.Despawn(gameObject);
         }
 

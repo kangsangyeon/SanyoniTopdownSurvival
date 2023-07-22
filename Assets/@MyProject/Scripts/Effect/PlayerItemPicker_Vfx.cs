@@ -17,20 +17,20 @@ namespace MyProject
         {
             m_OnPickItemAction = _param =>
             {
-                IObtainableItem _item = null;
+                IPickupItem _item = null;
 
                 if (InstanceFinder.IsServer
                     && InstanceFinder.ServerManager.Objects.Spawned.ContainsKey(_param.itemNetworkObjectId))
                 {
                     _item =
                         InstanceFinder.ServerManager.Objects.Spawned[_param.itemNetworkObjectId]
-                            .GetComponent<IObtainableItem>();
+                            .GetComponent<IPickupItem>();
                 }
                 else if (InstanceFinder.ClientManager.Objects.Spawned.ContainsKey(_param.itemNetworkObjectId))
                 {
                     _item =
                         InstanceFinder.ClientManager.Objects.Spawned[_param.itemNetworkObjectId]
-                            .GetComponent<IObtainableItem>();
+                            .GetComponent<IPickupItem>();
                 }
 
                 if (_item != null)

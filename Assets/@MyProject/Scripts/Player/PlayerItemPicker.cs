@@ -14,7 +14,7 @@ namespace MyProject
         public event System.Action<PlayerItemPicker_OnPickItem_EventParam> onPickItem_OnClient; // param: <item> 
 
         [Server]
-        private void Server_OnPickItem(IObtainableItem _item)
+        private void Server_OnPickItem(IPickupItem _item)
         {
             var _itemNetworkBehaviour = (_item as NetworkBehaviour);
             var _itemTransform = _itemNetworkBehaviour.transform;
@@ -47,11 +47,11 @@ namespace MyProject
                 return;
             }
 
-            if (_other.GetComponent<IObtainableItem>() is IObtainableItem _item)
+            if (_other.GetComponent<IPickupItem>() is IPickupItem _item)
             {
-                if (_item.canObtain)
+                if (_item.canPickup)
                 {
-                    _item.Obtain(m_Player);
+                    _item.Pickup(m_Player);
                     Server_OnPickItem(_item);
                 }
             }
