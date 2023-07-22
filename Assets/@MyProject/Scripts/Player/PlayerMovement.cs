@@ -59,7 +59,7 @@ namespace MyProject
 
         private CharacterController m_CharacterController;
         public CharacterController characterController => m_CharacterController;
-        
+
         private Vector3 m_Movement;
         private float m_VerticalVelocity;
         private bool m_QueueJump = false; // client only
@@ -101,7 +101,8 @@ namespace MyProject
              * 서서히 추진력을 잃는 듯한 느낌을 주도록 합니다.
              */
             if (m_CharacterController.isGrounded && m_VerticalVelocity < -1f)
-                m_VerticalVelocity = Mathf.MoveTowards(m_VerticalVelocity, -1f, (-Physics.gravity.y * m_GravityMultiplier * 2f) * _deltaTime);
+                m_VerticalVelocity = Mathf.MoveTowards(m_VerticalVelocity, -1f,
+                    (-Physics.gravity.y * m_GravityMultiplier * 2f) * _deltaTime);
         }
 
         /// <summary>
@@ -204,7 +205,8 @@ namespace MyProject
                 Vector3 _start = transform.position + new Vector3(0f, m_CharacterController.height / 2f, 0f);
                 Vector3 _estimatedImpact =
                     transform.position
-                    + (_input.movement * (m_CharacterController.radius + m_CharacterController.skinWidth + _moveRate) * _deltaTime);
+                    + (_input.movement * (m_CharacterController.radius + m_CharacterController.skinWidth + _moveRate) *
+                       _deltaTime);
                 float _distance = (_start - _estimatedImpact).magnitude;
                 Vector3 _direction = (_estimatedImpact - _start).normalized;
                 Ray _ray = new Ray(_start, _direction);
@@ -419,7 +421,14 @@ namespace MyProject
 
             if (m_CanMove)
             {
-                m_Movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+                Transform _camTransform = Camera.main.transform;
+                Vector3 _camForwardXZ = new Vector3(_camTransform.forward.x, 0, _camTransform.forward.z).normalized;
+                Vector3 _camRightXZ = new Vector3(_camTransform.right.x, 0, _camTransform.right.z).normalized;
+                
+                m_Movement =
+                    _camForwardXZ * Input.GetAxisRaw("Vertical")
+                    + _camRightXZ * Input.GetAxisRaw("Horizontal");
+                
                 if (m_Movement.magnitude >= 1.0f)
                     m_Movement.Normalize();
 
