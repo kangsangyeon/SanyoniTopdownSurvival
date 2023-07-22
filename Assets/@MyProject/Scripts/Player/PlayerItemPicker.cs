@@ -1,29 +1,58 @@
 using FishNet;
+using FishNet.Object;
+using MyProject.Event;
 using UnityEngine;
 
 namespace MyProject
 {
-    public class PlayerItemPicker : MonoBehaviour
+    public class PlayerItemPicker : NetworkBehaviour
     {
         [SerializeField] private Player m_Player;
 
-        private void Awake()
+        #region Events
+
+        public event System.Action<PlayerItemPicker_OnPickItem_EventParam> onPickItem_OnClient; // param: <item> 
+
+        [Server]
+        private void Server_OnPickItem(IObtainableItem _item)
         {
-            if (InstanceFinder.IsServer == false)
+            var _itemNetworkBehaviour = (_item as NetworkBehaviour);
+            var _itemTransform = _itemNetworkBehaviour.transform;
+
+            var _param = new PlayerItemPicker_OnPickItem_EventParam()
             {
-                enabled = false;
-                return;
-            }
+                tick = InstanceFinder.TimeManager.Tick,
+                itemNetworkObjectId = _itemNetworkBehaviour.ObjectId,
+                itemPosition = _itemTransform.position,
+                itemRotation = _itemTransform.rotation
+            };
+
+            onPickItem_OnClient?.Invoke(_param);
+            ObserversRpc_OnPickItem(_param);
         }
+
+        [ObserversRpc]
+        private void ObserversRpc_OnPickItem(PlayerItemPicker_OnPickItem_EventParam _param)
+        {
+            onPickItem_OnClient?.Invoke(_param);
+        }
+
+        #endregion
 
         private void OnTriggerStay(Collider _other)
         {
+            if (base.IsServer == false)
+            {
+                // collision 판정은 서버에서만 합니다.
+                return;
+            }
+
             if (_other.GetComponent<IObtainableItem>() is IObtainableItem _item)
             {
                 if (_item.canObtain)
                 {
                     _item.Obtain(m_Player);
-                    Debug.Log($"obtain item! {_other.gameObject.name}");
+                    Server_OnPickItem(_item);
                 }
             }
         }

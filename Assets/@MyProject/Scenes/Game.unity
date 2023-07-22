@@ -290,68 +290,17 @@ MonoBehaviour:
   - {fileID: 1771771596}
   - {fileID: 2549422017930711061}
   - {fileID: 3418329739789209597}
---- !u!1 &41180121 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5710849345423677905, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+--- !u!114 &41180125 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
   m_PrefabInstance: {fileID: 7750150132325841373}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &41180123 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8128907370979020523, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
-  m_PrefabInstance: {fileID: 7750150132325841373}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 41180121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3847f3255b4cc44f9030f47879c5e33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &41180125
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 41180121}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <IsNested>k__BackingField: 0
-  <ComponentIndex>k__BackingField: 0
-  <PredictedSpawn>k__BackingField: {fileID: 0}
-  _networkBehaviours:
-  - {fileID: 41180123}
-  <ParentNetworkObject>k__BackingField: {fileID: 0}
-  <ChildNetworkObjects>k__BackingField: []
-  SerializedTransformProperties:
-    Position: {x: -2.85, y: -0.00000011920929, z: -0.3647375}
-    Rotation: {x: 0, y: 0, z: 0, w: 1}
-    LocalScale: {x: 1, y: 1, z: 1}
-  _isNetworked: 1
-  _isGlobal: 0
-  _initializeOrder: 0
-  _defaultDespawnType: 0
-  NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 0
-  <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 3562130460
-  <SceneId>k__BackingField: 15299233831323450070
-  <AssetPathHash>k__BackingField: 0
-  _sceneNetworkObjects:
-  - {fileID: 41180125}
-  - {fileID: 21494057}
-  - {fileID: 265210631}
-  - {fileID: 435534447}
-  - {fileID: 693265302}
-  - {fileID: 1059103166}
-  - {fileID: 1270938592}
-  - {fileID: 1717886052}
-  - {fileID: 1769307353}
-  - {fileID: 1771771596}
-  - {fileID: 2549422017930711061}
-  - {fileID: 3418329739789209597}
 --- !u!1 &43713962
 GameObject:
   m_ObjectHideFlags: 0
@@ -3657,17 +3606,58 @@ PrefabInstance:
       propertyPath: m_Name
       value: AbilityItem_FastBullet
       objectReference: {fileID: 0}
-    - target: {fileID: 8128907370979020523, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
-      propertyPath: _addedNetworkObject
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: <SceneId>k__BackingField
+      value: 15299233834079826282
+      objectReference: {fileID: 0}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[1]
       value: 
-      objectReference: {fileID: 41180125}
+      objectReference: {fileID: 21494057}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[2]
+      value: 
+      objectReference: {fileID: 265210631}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[3]
+      value: 
+      objectReference: {fileID: 435534447}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[4]
+      value: 
+      objectReference: {fileID: 693265302}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[5]
+      value: 
+      objectReference: {fileID: 1059103166}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[6]
+      value: 
+      objectReference: {fileID: 1270938592}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[7]
+      value: 
+      objectReference: {fileID: 1717886052}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[8]
+      value: 
+      objectReference: {fileID: 1769307353}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[9]
+      value: 
+      objectReference: {fileID: 1771771596}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[10]
+      value: 
+      objectReference: {fileID: 2549422017930711061}
+    - target: {fileID: 6084721155540682889, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[11]
+      value: 
+      objectReference: {fileID: 3418329739789209597}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5710849345423677905, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 41180125}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

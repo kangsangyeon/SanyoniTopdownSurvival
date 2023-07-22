@@ -1,4 +1,5 @@
 using System;
+using FishNet;
 using FishNet.Object;
 using UnityEngine;
 
@@ -28,8 +29,10 @@ namespace MyProject
         {
             m_AlreadyClaimed = true;
             m_Collider.enabled = false;
+
             _player.Server_AddAbility(m_Ability);
             onObtain?.Invoke(_player);
+            InstanceFinder.ServerManager.Despawn(gameObject);
         }
 
         #endregion
