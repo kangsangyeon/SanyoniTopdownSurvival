@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using FishNet.Connection;
 using FishNet.Object;
@@ -16,9 +15,8 @@ namespace MyProject
 
         [SerializeField] private PlayerMovement m_Movement;
         public PlayerMovement movement => m_Movement;
-
-        [SerializeField] private List<SpriteRenderer> m_SpriteRenderers;
-        public ReadOnlyCollection<SpriteRenderer> spriteRenderers => m_SpriteRenderers.AsReadOnly();
+        
+        
 
         [SerializeField] private UI_HealthBar m_HealthBar;
 
@@ -398,8 +396,6 @@ namespace MyProject
             health.onHealthIsZero_OnSync += () =>
             {
                 m_Movement.characterController.enabled = false;
-                foreach (SpriteRenderer _renderer in m_SpriteRenderers)
-                    _renderer.enabled = false;
                 if (m_HealthBar)
                     m_HealthBar.enabled = false;
             };
@@ -407,8 +403,6 @@ namespace MyProject
             onRespawn_OnClient += () =>
             {
                 m_Movement.characterController.enabled = true;
-                foreach (SpriteRenderer _renderer in m_SpriteRenderers)
-                    _renderer.enabled = true;
                 if (m_HealthBar)
                     m_HealthBar.enabled = true;
             };
