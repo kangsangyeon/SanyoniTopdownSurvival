@@ -121,7 +121,7 @@ namespace MyProject
             Vector3 _position = transform.position;
             Vector3 _mousePositionWorld = _position;
 
-            Ray ray = m_Player.camera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 _mousePositionWorld = hit.point;

@@ -16,14 +16,6 @@ namespace MyProject
         [SerializeField] private PlayerMovement m_Movement;
         public PlayerMovement movement => m_Movement;
 
-        private Camera m_Camera;
-
-        public Camera camera
-        {
-            get => m_Camera;
-            set => m_Camera = value;
-        }
-
         [SerializeField] private UI_HealthBar m_HealthBar;
 
         private IWeapon m_Weapon;

@@ -422,7 +422,7 @@ namespace MyProject
 
             if (m_CanMove)
             {
-                Transform _camTransform = m_Player.camera.transform;
+                Transform _camTransform = Camera.main.transform;
                 Vector3 _camForwardXZ = new Vector3(_camTransform.forward.x, 0, _camTransform.forward.z).normalized;
                 Vector3 _camRightXZ = new Vector3(_camTransform.right.x, 0, _camTransform.right.z).normalized;
 
