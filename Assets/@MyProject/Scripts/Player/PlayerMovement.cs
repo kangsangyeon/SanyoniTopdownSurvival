@@ -1,5 +1,4 @@
 using FishNet.Connection;
-using FishNet.Managing.Logging;
 using FishNet.Object;
 using FishNet.Object.Prediction;
 using FishNet.Transporting;
@@ -55,7 +54,9 @@ namespace MyProject
 
         [SerializeField] private float m_MoveSpeed = 4f;
         [SerializeField] private float m_JumpVelocity = 7f;
+
         [SerializeField] private Player m_Player;
+        public Player player => m_Player;
 
         private CharacterController m_CharacterController;
         public CharacterController characterController => m_CharacterController;
@@ -424,11 +425,11 @@ namespace MyProject
                 Transform _camTransform = Camera.main.transform;
                 Vector3 _camForwardXZ = new Vector3(_camTransform.forward.x, 0, _camTransform.forward.z).normalized;
                 Vector3 _camRightXZ = new Vector3(_camTransform.right.x, 0, _camTransform.right.z).normalized;
-                
+
                 m_Movement =
                     _camForwardXZ * Input.GetAxisRaw("Vertical")
                     + _camRightXZ * Input.GetAxisRaw("Horizontal");
-                
+
                 if (m_Movement.magnitude >= 1.0f)
                     m_Movement.Normalize();
 

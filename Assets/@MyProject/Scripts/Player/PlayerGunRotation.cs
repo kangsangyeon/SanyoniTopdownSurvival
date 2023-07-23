@@ -43,6 +43,9 @@ namespace MyProject
             public void SetTick(uint value) => tick = value;
         }
 
+        [SerializeField] private Player m_Player;
+        public Player player => m_Player;
+
         private float m_Angle;
 
         private void BuildData(out RotationData _moveData)
