@@ -823,7 +823,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c979e77bf0729bf48afdc98d4a61c4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Player: {fileID: 0}
 --- !u!114 &1794637739313597232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -854,7 +853,7 @@ MonoBehaviour:
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
-    Position: {x: -2.442199, y: 0, z: -1.4276628}
+    Position: {x: 4.5651603, y: 0.397, z: -5.319018}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     LocalScale: {x: 1, y: 1, z: 1}
   _isNetworked: 1
@@ -864,11 +863,24 @@ MonoBehaviour:
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 2
   <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 0
+  _scenePathHash: 920309226
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 18431371148239109002
   _sceneNetworkObjects:
   - {fileID: 1794637739313597232}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}
 --- !u!114 &113317106724916382
 MonoBehaviour:
@@ -1026,7 +1038,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c979e77bf0729bf48afdc98d4a61c4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Player: {fileID: 4764942256557422283}
 --- !u!1 &5062409954553816148
 GameObject:
   m_ObjectHideFlags: 0
@@ -1082,7 +1093,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 45
+    FieldOfView: 50
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
