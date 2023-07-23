@@ -21,7 +21,7 @@ namespace MyProject
             return _position;
         }
 
-        private void OnEnable()
+        private void Start()
         {
             m_OnPlayerAddedAction = _player =>
             {
@@ -42,7 +42,7 @@ namespace MyProject
             OfflineGameplayDependencies.gameScene.onPlayerAdded_OnServer += m_OnPlayerAddedAction;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             if (m_OnPlayerAddedAction != null)
             {
