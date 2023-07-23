@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FishNet.Object;
 using MyProject.Event;
 using UnityEngine;
@@ -20,10 +21,12 @@ namespace MyProject
         private int m_CurrentExperience;
         public int currentExperience => m_CurrentExperience;
 
+        private int[] m_RequiredExperienceByLevel;
+
         public int requiredExperienceToNextLevel =>
             currentLevel >= maxLevel
                 ? 0
-                : m_Definition.requiredExperienceArray[currentLevel + 1];
+                : m_RequiredExperienceByLevel[currentLevel + 1];
 
         public event Action<ILevelable_CurrentExperienceOrLevelChanged_EventParam> onCurrentExperienceOrLevelChanged;
 
@@ -65,7 +68,6 @@ namespace MyProject
             {
                 _becomeNewLevel = true;
                 ++m_CurrentLevel;
-                Debug.Log("level up");
 
                 if (m_CurrentLevel == maxLevel)
                 {
@@ -83,5 +85,16 @@ namespace MyProject
         }
 
         #endregion
+
+        private void Start()
+        {
+            m_RequiredExperienceByLevel = new int[m_Definition.requiredExperienceToNextLevelGapArray.Length];
+            int _prevValue = 0;
+            for (int i = 2; i < m_Definition.requiredExperienceToNextLevelGapArray.Length; ++i)
+            {
+                m_RequiredExperienceByLevel[i] = _prevValue + m_Definition.requiredExperienceToNextLevelGapArray[i];
+                _prevValue = m_RequiredExperienceByLevel[i];
+            }
+        }
     }
 }
