@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1494690074406284, guid: 17c4c9e970feeb54f8fcf456f90d24ce, type: 3}
       propertyPath: m_Name
-      value: slashVolume_heavy_darkBlue Variant
+      value: FX_MeleeWeapon_Slash_Dark
       objectReference: {fileID: 0}
     - target: {fileID: 4932093234961054, guid: 17c4c9e970feeb54f8fcf456f90d24ce, type: 3}
       propertyPath: m_LocalScale.x
