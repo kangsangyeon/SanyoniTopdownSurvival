@@ -16,5 +16,6 @@ MonoBehaviour:
   m_AbilityName: Buck Shot
   m_Thumbnail: {fileID: 0}
   m_Description: "\uCD1D\uC54C\uC774 \uC0B0\uD0C4\uC73C\uB85C \uBC1C\uC0AC\uB429\uB2C8\uB2E4!"
+  m_Prefab_Model: {fileID: 202652190084042631, guid: 5a94fc8d32c760f4f809ae1855b3a488, type: 3}
   m_AbilityPropertyModifierDefinitionList:
   - {fileID: 11400000, guid: cac21f2d53a72a64fa77369a4d3ab9ad, type: 2}
