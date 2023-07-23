@@ -265,18 +265,6 @@ namespace MyProject
                     SpawnProjectile(
                         _param.ownerConnectionId, _passedTime,
                         _param.position, _d);
-
-                _projectile.onHit += _col =>
-                {
-                    Server_OnProjectileHit(new Weapon_MagicSword_OnProjectileHit_EventParam()
-                    {
-                        tick = _param.tick,
-                        ownerConnectionId = _param.ownerConnectionId,
-                        hitPoint = _col.ClosestPoint(_projectile.transform.position),
-                        hitDirection = _projectile.direction,
-                        hitRotation = Quaternion.Euler(0, _param.rotationY, 0)
-                    });
-                };
             });
         }
 
@@ -419,7 +407,18 @@ namespace MyProject
             Projectile _projectile = Instantiate(m_Prefab_Projectile);
             _projectile.gameObject.SetActive(false);
             _projectile.onLifeEnd += () => { m_ProjectilePool.Release(_projectile); };
-            _projectile.onHit += (col) => { m_ProjectilePool.Release(_projectile); };
+            _projectile.onHit += (col) =>
+            {
+                Server_OnProjectileHit(new Weapon_MagicSword_OnProjectileHit_EventParam()
+                {
+                    tick = base.TimeManager.Tick,
+                    ownerConnectionId = _projectile.m_OwnerConnectionId,
+                    hitPoint = col.ClosestPoint(_projectile.transform.position),
+                    hitDirection = _projectile.direction,
+                    hitRotation = Quaternion.Euler(0, _projectile.transform.rotation.eulerAngles.y, 0)
+                });
+                m_ProjectilePool.Release(_projectile);
+            };
 
             return _projectile;
         }
@@ -447,7 +446,7 @@ namespace MyProject
             m_LastAttackTime = -9999;
             m_CanAttack = true;
 
-            player.health.onHealthChanged_OnSync += _amount =>
+            player.health.onHealthChanged_OnSync +=_amount =>
             {
                 if (player.health.health > 0)
                     m_CanAttack = true;
