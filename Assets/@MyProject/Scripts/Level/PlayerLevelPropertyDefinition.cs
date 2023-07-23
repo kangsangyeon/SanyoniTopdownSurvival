@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MyProject
 {
@@ -8,7 +9,7 @@ namespace MyProject
         [SerializeField] private int m_MaxLevel;
         public int maxLevel => m_MaxLevel;
 
-        [SerializeField] private int[] m_RequiredExperienceArray;
-        public int[] requiredExperienceArray => m_RequiredExperienceArray;
+        [SerializeField] private int[] m_RequiredExperienceToNextLevelGapArray;
+        public int[] requiredExperienceToNextLevelGapArray => m_RequiredExperienceToNextLevelGapArray;
     }
 }
