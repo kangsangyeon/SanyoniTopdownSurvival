@@ -19,6 +19,9 @@ namespace MyProject
         [SerializeField] private string m_Description;
         public string description => m_Description;
 
+        [SerializeField] private GameObject m_Prefab_Model;
+        public GameObject prefabModel => m_Prefab_Model;
+
         [SerializeField] private List<AbilityPropertyModifierDefinition> m_AbilityPropertyModifierDefinitionList =
             new List<AbilityPropertyModifierDefinition>();
 

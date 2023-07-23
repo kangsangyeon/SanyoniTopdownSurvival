@@ -1,14 +1,32 @@
+using System;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MyProject
 {
     public class SpawnManager : MonoBehaviour
     {
-        [SerializeField] private Transform m_SpawnPoint;
+        [SerializeField] private SpawnPoint[] m_SpawnPoints;
 
         public Transform ReturnSpawnPoint()
         {
-            return m_SpawnPoint;
+            for (int i = 0; i < 10; ++i)
+            {
+                // 스폰 가능한 위치를 최대 10번 찾습니다.
+                int _index = Random.Range(0, m_SpawnPoints.Length - 1);
+                if (m_SpawnPoints[_index].canSpawn)
+                    return m_SpawnPoints[_index].transform;
+            }
+
+            return null;
+        }
+
+        private void Start()
+        {
+            m_SpawnPoints = GameObject.FindGameObjectsWithTag("SpawnPoint")
+                .Select(_go => _go.GetComponent<SpawnPoint>())
+                .ToArray();
         }
     }
 }
