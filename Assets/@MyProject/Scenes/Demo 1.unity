@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44456464, g: 0.49407113, b: 0.5733463, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -65607,16 +65607,8 @@ PrefabInstance:
       value: _____GameScene
       objectReference: {fileID: 0}
     - target: {fileID: 2336850895114506072, guid: 186c7fb6ad77fdb469ea23490e3f933f, type: 3}
-      propertyPath: _scenePathHash
-      value: 920309226
-      objectReference: {fileID: 0}
-    - target: {fileID: 2336850895114506072, guid: 186c7fb6ad77fdb469ea23490e3f933f, type: 3}
       propertyPath: <SceneId>k__BackingField
       value: 3952698029948749334
-      objectReference: {fileID: 0}
-    - target: {fileID: 2336850895114506072, guid: 186c7fb6ad77fdb469ea23490e3f933f, type: 3}
-      propertyPath: _sceneNetworkObjects.Array.size
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4232719923555462240, guid: 186c7fb6ad77fdb469ea23490e3f933f, type: 3}
       propertyPath: m_LocalPosition.x
