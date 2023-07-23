@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ItemPicker: {fileID: 7527525858937501027}
-  m_Prefab_Particle: {fileID: 6936868346289231479, guid: 2e72ccfcbf0431d409ca752244bb630c, type: 3}
+  m_Prefab_Particle: {fileID: 4965727812869022011, guid: 451d01850a00ee047b4c77a0d0e47029, type: 3}
 --- !u!1 &1209061328548641352
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,7 +863,7 @@ MonoBehaviour:
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 2
   <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 920309226
+  _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 18431371148239109002
   _sceneNetworkObjects:
