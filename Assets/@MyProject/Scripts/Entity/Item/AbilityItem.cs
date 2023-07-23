@@ -40,9 +40,11 @@ namespace MyProject
 
         #endregion
 
-        public void SetModel(GameObject _go)
+        public void SetModelPrefab(GameObject _prefab)
         {
-            _go.transform.SetParent(_go.transform);
+            var _go = GameObject.Instantiate(_prefab, m_ModelParent);
+            _go.transform.localPosition = Vector3.zero;
+            _go.transform.rotation = Quaternion.identity;
         }
 
         [Server]

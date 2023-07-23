@@ -13,7 +13,7 @@ namespace MyProject
         {
             m_OnSetAbilityDefinitionAction = _abilityDefinition =>
             {
-                m_AbilityItem.SetModel(_abilityDefinition.prefabModel);
+                m_AbilityItem.SetModelPrefab(_abilityDefinition.prefabModel);
             };
             m_AbilityItem.onSetAbilityDefinition_onClient += m_OnSetAbilityDefinitionAction;
         }
