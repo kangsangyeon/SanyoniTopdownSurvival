@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MyProject
 {
-    public class DropExperienceOnHealthIsZero : MonoBehaviour, IDropExperience
+    public class GainExperienceOnHealthIsZero : MonoBehaviour, IDropExperience
     {
         private EntityHealth m_Health;
         private Action m_OnHealthIsZeroAction;

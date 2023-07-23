@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace MyProject
 {
-    public class DropExperienceOnTimeFlows : MonoBehaviour, IDropExperience
+    public class GainExperienceOnTimeFlows : MonoBehaviour, IDropExperience
     {
         [SerializeField] private float m_TimeInterval = 1.0f;
 
