@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: New Ability Database Definition
   m_EditorClassIdentifier: 
   m_DefinitionList:
-  - {fileID: 11400000, guid: 95e0e8bbdd8e6b7428b1cb9b0d7a0523, type: 2}
   - {fileID: 11400000, guid: 42d7cf319746f374cb7711cede2367fd, type: 2}
   - {fileID: 11400000, guid: accbe288eed8ff64f8c64c8725d29a02, type: 2}
   - {fileID: 11400000, guid: 38bed704b051e83488e9c86635ef48f0, type: 2}
