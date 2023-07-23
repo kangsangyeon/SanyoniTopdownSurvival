@@ -65,6 +65,7 @@ namespace MyProject
             {
                 _becomeNewLevel = true;
                 ++m_CurrentLevel;
+                Debug.Log("level up");
 
                 if (m_CurrentLevel == maxLevel)
                 {
