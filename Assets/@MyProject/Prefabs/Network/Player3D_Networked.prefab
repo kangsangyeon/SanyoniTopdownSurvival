@@ -682,6 +682,7 @@ GameObject:
   - component: {fileID: 7940152513494476753}
   - component: {fileID: 9102785744386135055}
   - component: {fileID: 7450026796763446544}
+  - component: {fileID: 6837770475966816916}
   m_Layer: 6
   m_Name: Player3D_Networked
   m_TagString: Character
@@ -822,7 +823,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c979e77bf0729bf48afdc98d4a61c4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Prefab_DeadFX: {fileID: 139366, guid: 713e7003ca09843438f1c390d19b5d61, type: 3}
+  m_Player: {fileID: 0}
 --- !u!114 &1794637739313597232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1013,6 +1014,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Player: {fileID: 4764942256557422283}
   m_ExperienceAmount: 30
+--- !u!114 &6837770475966816916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4020802814622884090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c979e77bf0729bf48afdc98d4a61c4e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Player: {fileID: 4764942256557422283}
 --- !u!1 &5062409954553816148
 GameObject:
   m_ObjectHideFlags: 0
@@ -1023,6 +1037,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4507111651286430868}
   - component: {fileID: 6696887178924886822}
+  - component: {fileID: 1376148110476532303}
   m_Layer: 6
   m_Name: PlayerVirtualCamera
   m_TagString: Untagged
@@ -1085,6 +1100,19 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 7095713643398649892}
+--- !u!114 &1376148110476532303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5062409954553816148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ae211abfe742574ab46e7e98a2e6a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Player: {fileID: 4764942256557422283}
 --- !u!1 &5111140355356379652
 GameObject:
   m_ObjectHideFlags: 0
