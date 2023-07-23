@@ -4,22 +4,22 @@ using UnityEngine;
 
 namespace MyProject
 {
-    public class DropExperienceOnPlayerKill : MonoBehaviour, IDropExperience
+    public class GainExperienceOnPlayerDead : MonoBehaviour, IDropExperience
     {
         [SerializeField] private Player m_Player;
 
-        private Action<Player> m_OnKillAction;
+        private Action<object> m_OnDeadAction;
 
         #region IDropExperience
 
-        [SerializeField] private int m_ExperienceAmount = 50;
+        [SerializeField] private int m_ExperienceAmount = 30;
         public int experienceAmount => m_ExperienceAmount;
 
         #endregion
 
         private void OnEnable()
         {
-            m_OnKillAction = _target =>
+            m_OnDeadAction = _source =>
             {
                 m_Player.GetComponent<PlayerLevel>().AddExperience(new ExperienceParam()
                 {
@@ -29,13 +29,13 @@ namespace MyProject
                     experience = experienceAmount
                 }, out int _addedExperience);
             };
-            m_Player.onKill_OnServer += m_OnKillAction;
+            m_Player.onDead_OnServer += m_OnDeadAction;
         }
 
         private void OnDisable()
         {
-            m_Player.onKill_OnServer -= m_OnKillAction;
-            m_OnKillAction = null;
+            m_Player.onDead_OnServer -= m_OnDeadAction;
+            m_OnDeadAction = null;
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MyProject
 {
-    public class DropExperienceOnPlayerAttack : MonoBehaviour, IDropExperience
+    public class GainExperienceOnPlayerAttack : MonoBehaviour, IDropExperience
     {
         [SerializeField] private Player m_Player;
 
