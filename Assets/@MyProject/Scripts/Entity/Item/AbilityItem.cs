@@ -53,7 +53,7 @@ namespace MyProject
             ObserversRpc_SetAbility(_abilityDefinition.abilityId);
         }
 
-        [ObserversRpc]
+        [ObserversRpc(ExcludeServer = true)]
         private void ObserversRpc_SetAbility(string _abilityId)
         {
             var _abilityDefinition = OfflineGameplayDependencies.abilityDatabase.GetAbility(_abilityId);

@@ -9,7 +9,7 @@ namespace MyProject
 
         private Action<AbilityDefinition> m_OnSetAbilityDefinitionAction;
 
-        private void Start()
+        private void Awake()
         {
             m_OnSetAbilityDefinitionAction = _abilityDefinition =>
             {
