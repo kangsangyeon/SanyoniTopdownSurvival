@@ -329,7 +329,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SpawnManager: {fileID: 3613616396162374954}
   m_AbilityDatabase: {fileID: 7432180407850591667}
-  m_UI_GetAbility: {fileID: 8092901825254005543}
   m_GameScene: {fileID: 1314664149152447368}
 --- !u!1 &2236438261983220395
 GameObject:
@@ -598,69 +597,6 @@ MonoBehaviour:
   _placement: 2
   _showOutgoing: 1
   _showIncoming: 1
---- !u!1 &4939135644146519497
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2523993062584855857}
-  - component: {fileID: 5233457068210595667}
-  - component: {fileID: 8092901825254005543}
-  m_Layer: 5
-  m_Name: UIDocument_GetAbility
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2523993062584855857
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4939135644146519497}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 333994020969839159}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5233457068210595667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4939135644146519497}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 679726edee23a894791a86728ae826b9, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: a10077ed07aecaa4c8d6bea583159c02, type: 3}
-  m_SortingOrder: 0
---- !u!114 &8092901825254005543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4939135644146519497}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eac00daa6e60bdf438331fe5945a7d84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_GameScene: {fileID: 1314664149152447368}
-  m_Document: {fileID: 5233457068210595667}
 --- !u!1 &5041830337881811353
 GameObject:
   m_ObjectHideFlags: 0
@@ -782,7 +718,6 @@ Transform:
   - {fileID: 5002387878052862946}
   - {fileID: 6328870434950751315}
   - {fileID: 1155610829039367771}
-  - {fileID: 2523993062584855857}
   m_Father: {fileID: 4232719923555462240}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7426100045477491045

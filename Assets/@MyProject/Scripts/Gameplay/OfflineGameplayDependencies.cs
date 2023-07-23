@@ -12,9 +12,6 @@ namespace MyProject
         [SerializeField] private AbilityDatabase m_AbilityDatabase;
         public static AbilityDatabase abilityDatabase => s_Instance.m_AbilityDatabase;
 
-        [SerializeField] private UI_GetAbility m_UI_GetAbility;
-        public static UI_GetAbility ui_GetAbility => s_Instance.m_UI_GetAbility;
-
         [SerializeField] private Scene_Game m_GameScene;
         public static Scene_Game gameScene => s_Instance.m_GameScene;
 
@@ -27,14 +24,12 @@ namespace MyProject
         private void Awake()
         {
             s_Instance = this;
-            m_UI_GetAbility.Hide();
             m_AbilityDatabase.Initialize();
         }
 
         private void OnDestroy()
         {
             s_Instance = null;
-            m_UI_GetAbility.Hide();
             m_AbilityDatabase.Uninitialize();
         }
     }
