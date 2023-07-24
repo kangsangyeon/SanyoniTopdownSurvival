@@ -29,34 +29,37 @@ namespace MyProject
         {
             m_OnAttackAction = _param =>
             {
-                ParticleSystem _particle =
-                    GameObject.Instantiate(
-                        m_Prefab_OnAttackParticle,
-                        m_CachedOnAttackParticleSpawnPosition,
-                        m_CachedOnAttackParticleSpawnRotation);
-                Destroy(_particle, 2.0f);
+                GameObject _particle = OfflineGameplayDependencies.objectPoolManager
+                    .Get(m_Prefab_OnAttackParticle.gameObject);
+                _particle.transform.SetPositionAndRotation(
+                    m_CachedOnAttackParticleSpawnPosition,
+                    m_CachedOnAttackParticleSpawnRotation);
+                OfflineGameplayDependencies.objectPoolManager
+                    .Release(m_Prefab_OnAttackParticle.gameObject, _particle, 2.0f);
             };
             _weapon.onAttack += m_OnAttackAction;
 
             m_OnAttackHitAction = _param =>
             {
-                ParticleSystem _particle =
-                    GameObject.Instantiate(
-                        m_Prefab_OnAttackHitParticle,
-                        _param.hitPoint,
-                        _param.hitRotation);
-                Destroy(_particle, 2.0f);
+                GameObject _particle = OfflineGameplayDependencies.objectPoolManager
+                    .Get(m_Prefab_OnAttackHitParticle.gameObject);
+                _particle.transform.SetPositionAndRotation(
+                    _param.hitPoint,
+                    _param.hitRotation);
+                OfflineGameplayDependencies.objectPoolManager
+                    .Release(m_Prefab_OnAttackHitParticle.gameObject, _particle, 2.0f);
             };
             _weapon.onAttackHit += m_OnAttackHitAction;
 
             m_OnProjectileHitAction = _param =>
             {
-                ParticleSystem _particle =
-                    GameObject.Instantiate(
-                        m_Prefab_OnProjectileHitParticle,
-                        _param.hitPoint,
-                        _param.hitRotation);
-                Destroy(_particle, 2.0f);
+                GameObject _particle = OfflineGameplayDependencies.objectPoolManager
+                    .Get(m_Prefab_OnProjectileHitParticle.gameObject);
+                _particle.transform.SetPositionAndRotation(
+                    _param.hitPoint,
+                    _param.hitRotation);
+                OfflineGameplayDependencies.objectPoolManager
+                    .Release(m_Prefab_OnProjectileHitParticle.gameObject, _particle, 2.0f);
             };
             _weapon.onProjectileHit += m_OnProjectileHitAction;
         }
@@ -73,7 +76,44 @@ namespace MyProject
             m_OnProjectileHitAction = null;
         }
 
-        private void Start()
+        private void RegisterPrefab()
+        {
+            OfflineGameplayDependencies.objectPoolManager.Register(
+                m_Prefab_OnAttackParticle.gameObject, 30,
+                () =>
+                {
+                    var _particle = GameObject.Instantiate(m_Prefab_OnAttackParticle);
+                    _particle.gameObject.SetActive(false);
+                    return _particle.gameObject;
+                },
+                null,
+                (_go) => { _go.SetActive(true); },
+                (_go) => { _go.SetActive(false); });
+            OfflineGameplayDependencies.objectPoolManager.Register(
+                m_Prefab_OnAttackHitParticle.gameObject, 30,
+                () =>
+                {
+                    var _particle = GameObject.Instantiate(m_Prefab_OnAttackHitParticle);
+                    _particle.gameObject.SetActive(false);
+                    return _particle.gameObject;
+                },
+                null,
+                (_go) => { _go.SetActive(true); },
+                (_go) => { _go.SetActive(false); });
+            OfflineGameplayDependencies.objectPoolManager.Register(
+                m_Prefab_OnProjectileHitParticle.gameObject, 30,
+                () =>
+                {
+                    var _particle = GameObject.Instantiate(m_Prefab_OnAttackParticle);
+                    _particle.gameObject.SetActive(false);
+                    return _particle.gameObject;
+                },
+                null,
+                (_go) => { _go.SetActive(true); },
+                (_go) => { _go.SetActive(false); });
+        }
+
+        private void Awake()
         {
             m_Player = GetComponentInParent<Player>(); // for test
             if (m_Player == null)
@@ -95,6 +135,8 @@ namespace MyProject
                 if (player.weapon is Weapon_MagicSword _magicSword)
                     InitializeMagicSword(_magicSword);
             };
+
+            RegisterPrefab();
         }
 
         private void Update()
