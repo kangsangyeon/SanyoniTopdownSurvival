@@ -384,7 +384,7 @@ namespace MyProject
                 float _delta = i / (float)(_count - 1);
                 float _angleDelta = _angleRange * _delta;
                 float _angle = _startAngle + _angleDelta;
-                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _angle));
+                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, _angle, 0));
                 Vector3 _bulletDirection = _angleQuaternion * Vector3.right;
 
                 _outDirectionList.Add(_bulletDirection);
