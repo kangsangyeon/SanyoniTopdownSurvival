@@ -266,6 +266,27 @@ namespace MyProject
                         _param.ownerConnectionId, _passedTime,
                         _param.position, _d);
             });
+
+            ObserversRpc_ProjectileAttack(_param);
+        }
+
+        [ObserversRpc(ExcludeServer = true, ExcludeOwner = true)]
+        private void ObserversRpc_ProjectileAttack(
+            Weapon_MagicSword_Attack_EventParam _param)
+        {
+            float _passedTime = (float)base.TimeManager.TimePassed(_param.tick);
+
+            var _projectileDirections =
+                GetDirectionsByRotationY(_param.rotationY, projectileCountPerShot, projectileShotAngleRange);
+
+            _projectileDirections.ForEach(_d =>
+            {
+                // 총알을 스폰합니다.
+                var _projectile =
+                    SpawnProjectile(
+                        _param.ownerConnectionId, _passedTime,
+                        _param.position, _d);
+            });
         }
 
         [Server]
@@ -446,7 +467,7 @@ namespace MyProject
             m_LastAttackTime = -9999;
             m_CanAttack = true;
 
-            player.health.onHealthChanged_OnSync +=_amount =>
+            player.health.onHealthChanged_OnSync += _amount =>
             {
                 if (player.health.health > 0)
                     m_CanAttack = true;
