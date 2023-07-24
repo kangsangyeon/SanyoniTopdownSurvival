@@ -55,7 +55,7 @@ namespace MyProject
                 float _rotation = (360.0f / _count) * i;
                 _rotation = _rotation + _startRotation;
                 Vector3 _directionToSpawnPoint = new Vector3(
-                    Mathf.Cos(_rotation), 0, Mathf.Sin(_rotation * Mathf.Deg2Rad));
+                    Mathf.Cos(_rotation * Mathf.Deg2Rad), 0, Mathf.Sin(_rotation * Mathf.Deg2Rad));
                 _positions[i] = _origin + _directionToSpawnPoint * _distance;
             }
 
