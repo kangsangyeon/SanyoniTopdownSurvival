@@ -8,9 +8,9 @@ namespace MyProject
     public class MagicSword_Vfx : MonoBehaviour
     {
         /* prefab reference */
-        [SerializeField] private ParticleSystem m_Prefab_OnAttackParticle;
-        [SerializeField] private ParticleSystem m_Prefab_OnAttackHitParticle;
-        [SerializeField] private ParticleSystem m_Prefab_OnProjectileHitParticle;
+        [SerializeField] private GameObject m_Prefab_OnAttackParticle;
+        [SerializeField] private GameObject m_Prefab_OnAttackHitParticle;
+        [SerializeField] private GameObject m_Prefab_OnProjectileHitParticle;
 
         /* in this prefab reference */
         [SerializeField] private Transform m_OnAttackParticleSpawnPoint;
@@ -30,36 +30,47 @@ namespace MyProject
             m_OnAttackAction = _param =>
             {
                 GameObject _particle = OfflineGameplayDependencies.objectPoolManager
-                    .Get(m_Prefab_OnAttackParticle.gameObject);
-                _particle.transform.SetPositionAndRotation(
-                    m_CachedOnAttackParticleSpawnPosition,
-                    m_CachedOnAttackParticleSpawnRotation);
+                    .Get(m_Prefab_OnAttackParticle);
+
+                if (_weapon.IsOwner)
+                {
+                    _particle.transform.SetPositionAndRotation(
+                        m_CachedOnAttackParticleSpawnPosition,
+                        m_CachedOnAttackParticleSpawnRotation);
+                }
+                else
+                {
+                    _particle.transform.SetPositionAndRotation(
+                        _param.position,
+                        Quaternion.Euler(0, _param.rotationY, 0));
+                }
+
                 OfflineGameplayDependencies.objectPoolManager
-                    .Release(m_Prefab_OnAttackParticle.gameObject, _particle, 2.0f);
+                    .Release(m_Prefab_OnAttackParticle, _particle, 2.0f);
             };
             _weapon.onAttack += m_OnAttackAction;
 
             m_OnAttackHitAction = _param =>
             {
                 GameObject _particle = OfflineGameplayDependencies.objectPoolManager
-                    .Get(m_Prefab_OnAttackHitParticle.gameObject);
+                    .Get(m_Prefab_OnAttackHitParticle);
                 _particle.transform.SetPositionAndRotation(
                     _param.hitPoint,
                     _param.hitRotation);
                 OfflineGameplayDependencies.objectPoolManager
-                    .Release(m_Prefab_OnAttackHitParticle.gameObject, _particle, 2.0f);
+                    .Release(m_Prefab_OnAttackHitParticle, _particle, 2.0f);
             };
             _weapon.onAttackHit += m_OnAttackHitAction;
 
             m_OnProjectileHitAction = _param =>
             {
                 GameObject _particle = OfflineGameplayDependencies.objectPoolManager
-                    .Get(m_Prefab_OnProjectileHitParticle.gameObject);
+                    .Get(m_Prefab_OnProjectileHitParticle);
                 _particle.transform.SetPositionAndRotation(
                     _param.hitPoint,
                     _param.hitRotation);
                 OfflineGameplayDependencies.objectPoolManager
-                    .Release(m_Prefab_OnProjectileHitParticle.gameObject, _particle, 2.0f);
+                    .Release(m_Prefab_OnProjectileHitParticle, _particle, 2.0f);
             };
             _weapon.onProjectileHit += m_OnProjectileHitAction;
         }
@@ -79,34 +90,34 @@ namespace MyProject
         private void RegisterPrefab()
         {
             OfflineGameplayDependencies.objectPoolManager.Register(
-                m_Prefab_OnAttackParticle.gameObject, 30,
+                m_Prefab_OnAttackParticle, 30,
                 () =>
                 {
                     var _particle = GameObject.Instantiate(m_Prefab_OnAttackParticle);
-                    _particle.gameObject.SetActive(false);
-                    return _particle.gameObject;
+                    _particle.SetActive(false);
+                    return _particle;
                 },
                 null,
                 (_go) => { _go.SetActive(true); },
                 (_go) => { _go.SetActive(false); });
             OfflineGameplayDependencies.objectPoolManager.Register(
-                m_Prefab_OnAttackHitParticle.gameObject, 30,
+                m_Prefab_OnAttackHitParticle, 30,
                 () =>
                 {
                     var _particle = GameObject.Instantiate(m_Prefab_OnAttackHitParticle);
-                    _particle.gameObject.SetActive(false);
-                    return _particle.gameObject;
+                    _particle.SetActive(false);
+                    return _particle;
                 },
                 null,
                 (_go) => { _go.SetActive(true); },
                 (_go) => { _go.SetActive(false); });
             OfflineGameplayDependencies.objectPoolManager.Register(
-                m_Prefab_OnProjectileHitParticle.gameObject, 30,
+                m_Prefab_OnProjectileHitParticle, 30,
                 () =>
                 {
                     var _particle = GameObject.Instantiate(m_Prefab_OnAttackParticle);
-                    _particle.gameObject.SetActive(false);
-                    return _particle.gameObject;
+                    _particle.SetActive(false);
+                    return _particle;
                 },
                 null,
                 (_go) => { _go.SetActive(true); },
