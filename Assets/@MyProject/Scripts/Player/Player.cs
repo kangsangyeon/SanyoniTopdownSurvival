@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FishNet.Connection;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using MyProject.Event;
 using MyProject.Struct;
 using UnityEngine;
@@ -18,6 +19,9 @@ namespace MyProject
 
         [SerializeField] private UI_HealthBar m_HealthBar;
 
+        [SyncVar(WritePermissions = WritePermission.ServerOnly, OnChange = nameof(SyncVar_WeaponNetworkObjectId))]
+        private int? m_WeaponNetworkObjectId;
+
         private IWeapon m_Weapon;
 
         public IWeapon weapon
@@ -29,6 +33,8 @@ namespace MyProject
                 {
                     IWeapon _prevWeapon = m_Weapon;
                     m_Weapon = value;
+                    m_WeaponNetworkObjectId =
+                        (m_Weapon as NetworkBehaviour)?.ObjectId;
                     Server_OnWeaponChanged(_prevWeapon, m_Weapon);
                 }
             }
@@ -352,13 +358,15 @@ namespace MyProject
             if (_prevWeaponNetworkObjectId.HasValue)
             {
                 if (base.ClientManager.Objects.Spawned.ContainsKey(_prevWeaponNetworkObjectId.Value))
-                    _prevWeapon = base.ClientManager.Objects.Spawned[_prevWeaponNetworkObjectId.Value].GetComponent<IWeapon>();
+                    _prevWeapon = base.ClientManager.Objects.Spawned[_prevWeaponNetworkObjectId.Value]
+                        .GetComponent<IWeapon>();
             }
 
             if (_newWeaponNetworkObjectId.HasValue)
             {
                 if (base.ClientManager.Objects.Spawned.ContainsKey(_newWeaponNetworkObjectId.Value))
-                    _newWeapon = base.ClientManager.Objects.Spawned[_newWeaponNetworkObjectId.Value].GetComponent<IWeapon>();
+                    _newWeapon = base.ClientManager.Objects.Spawned[_newWeaponNetworkObjectId.Value]
+                        .GetComponent<IWeapon>();
             }
 
             m_Weapon = _newWeapon;
@@ -366,6 +374,29 @@ namespace MyProject
         }
 
         #endregion
+
+        private void SyncVar_WeaponNetworkObjectId(int? _prevWeaponId, int? _nextWeaponId, bool _asServer)
+        {
+            IWeapon _prevWeapon = null;
+            IWeapon _newWeapon = null;
+
+            if (_prevWeaponId.HasValue)
+            {
+                if (base.ClientManager.Objects.Spawned.ContainsKey(_prevWeaponId.Value))
+                    _prevWeapon = base.ClientManager.Objects.Spawned[_prevWeaponId.Value]
+                        .GetComponent<IWeapon>();
+            }
+
+            if (_nextWeaponId.HasValue)
+            {
+                if (base.ClientManager.Objects.Spawned.ContainsKey(_nextWeaponId.Value))
+                    _newWeapon = base.ClientManager.Objects.Spawned[_nextWeaponId.Value]
+                        .GetComponent<IWeapon>();
+            }
+
+            m_Weapon = _newWeapon;
+            onWeaponChanged_OnClient?.Invoke(_prevWeapon, _newWeapon);
+        }
 
         [Server]
         public void Server_Respawn(Vector3 _position)
