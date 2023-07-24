@@ -1633,18 +1633,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8679007712400554575}
     m_Modifications:
-    - target: {fileID: 6108236253972611690, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 6108236254518671058, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 6108236254764715331, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 6108236254764715332, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1653,17 +1641,21 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6108236254764715333, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6108236254764715333, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6108236254764715333, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6108236254867478346, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
       propertyPath: m_Name
       value: Canvas_HealthBar
-      objectReference: {fileID: 0}
-    - target: {fileID: 6108236254867478346, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 6108236254867478348, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6108236254867478350, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
       propertyPath: m_Pivot.x
@@ -1672,10 +1664,6 @@ PrefabInstance:
     - target: {fileID: 6108236254867478350, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6108236254867478350, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
-      propertyPath: m_RootOrder
-      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6108236254867478350, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1749,10 +1737,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6108236255596440433, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
+    - target: {fileID: 6108236254867478351, guid: 1097dfee5eeb4c94c955125b87589171, type: 3}
+      propertyPath: m_Health
+      value: 
+      objectReference: {fileID: 4941231546294391343}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
