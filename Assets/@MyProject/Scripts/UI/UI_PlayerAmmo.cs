@@ -161,17 +161,15 @@ namespace MyProject
             if (m_Player.weapon is IGunWeapon _gunWeapon)
                 InitializeGunWeaponEvents(_gunWeapon);
 
-            m_Player.onWeaponChanged_OnServer += (_prevWeaponId) =>
+            m_Player.onWeaponChanged_OnServer += (_prevWeapon, _newWeapon) =>
             {
-                if (_prevWeaponId.HasValue)
+                if (_prevWeapon != null)
                 {
-                    IWeapon _prevWeapon = InstanceFinder.ClientManager.Objects.Spawned[_prevWeaponId.Value] as IWeapon;
-
                     if (_prevWeapon is IGunWeapon _prevGunWeapon)
                         UninitializeGunWeaponEvents(_prevGunWeapon);
                 }
 
-                if (m_Player.weapon is IGunWeapon _gunWeapon)
+                if (_newWeapon is IGunWeapon _gunWeapon)
                     InitializeGunWeaponEvents(_gunWeapon);
             };
 

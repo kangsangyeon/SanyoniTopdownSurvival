@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -7,7 +6,7 @@ namespace MyProject
 {
     public class SpawnManager : MonoBehaviour
     {
-        [SerializeField] private SpawnPoint[] m_SpawnPoints;
+        private SpawnPoint[] m_SpawnPoints;
 
         public Transform ReturnSpawnPoint()
         {

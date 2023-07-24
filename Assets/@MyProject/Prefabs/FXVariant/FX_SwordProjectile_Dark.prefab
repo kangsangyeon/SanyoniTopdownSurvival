@@ -124,7 +124,20 @@ PrefabInstance:
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 199201967362906002, guid: aa4492488f4465f41a2ae99c8f113119, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 199585424228964022, guid: aa4492488f4465f41a2ae99c8f113119, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 199869728532693654, guid: aa4492488f4465f41a2ae99c8f113119, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114153227804344274, guid: aa4492488f4465f41a2ae99c8f113119, type: 3}
     m_RemovedGameObjects:
     - {fileID: 1768296118020470, guid: aa4492488f4465f41a2ae99c8f113119, type: 3}
     m_AddedGameObjects: []

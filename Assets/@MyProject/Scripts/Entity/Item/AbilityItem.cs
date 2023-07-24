@@ -1,6 +1,7 @@
 using System;
 using FishNet;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using UnityEngine;
 
 namespace MyProject
@@ -12,8 +13,12 @@ namespace MyProject
         [SerializeField] private Collider m_Collider;
         [SerializeField] private Transform m_ModelParent;
 
-        private float m_SpawnTime;
+        [SyncVar(WritePermissions = WritePermission.ServerOnly)]
+        private string m_AbilityId;
+
         private AbilityDefinition m_Ability;
+
+        private float m_SpawnTime;
 
         private bool m_AlreadyClaimed;
         public bool alreadyClaimed => m_AlreadyClaimed;
@@ -40,27 +45,23 @@ namespace MyProject
 
         #endregion
 
-        public void SetModelPrefab(GameObject _prefab)
+        // Instantiate한 직후 NetworkObject가 초기화되지 않았기 때문에 Server 검증을 정상적으로 통과할 수 없습니다.
+        // 따라서 주석 처리하지만, 서버에서만 불러야 합니다.
+        // [Server]
+        public void Server_Initialize()
+        {
+            m_Ability =
+                OfflineGameplayDependencies.abilityDatabase.GetRandomAbility();
+            m_AbilityId =
+                m_Ability.abilityId;
+            SetModelPrefab(m_Ability.prefabModel);
+        }
+
+        private void SetModelPrefab(GameObject _prefab)
         {
             var _go = GameObject.Instantiate(_prefab, m_ModelParent);
             _go.transform.localPosition = Vector3.zero;
             _go.transform.rotation = Quaternion.identity;
-        }
-
-        [Server]
-        private void Server_SetAbility(AbilityDefinition _abilityDefinition)
-        {
-            m_Ability = _abilityDefinition;
-            onSetAbilityDefinition_onClient?.Invoke(_abilityDefinition);
-            ObserversRpc_SetAbility(_abilityDefinition.abilityId);
-        }
-
-        [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_SetAbility(string _abilityId)
-        {
-            var _abilityDefinition = OfflineGameplayDependencies.abilityDatabase.GetAbility(_abilityId);
-            m_Ability = _abilityDefinition;
-            onSetAbilityDefinition_onClient?.Invoke(_abilityDefinition);
         }
 
         public override void OnStartServer()
@@ -69,9 +70,6 @@ namespace MyProject
 
             m_SpawnTime = Time.time;
             m_Collider.enabled = true;
-
-            var _randomAbility = OfflineGameplayDependencies.abilityDatabase.GetRandomAbility();
-            Server_SetAbility(_randomAbility);
         }
 
         public override void OnStopServer()
@@ -79,6 +77,18 @@ namespace MyProject
             base.OnStopServer();
 
             m_AlreadyClaimed = false;
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            if (base.IsServer == false)
+            {
+                m_Ability =
+                    OfflineGameplayDependencies.abilityDatabase.GetAbility(m_AbilityId);
+                SetModelPrefab(m_Ability.prefabModel);
+            }
         }
     }
 }
