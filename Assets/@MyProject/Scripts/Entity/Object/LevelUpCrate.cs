@@ -62,7 +62,7 @@ namespace MyProject
             return _positions;
         }
 
-        private void Start()
+        private void Awake()
         {
             m_Health = GetComponent<EntityHealth>();
 
@@ -82,7 +82,7 @@ namespace MyProject
             m_Health.onHealthIsZero_OnServer += m_OnHealthIsZeroAction;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             if (m_OnHealthIsZeroAction != null)
             {
