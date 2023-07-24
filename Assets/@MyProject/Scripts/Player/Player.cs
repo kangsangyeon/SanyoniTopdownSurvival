@@ -27,12 +27,9 @@ namespace MyProject
             {
                 if (m_Weapon != value)
                 {
-                    int? _prevWeaponId = null;
-                    if (m_Weapon != null)
-                        _prevWeaponId = (m_Weapon as NetworkBehaviour).ObjectId;
-
+                    IWeapon _prevWeapon = m_Weapon;
                     m_Weapon = value;
-                    Server_OnWeaponChanged(_prevWeaponId);
+                    Server_OnWeaponChanged(_prevWeapon, m_Weapon);
                 }
             }
         }
@@ -52,6 +49,7 @@ namespace MyProject
         public event System.Action onStopServer;
         public event System.Action onStartClient;
         public event System.Action onStopClient;
+        public event System.Action onInitializedOnClient; // server only
 
         private bool m_OnStartServerCalled;
         public bool onStartServerCalled => m_OnStartServerCalled;
@@ -64,6 +62,15 @@ namespace MyProject
 
         private bool m_OnStopClientCalled;
         public bool onStopClientCalled => m_OnStopClientCalled;
+
+        private bool m_InitializedOnClient; // server only
+
+        [ServerRpc]
+        private void ServerRpc_InitializedOnClient()
+        {
+            m_InitializedOnClient = true;
+            onInitializedOnClient?.Invoke();
+        }
 
         #endregion
 
@@ -316,21 +323,46 @@ namespace MyProject
             onRespawn_OnClient?.Invoke();
         }
 
-        public event System.Action<int?> onWeaponChanged_OnServer; // param: <prevWeaponObjectId>
-        public event System.Action<int?> onWeaponChanged_OnClient; // param: <prevWeaponObjectId>
+        public event System.Action<IWeapon, IWeapon> onWeaponChanged_OnServer; // param: <prevWeapon, newWeapon>
+        public event System.Action<IWeapon, IWeapon> onWeaponChanged_OnClient; // param: <prevWeapon, newWeapon>
 
         [Server]
-        private void Server_OnWeaponChanged(int? _prevWeaponId)
+        private void Server_OnWeaponChanged(IWeapon _prevWeapon, IWeapon _newWeapon)
         {
-            onWeaponChanged_OnServer?.Invoke(_prevWeaponId);
-            onWeaponChanged_OnClient?.Invoke(_prevWeaponId);
-            ObserversRpc_OnWeaponChanged(_prevWeaponId);
+            onWeaponChanged_OnServer?.Invoke(_prevWeapon, _newWeapon);
+            onWeaponChanged_OnClient?.Invoke(_prevWeapon, _newWeapon);
+
+            int? _prevWeaponNetworkObjectId = null;
+            if (_prevWeapon != null)
+                _prevWeaponNetworkObjectId = (_prevWeapon as NetworkBehaviour).ObjectId;
+
+            int? _newWeaponNetworkObjectId = null;
+            if (_newWeapon != null)
+                _newWeaponNetworkObjectId = (_newWeapon as NetworkBehaviour).ObjectId;
+
+            ObserversRpc_OnWeaponChanged(_prevWeaponNetworkObjectId, _newWeaponNetworkObjectId);
         }
 
         [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_OnWeaponChanged(int? _prevWeaponId)
+        private void ObserversRpc_OnWeaponChanged(int? _prevWeaponNetworkObjectId, int? _newWeaponNetworkObjectId)
         {
-            onWeaponChanged_OnClient?.Invoke(_prevWeaponId);
+            IWeapon _prevWeapon = null;
+            IWeapon _newWeapon = null;
+
+            if (_prevWeaponNetworkObjectId.HasValue)
+            {
+                if (base.ClientManager.Objects.Spawned.ContainsKey(_prevWeaponNetworkObjectId.Value))
+                    _prevWeapon = base.ClientManager.Objects.Spawned[_prevWeaponNetworkObjectId.Value].GetComponent<IWeapon>();
+            }
+
+            if (_newWeaponNetworkObjectId.HasValue)
+            {
+                if (base.ClientManager.Objects.Spawned.ContainsKey(_newWeaponNetworkObjectId.Value))
+                    _newWeapon = base.ClientManager.Objects.Spawned[_newWeaponNetworkObjectId.Value].GetComponent<IWeapon>();
+            }
+
+            m_Weapon = _newWeapon;
+            onWeaponChanged_OnClient?.Invoke(_prevWeapon, _newWeapon);
         }
 
         #endregion
@@ -345,11 +377,19 @@ namespace MyProject
         public override void OnStartServer()
         {
             base.OnStartServer();
+
             Scene_Game.Instance.TargetRpc_JoinGame(base.Owner, new GameJoinedEventParam()
             {
                 playerInfoList = Scene_Game.Instance.playerInfoDict.Values.ToList()
             });
             Scene_Game.Instance.Server_AddPlayer(this);
+
+            onInitializedOnClient += () =>
+            {
+                // 클라이언트가 연결되었을 때 무기를 잡고 모두에게 전파합니다.
+                // weapon property는 서버에서 기록하면, 클라이언트에게 자동으로 전파됩니다.
+                weapon = GetComponentInChildren<IWeapon>();
+            };
 
             health.onHealthIsZero_OnServer += () =>
             {
@@ -413,6 +453,7 @@ namespace MyProject
 
             m_OnStartClientCalled = true;
             onStartClient?.Invoke();
+            ServerRpc_InitializedOnClient();
         }
 
         public override void OnStopClient()
@@ -427,8 +468,6 @@ namespace MyProject
         {
             base.OnStartNetwork();
 
-            weapon = GetComponentInChildren<IWeapon>();
-
             if (base.Owner.IsLocalClient)
             {
                 OfflineGameplayDependencies.gameScene.myPlayer = this;
@@ -436,14 +475,12 @@ namespace MyProject
 
             health.onHealthIsZero_OnSync += () =>
             {
-                m_Movement.characterController.enabled = false;
                 if (m_HealthBar)
                     m_HealthBar.enabled = false;
             };
 
             onRespawn_OnClient += () =>
             {
-                m_Movement.characterController.enabled = true;
                 if (m_HealthBar)
                     m_HealthBar.enabled = true;
             };
@@ -453,14 +490,17 @@ namespace MyProject
         {
             if (base.IsOwner)
             {
-                if (Input.GetKey(KeyCode.Mouse0))
+                if (weapon != null)
                 {
-                    m_Weapon.QueueAttack();
-                }
+                    if (Input.GetKey(KeyCode.Mouse0))
+                    {
+                        m_Weapon.QueueAttack();
+                    }
 
-                if (Input.GetKeyDown(KeyCode.R) && m_Weapon is IGunWeapon _gunWeapon)
-                {
-                    _gunWeapon.QueueReload();
+                    if (Input.GetKeyDown(KeyCode.R) && m_Weapon is IGunWeapon _gunWeapon)
+                    {
+                        _gunWeapon.QueueReload();
+                    }
                 }
             }
         }

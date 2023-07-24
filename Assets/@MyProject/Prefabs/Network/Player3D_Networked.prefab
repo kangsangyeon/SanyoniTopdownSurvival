@@ -373,6 +373,7 @@ GameObject:
   - component: {fileID: 7878969113253120864}
   - component: {fileID: 1705116974855221427}
   - component: {fileID: 6562644641842848506}
+  - component: {fileID: 5866284958180830205}
   m_Layer: 6
   m_Name: Weapon_MagicSword
   m_TagString: Untagged
@@ -439,6 +440,39 @@ MonoBehaviour:
   m_Prefab_OnAttackHitParticle: {fileID: 7640624326869079813, guid: 37422c14df15071469e7bc42b9fb5619, type: 3}
   m_Prefab_OnProjectileHitParticle: {fileID: 6936868346289231479, guid: a53107b935150c1468cd56c7124d3237, type: 3}
   m_OnAttackParticleSpawnPoint: {fileID: 4232228382695286605}
+--- !u!114 &5866284958180830205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3345809666150506678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 1
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours: []
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: 0.788, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    LocalScale: {x: 1, y: 1, z: 1}
+  _isNetworked: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 0
+  _sceneNetworkObjects: []
 --- !u!1 &3375973524908030748
 GameObject:
   m_ObjectHideFlags: 0

@@ -122,12 +122,10 @@ namespace MyProject
             if (player.weapon is Weapon_MagicSword _magicSword)
                 InitializeMagicSword(_magicSword);
 
-            player.onWeaponChanged_OnClient += _prevWeaponId =>
+            player.onWeaponChanged_OnClient += (_prevWeapon, _currentWeapon) =>
             {
-                if (_prevWeaponId.HasValue)
+                if (_prevWeapon != null)
                 {
-                    IWeapon _prevWeapon = InstanceFinder.ClientManager.Objects.Spawned[_prevWeaponId.Value] as IWeapon;
-
                     if (_prevWeapon is Weapon_MagicSword _prevMagicSword)
                         UninitializeMagicSword(_prevMagicSword);
                 }
