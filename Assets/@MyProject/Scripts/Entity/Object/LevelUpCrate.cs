@@ -74,6 +74,8 @@ namespace MyProject
                 {
                     var _itemGO =
                         GameObject.Instantiate(m_Prefab_AbilityItem, _itemPositions[i], Quaternion.identity);
+                    var _abilityItem = _itemGO.GetComponent<AbilityItem>();
+                    _abilityItem.Server_Initialize();
                     base.ServerManager.Spawn(_itemGO);
                 }
 
