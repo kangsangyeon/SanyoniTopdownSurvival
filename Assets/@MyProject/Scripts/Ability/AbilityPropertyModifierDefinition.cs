@@ -1,47 +1,62 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MyProject
 {
     [CreateAssetMenu(menuName = "MyProject/AbilityPropertyModifierDefinition")]
     public class AbilityPropertyModifierDefinition : ScriptableObject
     {
+        /* character */
+
+        [SerializeField] private int m_MaxHealthAddition;
+        public int maxHealthAddition => m_MaxHealthAddition;
+
+        [SerializeField] private float m_MoveSpeedAddition;
+        public float moveSpeedAddition => m_MoveSpeedAddition;
+
         /* gun attack */
 
-        [SerializeField] private float m_ReloadDurationMultiplier = 1.0f;
-        public float reloadDurationMultiplier => m_ReloadDurationMultiplier;
+        [SerializeField] private float m_ReloadDurationAddition;
+        public float reloadDurationAddition => m_ReloadDurationAddition;
 
-        [SerializeField] private float m_FireDelayMultiplier = 1.0f;
-        public float fireDelayMultiplier => m_FireDelayMultiplier;
+        [SerializeField] private float m_FireDelayAddition;
+        public float fireDelayAddition => m_FireDelayAddition;
 
-        [SerializeField] private float m_MaxMagazineMultiplier = 1.0f;
-        public float maxMagazineMultiplier => m_MaxMagazineMultiplier;
+        [SerializeField] private int m_MaxMagazineAddition;
+        public int maxMagazineAddition => m_MaxMagazineAddition;
 
-        [SerializeField] private float m_ProjectileSpeedMultiplier = 1.0f;
-        public float projectileSpeedMultiplier => m_ProjectileSpeedMultiplier;
+        [SerializeField] private float m_ProjectileSpeedAddition;
+        public float projectileSpeedAddition => m_ProjectileSpeedAddition;
 
-        [SerializeField] private float m_ProjectileDamageMultiplier = 1.0f;
-        public float projectileDamageMultiplier => m_ProjectileDamageMultiplier;
+        [SerializeField] private int m_ProjectileDamageAddition;
+        public int projectileDamageAddition => m_ProjectileDamageAddition;
 
-        [SerializeField] private float m_ProjectileSizeMultiplier = 1.0f;
-        public float projectileSizeMultiplier => m_ProjectileSizeMultiplier;
+        [SerializeField] private float m_ProjectileSizeAddition;
+        public float projectileSizeAddition => m_ProjectileSizeAddition;
 
-        [SerializeField] private int m_ProjectileCountPerShotAdditional = 0;
-        public int projectileCountPerShotAdditional => m_ProjectileCountPerShotAdditional;
+        [SerializeField] private int m_ProjectileCountPerShotAddition = 0;
+        public int projectileCountPerShotAddition => m_ProjectileCountPerShotAddition;
 
-        [SerializeField] private float m_ProjectileSpreadAngleMultiplier = 1.0f;
-        public float projectileSpreadAngleMultiplier => m_ProjectileSpreadAngleMultiplier;
+        [SerializeField] private float m_ProjectileSpreadAngleAddition;
+        public float projectileSpreadAngleAddition => m_ProjectileSpreadAngleAddition;
 
         /* melee attack */
 
-        [SerializeField] private float m_MeleeAttackDelayMultiplier = 1.0f;
-        public float meleeAttackDelayMultiplier => m_MeleeAttackDelayMultiplier;
+        [SerializeField] private float m_MeleeAttackDelayAddition;
+        public float meleeAttackDelayAddition => m_MeleeAttackDelayAddition;
 
-        [SerializeField] private float m_MeleeAttackDamageMagnitudeMultiplier = 1.0f;
-        public float meleeAttackDamageMagnitudeMultiplier => m_MeleeAttackDamageMagnitudeMultiplier;
+        [SerializeField] private float m_MeleeAttackIntervalAddition;
+        public float meleeAttackIntervalAddition => m_MeleeAttackIntervalAddition;
+
+        [SerializeField] private int m_MeleeAttackDamageMagnitudeAddition;
+        public int meleeAttackDamageMagnitudeAddition => m_MeleeAttackDamageMagnitudeAddition;
+
+        [SerializeField] private float m_MeleeAttackSizeAddition;
+        public float meleeAttackSizeAddition => m_MeleeAttackSizeAddition;
 
         /* sword */
 
-        [SerializeField] private int m_SwordProjectileRequiredStackAddition = 0;
+        [SerializeField] private int m_SwordProjectileRequiredStackAddition;
         public int swordProjectileRequiredStackAddition => m_SwordProjectileRequiredStackAddition;
     }
 }

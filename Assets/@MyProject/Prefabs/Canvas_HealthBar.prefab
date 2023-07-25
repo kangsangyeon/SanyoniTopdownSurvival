@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6108236253972611691}
   - component: {fileID: 6108236253972611693}
   - component: {fileID: 6108236253972611692}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6108236254518671059}
   - component: {fileID: 6108236254518671060}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,11 +134,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 0, g: 0, b: 0, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -152,8 +152,8 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_Interactable: 0
+  m_TargetGraphic: {fileID: 6108236254764715333}
   m_FillRect: {fileID: 6108236254764715332}
   m_HandleRect: {fileID: 0}
   m_Direction: 0
@@ -175,7 +175,7 @@ GameObject:
   - component: {fileID: 6108236254764715332}
   - component: {fileID: 6108236254764715334}
   - component: {fileID: 6108236254764715333}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 6108236254867478348}
   - component: {fileID: 6108236254867478347}
   - component: {fileID: 6108236254867478351}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Canvas_HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -356,6 +356,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Canvas: {fileID: 6108236254867478349}
   m_Slider: {fileID: 6108236254518671060}
+  m_FillImage: {fileID: 6108236254764715333}
+  m_Color1: {r: 0, g: 1, b: 0, a: 1}
+  m_Threshold1: 0.7
+  m_Color2: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  m_Threshold2: 0.4
+  m_Color3: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &6108236255596440433
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,7 +371,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6108236255596440434}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -41,11 +41,11 @@ namespace MyProject
         public int ownerConnectionId => player.OwnerId;
 
         public int attackDamageMagnitude =>
-            Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage *
-                             m_Player.abilityProperty.projectileDamageMultiplier);
+            Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage +
+                             m_Player.abilityProperty.projectileDamageAddition);
 
         public float attackDelay =>
-            m_Player.abilityProperty.fireDelay * m_Player.abilityProperty.fireDelayMultiplier;
+            m_Player.abilityProperty.fireDelay + m_Player.abilityProperty.fireDelayAddition;
 
         public int currentMagazineCount
         {
@@ -61,25 +61,27 @@ namespace MyProject
         }
 
         public int maxMagazineCount =>
-            Mathf.RoundToInt(m_Player.abilityProperty.maxMagazine * m_Player.abilityProperty.maxMagazineMultiplier);
+            Mathf.RoundToInt(m_Player.abilityProperty.maxMagazine + m_Player.abilityProperty.maxMagazineAddition);
 
         public float reloadDuration =>
-            m_Player.abilityProperty.reloadDuration * m_Player.abilityProperty.reloadDurationMultiplier;
+            m_Player.abilityProperty.reloadDuration + m_Player.abilityProperty.reloadDurationAddition;
 
         public float fireDelay =>
-            m_Player.abilityProperty.fireDelay * m_Player.abilityProperty.fireDelayMultiplier;
+            m_Player.abilityProperty.fireDelay + m_Player.abilityProperty.fireDelayAddition;
 
         public float projectileSpeed =>
-            m_Player.abilityProperty.projectileSpeed * m_Player.abilityProperty.projectileSpeedMultiplier;
+            m_Player.abilityProperty.projectileSpeed + m_Player.abilityProperty.projectileSpeedAddition;
 
         public float projectileScaleMultiplier =>
-            m_Player.abilityProperty.projectileSizeMultiplier;
+            1.0f + m_Player.abilityProperty.projectileSizeAddition;
 
         public int projectileCountPerShot =>
-            m_Player.abilityProperty.projectileCountPerShot;
+            m_Player.abilityProperty.projectileCountPerShot
+            + m_Player.abilityProperty.projectileCountPerShotAddition;
 
         public float projectileShotAngleRange =>
-            m_Player.abilityProperty.projectileShotAngleRange;
+            m_Player.abilityProperty.projectileShotAngleRange
+            + m_Player.abilityProperty.projectileShotAngleRangeAddition;
 
         public event System.Action onCurrentMagazineCountChanged;
         public event Action<IWeapon_OnAttack_EventParam> onAttack;

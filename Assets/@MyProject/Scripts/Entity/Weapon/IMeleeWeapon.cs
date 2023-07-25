@@ -16,6 +16,9 @@ namespace MyProject
 
     public interface IMeleeWeapon : IWeapon
     {
+        float meleeAttackDelay { get; }
+        float meleeAttackInterval { get; }
+        Collider meleeAttackRange { get; }
         event System.Action<IMeleeWeapon_OnAttackHit_EventParam> onAttackHit;
     }
 }
