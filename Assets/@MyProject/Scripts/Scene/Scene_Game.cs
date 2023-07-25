@@ -12,7 +12,6 @@ namespace MyProject
         public static Scene_Game Instance;
 
         [SerializeField] private UI_PlayerList m_UI_PlayerList;
-        [SerializeField] private Transform m_RespawnPoint;
         [SerializeField] private int m_MaxTime = 60 * 5;
         [SerializeField] private int m_MaxKillCount = 30;
         [SerializeField] private int m_RespawnTime = 5;
@@ -109,7 +108,11 @@ namespace MyProject
             _player.onKill_OnClient += target => RefreshPlayerRankList();
 
             _player.onDead_OnServer += (source =>
-                this.Invoke(() => { _player.Server_Respawn(m_RespawnPoint.position); }, m_RespawnTime));
+                this.Invoke(() =>
+                {
+                    _player.Server_Respawn(
+                        OfflineGameplayDependencies.spawnManager.ReturnSpawnPoint().position);
+                }, m_RespawnTime));
 
             _player.onKill_OnServer += (target =>
             {

@@ -345,12 +345,14 @@ namespace MyProject
             m_CanMove = true;
             m_DefaultStepOffset = m_CharacterController.stepOffset;
 
-            m_Player.health.onHealthIsZero_OnSync += () => m_CanMove = false;
+            m_Player.health.onHealthIsZero_OnSync += () => { m_CanMove = false; };
 
             m_Player.health.onHealthChanged_OnSync += _amount =>
             {
                 if (m_Player.health.health > 0)
+                {
                     m_CanMove = true;
+                }
             };
         }
 

@@ -78,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 198018080214696792, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
       propertyPath: playOnAwake
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198018080214696792, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
       propertyPath: RotationModule.curve.scalar
@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 198248768583064048, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
       propertyPath: playOnAwake
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 198248768583064048, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
       propertyPath: RotationModule.curve.scalar
@@ -106,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 198682754650566076, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
       propertyPath: playOnAwake
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 199268493036765418, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
       propertyPath: m_Materials.Array.size
@@ -120,8 +120,29 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114835220603995840, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1494690074406284, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5028851838370823716}
   m_SourcePrefab: {fileID: 100100000, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
+--- !u!1 &7894872635243294901 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1494690074406284, guid: 8d270b9c49344574cac44259ba87f30c, type: 3}
+  m_PrefabInstance: {fileID: 7896349173624069433}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5028851838370823716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7894872635243294901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719444109054aaa468182e9af01b4aea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

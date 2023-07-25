@@ -732,6 +732,8 @@ MonoBehaviour:
   _serverIndicator: {fileID: 732648666235735229}
   _clientIndicator: {fileID: 282775858380693825}
   m_AddressInputField: {fileID: 553009205034351576}
+  m_ServerButton: {fileID: 8527527659876558196}
+  m_ClientButton: {fileID: 5290479449368186972}
 --- !u!223 &454442442368818598
 Canvas:
   m_ObjectHideFlags: 0

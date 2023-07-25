@@ -25,6 +25,7 @@ namespace MyProject
         [SerializeField] private LayerMask m_CharacterLayer;
         [SerializeField] private LayerMask m_IgnoreCollisionCharacterLayer;
         [SerializeField] private LayerMask m_DamageableLayer;
+        [SerializeField] private LayerMask m_BlockMovementLayer;
 
         private bool m_CanAttack;
         private float m_LastAttackTime;
@@ -266,6 +267,27 @@ namespace MyProject
                         _param.ownerConnectionId, _passedTime,
                         _param.position, _d);
             });
+
+            ObserversRpc_ProjectileAttack(_param);
+        }
+
+        [ObserversRpc(ExcludeServer = true, ExcludeOwner = true)]
+        private void ObserversRpc_ProjectileAttack(
+            Weapon_MagicSword_Attack_EventParam _param)
+        {
+            float _passedTime = (float)base.TimeManager.TimePassed(_param.tick);
+
+            var _projectileDirections =
+                GetDirectionsByRotationY(_param.rotationY, projectileCountPerShot, projectileShotAngleRange);
+
+            _projectileDirections.ForEach(_d =>
+            {
+                // 총알을 스폰합니다.
+                var _projectile =
+                    SpawnProjectile(
+                        _param.ownerConnectionId, _passedTime,
+                        _param.position, _d);
+            });
         }
 
         [Server]
@@ -294,6 +316,20 @@ namespace MyProject
                     }
 
                     _alreadyDamagedList.Add(_damageableEntity);
+
+                    Vector3 _directionToOther = (_collider.transform.position - _param.position).normalized;
+                    RaycastHit _hit;
+                    if (Physics.Raycast(
+                            _param.position, _directionToOther, out _hit, 10.0f,
+                            m_DamageableLayer | m_BlockMovementLayer))
+                    {
+                        // 무기와 피격 대상 사이에 다른 무언가 있다면,
+                        // 피격 처리를 하지 않습니다.
+                        if (_hit.collider != _collider)
+                        {
+                            continue;
+                        }
+                    }
 
                     Vector3 _attackDirection = GetDirectionsByRotationY(_param.rotationY, 1, 0)[0];
                     var _damageParam = new DamageParam()
@@ -363,7 +399,7 @@ namespace MyProject
                 float _delta = i / (float)(_count - 1);
                 float _angleDelta = _angleRange * _delta;
                 float _angle = _startAngle + _angleDelta;
-                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, 0, _angle));
+                Quaternion _angleQuaternion = Quaternion.Euler(new Vector3(0, _angle, 0));
                 Vector3 _bulletDirection = _angleQuaternion * Vector3.right;
 
                 _outDirectionList.Add(_bulletDirection);
@@ -446,7 +482,7 @@ namespace MyProject
             m_LastAttackTime = -9999;
             m_CanAttack = true;
 
-            player.health.onHealthChanged_OnSync +=_amount =>
+            player.health.onHealthChanged_OnSync += _amount =>
             {
                 if (player.health.health > 0)
                     m_CanAttack = true;

@@ -8,9 +8,9 @@ namespace MyProject
     public class MagicSword_Vfx : MonoBehaviour
     {
         /* prefab reference */
-        [SerializeField] private ParticleSystem m_Prefab_OnAttackParticle;
-        [SerializeField] private ParticleSystem m_Prefab_OnAttackHitParticle;
-        [SerializeField] private ParticleSystem m_Prefab_OnProjectileHitParticle;
+        [SerializeField] private GameObject m_Prefab_OnAttackParticle;
+        [SerializeField] private GameObject m_Prefab_OnAttackHitParticle;
+        [SerializeField] private GameObject m_Prefab_OnProjectileHitParticle;
 
         /* in this prefab reference */
         [SerializeField] private Transform m_OnAttackParticleSpawnPoint;
@@ -29,34 +29,48 @@ namespace MyProject
         {
             m_OnAttackAction = _param =>
             {
-                ParticleSystem _particle =
-                    GameObject.Instantiate(
-                        m_Prefab_OnAttackParticle,
+                GameObject _particle = OfflineGameplayDependencies.objectPoolManager
+                    .Get(m_Prefab_OnAttackParticle);
+
+                if (_weapon.IsOwner)
+                {
+                    _particle.transform.SetPositionAndRotation(
                         m_CachedOnAttackParticleSpawnPosition,
                         m_CachedOnAttackParticleSpawnRotation);
-                Destroy(_particle, 2.0f);
+                }
+                else
+                {
+                    _particle.transform.SetPositionAndRotation(
+                        _param.position,
+                        Quaternion.Euler(0, _param.rotationY, 0));
+                }
+
+                OfflineGameplayDependencies.objectPoolManager
+                    .Release(m_Prefab_OnAttackParticle, _particle, 2.0f);
             };
             _weapon.onAttack += m_OnAttackAction;
 
             m_OnAttackHitAction = _param =>
             {
-                ParticleSystem _particle =
-                    GameObject.Instantiate(
-                        m_Prefab_OnAttackHitParticle,
-                        _param.hitPoint,
-                        _param.hitRotation);
-                Destroy(_particle, 2.0f);
+                GameObject _particle = OfflineGameplayDependencies.objectPoolManager
+                    .Get(m_Prefab_OnAttackHitParticle);
+                _particle.transform.SetPositionAndRotation(
+                    _param.hitPoint,
+                    _param.hitRotation);
+                OfflineGameplayDependencies.objectPoolManager
+                    .Release(m_Prefab_OnAttackHitParticle, _particle, 2.0f);
             };
             _weapon.onAttackHit += m_OnAttackHitAction;
 
             m_OnProjectileHitAction = _param =>
             {
-                ParticleSystem _particle =
-                    GameObject.Instantiate(
-                        m_Prefab_OnProjectileHitParticle,
-                        _param.hitPoint,
-                        _param.hitRotation);
-                Destroy(_particle, 2.0f);
+                GameObject _particle = OfflineGameplayDependencies.objectPoolManager
+                    .Get(m_Prefab_OnProjectileHitParticle);
+                _particle.transform.SetPositionAndRotation(
+                    _param.hitPoint,
+                    _param.hitRotation);
+                OfflineGameplayDependencies.objectPoolManager
+                    .Release(m_Prefab_OnProjectileHitParticle, _particle, 2.0f);
             };
             _weapon.onProjectileHit += m_OnProjectileHitAction;
         }
@@ -73,7 +87,44 @@ namespace MyProject
             m_OnProjectileHitAction = null;
         }
 
-        private void Start()
+        private void RegisterPrefab()
+        {
+            OfflineGameplayDependencies.objectPoolManager.Register(
+                m_Prefab_OnAttackParticle, 30,
+                () =>
+                {
+                    var _particle = GameObject.Instantiate(m_Prefab_OnAttackParticle);
+                    _particle.SetActive(false);
+                    return _particle;
+                },
+                null,
+                (_go) => { _go.SetActive(true); },
+                (_go) => { _go.SetActive(false); });
+            OfflineGameplayDependencies.objectPoolManager.Register(
+                m_Prefab_OnAttackHitParticle, 30,
+                () =>
+                {
+                    var _particle = GameObject.Instantiate(m_Prefab_OnAttackHitParticle);
+                    _particle.SetActive(false);
+                    return _particle;
+                },
+                null,
+                (_go) => { _go.SetActive(true); },
+                (_go) => { _go.SetActive(false); });
+            OfflineGameplayDependencies.objectPoolManager.Register(
+                m_Prefab_OnProjectileHitParticle, 30,
+                () =>
+                {
+                    var _particle = GameObject.Instantiate(m_Prefab_OnAttackParticle);
+                    _particle.SetActive(false);
+                    return _particle;
+                },
+                null,
+                (_go) => { _go.SetActive(true); },
+                (_go) => { _go.SetActive(false); });
+        }
+
+        private void Awake()
         {
             m_Player = GetComponentInParent<Player>(); // for test
             if (m_Player == null)
@@ -82,12 +133,10 @@ namespace MyProject
             if (player.weapon is Weapon_MagicSword _magicSword)
                 InitializeMagicSword(_magicSword);
 
-            player.onWeaponChanged_OnClient += _prevWeaponId =>
+            player.onWeaponChanged_OnClient += (_prevWeapon, _currentWeapon) =>
             {
-                if (_prevWeaponId.HasValue)
+                if (_prevWeapon != null)
                 {
-                    IWeapon _prevWeapon = InstanceFinder.ClientManager.Objects.Spawned[_prevWeaponId.Value] as IWeapon;
-
                     if (_prevWeapon is Weapon_MagicSword _prevMagicSword)
                         UninitializeMagicSword(_prevMagicSword);
                 }
@@ -95,6 +144,8 @@ namespace MyProject
                 if (player.weapon is Weapon_MagicSword _magicSword)
                     InitializeMagicSword(_magicSword);
             };
+
+            RegisterPrefab();
         }
 
         private void Update()

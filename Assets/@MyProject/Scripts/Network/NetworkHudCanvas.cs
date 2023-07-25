@@ -65,6 +65,8 @@ namespace MyProject
         private Image _clientIndicator;
 
         [SerializeField] private TMP_InputField m_AddressInputField;
+        [SerializeField] private Button m_ServerButton;
+        [SerializeField] private Button m_ClientButton;
 
         #endregion
 
@@ -204,6 +206,24 @@ namespace MyProject
         {
             _clientState = obj.ConnectionState;
             UpdateColor(obj.ConnectionState, ref _clientIndicator);
+
+            if (obj.ConnectionState == LocalConnectionState.Started)
+            {
+                m_ClientButton.gameObject.SetActive(false);
+                m_AddressInputField.gameObject.SetActive(false);
+
+                m_ServerButton.gameObject.SetActive(false);
+            }
+            else if (obj.ConnectionState == LocalConnectionState.Stopped)
+            {
+                m_ClientButton.gameObject.SetActive(true);
+                m_AddressInputField.gameObject.SetActive(true);
+
+                if (_networkManager.ServerManager.Started == false)
+                {
+                    m_ServerButton.gameObject.SetActive(true);
+                }
+            }
         }
 
 
@@ -211,6 +231,11 @@ namespace MyProject
         {
             _serverState = obj.ConnectionState;
             UpdateColor(obj.ConnectionState, ref _serverIndicator);
+
+            if (obj.ConnectionState == LocalConnectionState.Started)
+                m_ServerButton.gameObject.SetActive(false);
+            else if (obj.ConnectionState == LocalConnectionState.Stopped)
+                m_ServerButton.gameObject.SetActive(true);
         }
 
 

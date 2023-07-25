@@ -65,17 +65,15 @@ namespace MyProject
             if (player.weapon is IMeleeWeapon _meleeWeapon)
                 InitializeMeleeWeapon(_meleeWeapon);
 
-            player.onWeaponChanged_OnClient += _prevWeaponId =>
+            player.onWeaponChanged_OnClient += (_prevWeapon, _newWeapon) =>
             {
-                if (_prevWeaponId.HasValue)
+                if (_prevWeapon != null)
                 {
-                    IWeapon _prevWeapon = InstanceFinder.ClientManager.Objects.Spawned[_prevWeaponId.Value] as IWeapon;
-
                     if (_prevWeapon is IMeleeWeapon _prevMeleeWeapon)
                         UninitializeMeleeWeapon(_prevMeleeWeapon);
                 }
 
-                if (player.weapon is IMeleeWeapon _meleeWeapon)
+                if (_newWeapon is IMeleeWeapon _meleeWeapon)
                     InitializeMeleeWeapon(_meleeWeapon);
             };
         }
