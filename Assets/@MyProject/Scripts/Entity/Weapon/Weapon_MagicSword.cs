@@ -20,8 +20,6 @@ namespace MyProject
         /// </summary>
         [SerializeField] private Projectile m_Prefab_Projectile;
 
-        [SerializeField] private Collider m_AttackRangeCollider;
-
         [SerializeField] private LayerMask m_CharacterLayer;
         [SerializeField] private LayerMask m_IgnoreCollisionCharacterLayer;
         [SerializeField] private LayerMask m_DamageableLayer;
@@ -47,10 +45,21 @@ namespace MyProject
 
         public int attackDamageMagnitude =>
             Mathf.RoundToInt(m_Player.abilityProperty.meleeAttackDamageMagnitude
-                             * m_Player.abilityProperty.meleeAttackDamageMagnitudeMultiplier);
+                             + m_Player.abilityProperty.meleeAttackDamageMagnitudeAddition);
 
         public float attackDelay =>
             m_Player.abilityProperty.meleeAttackDelay;
+
+        public float meleeAttackDelay =>
+            m_Player.abilityProperty.meleeAttackDelay
+            + m_Player.abilityProperty.meleeAttackDelayAddition;
+
+        public float meleeAttackInterval =>
+            m_Player.abilityProperty.meleeAttackInterval
+            + m_Player.abilityProperty.meleeAttackIntervalAddition;
+
+        [SerializeField] private Collider m_AttackRange;
+        public Collider meleeAttackRange => m_AttackRange;
 
         public event Action<IWeapon_OnAttack_EventParam> onAttack;
         public event Action<IMeleeWeapon_OnAttackHit_EventParam> onAttackHit;
@@ -90,23 +99,26 @@ namespace MyProject
         #region Sword
 
         public float projectileSpeed =>
-            m_Player.abilityProperty.projectileSpeed * m_Player.abilityProperty.projectileSpeedMultiplier;
+            m_Player.abilityProperty.projectileSpeed + m_Player.abilityProperty.projectileSpeedAddition;
 
-        public float projectileScaleMultiplier =>
-            m_Player.abilityProperty.projectileSizeMultiplier;
+        public float projectileScaleAddition =>
+            1.0f + m_Player.abilityProperty.projectileSizeAddition;
 
         public int projectileCountPerShot =>
-            m_Player.abilityProperty.projectileCountPerShot;
+            m_Player.abilityProperty.projectileCountPerShot
+            + m_Player.abilityProperty.projectileCountPerShotAddition;
 
         public float projectileShotAngleRange =>
-            m_Player.abilityProperty.projectileShotAngleRange;
+            m_Player.abilityProperty.projectileShotAngleRange
+            + m_Player.abilityProperty.projectileShotAngleRangeAddition;
 
         public int projectileDamageMagnitude =>
             Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage
-                             * m_Player.abilityProperty.projectileDamageMultiplier);
+                             + m_Player.abilityProperty.projectileDamageAddition);
 
         public int swordProjectileRequiredStack =>
-            m_Player.abilityProperty.swordProjectileRequiredStack;
+            m_Player.abilityProperty.swordProjectileRequiredStack
+            + m_Player.abilityProperty.swordProjectileRequiredStackAddition;
 
         public event Action<Weapon_MagicSword_OnProjectileHit_EventParam> onProjectileHit;
 
@@ -183,23 +195,26 @@ namespace MyProject
 
                     // 일반적인 근접 공격을 실시합니다.
 
-                    onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
+                    this.Invoke(() =>
                     {
-                        tick = base.TimeManager.Tick,
-                        ownerConnectionId = base.OwnerId,
-                        position = m_AttackQueuePosition,
-                        rotationY = m_AttackQueueRotationY
-                    });
+                        onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
+                        {
+                            tick = base.TimeManager.Tick,
+                            ownerConnectionId = base.OwnerId,
+                            position = m_AttackQueuePosition,
+                            rotationY = m_AttackQueueRotationY
+                        });
 
-                    // 서버에게 공격 사실을 알립니다.
-                    ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
-                    {
-                        tick = base.TimeManager.Tick,
-                        ownerConnectionId = base.LocalConnection.ClientId,
-                        position = m_AttackQueuePosition,
-                        rotationY = m_AttackQueueRotationY,
-                        isProjectileAttack = false
-                    });
+                        // 서버에게 공격 사실을 알립니다.
+                        ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
+                        {
+                            tick = base.TimeManager.Tick,
+                            ownerConnectionId = base.LocalConnection.ClientId,
+                            position = m_AttackQueuePosition,
+                            rotationY = m_AttackQueueRotationY,
+                            isProjectileAttack = false
+                        });
+                    }, meleeAttackDelay);
                 }
             }
         }
@@ -299,7 +314,7 @@ namespace MyProject
 
             var _others = Physics.OverlapBox(
                 _param.position,
-                m_AttackRangeCollider.bounds.extents,
+                m_AttackRange.bounds.extents,
                 Quaternion.Euler(0, _param.rotationY, 0),
                 m_DamageableLayer);
 
@@ -433,7 +448,7 @@ namespace MyProject
             _projectile.m_StartTime = Time.time;
             _projectile.m_Speed = projectileSpeed;
             _projectile.m_DamageMagnitude = projectileDamageMagnitude;
-            _projectile.scaleMultiplier = projectileScaleMultiplier;
+            _projectile.scaleMultiplier = projectileScaleAddition;
 
             return _projectile;
         }
