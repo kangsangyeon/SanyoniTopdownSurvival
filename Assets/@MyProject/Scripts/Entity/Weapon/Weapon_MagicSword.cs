@@ -195,23 +195,26 @@ namespace MyProject
 
                     // 일반적인 근접 공격을 실시합니다.
 
-                    onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
+                    this.Invoke(() =>
                     {
-                        tick = base.TimeManager.Tick,
-                        ownerConnectionId = base.OwnerId,
-                        position = m_AttackQueuePosition,
-                        rotationY = m_AttackQueueRotationY
-                    });
+                        onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
+                        {
+                            tick = base.TimeManager.Tick,
+                            ownerConnectionId = base.OwnerId,
+                            position = m_AttackQueuePosition,
+                            rotationY = m_AttackQueueRotationY
+                        });
 
-                    // 서버에게 공격 사실을 알립니다.
-                    ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
-                    {
-                        tick = base.TimeManager.Tick,
-                        ownerConnectionId = base.LocalConnection.ClientId,
-                        position = m_AttackQueuePosition,
-                        rotationY = m_AttackQueueRotationY,
-                        isProjectileAttack = false
-                    });
+                        // 서버에게 공격 사실을 알립니다.
+                        ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
+                        {
+                            tick = base.TimeManager.Tick,
+                            ownerConnectionId = base.LocalConnection.ClientId,
+                            position = m_AttackQueuePosition,
+                            rotationY = m_AttackQueueRotationY,
+                            isProjectileAttack = false
+                        });
+                    }, meleeAttackDelay);
                 }
             }
         }
