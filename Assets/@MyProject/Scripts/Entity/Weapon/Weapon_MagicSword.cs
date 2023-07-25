@@ -145,7 +145,7 @@ namespace MyProject
             float _elapsedTimeSinceLastFire = Time.time - m_LastAttackTime;
 
             // 가장 마지막으로 공격한 뒤 일정 시간 뒤에 다시 공격할 수 있습니다.
-            bool _canShoot = _elapsedTimeSinceLastFire >= attackDelay;
+            bool _canShoot = _elapsedTimeSinceLastFire >= meleeAttackInterval;
 
             if (_canShoot)
             {
