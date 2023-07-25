@@ -7,7 +7,7 @@ namespace MyProject
         public readonly int maxHealth = 200;
         public int maxHealthAddition;
 
-        public readonly float moveSpeed = 10.0f;
+        public readonly float moveSpeed = 4.0f;
         public float moveSpeedAddition;
 
         /* gun attack */
