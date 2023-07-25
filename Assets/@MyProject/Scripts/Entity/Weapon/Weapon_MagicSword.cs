@@ -47,7 +47,7 @@ namespace MyProject
 
         public int attackDamageMagnitude =>
             Mathf.RoundToInt(m_Player.abilityProperty.meleeAttackDamageMagnitude
-                             * m_Player.abilityProperty.meleeAttackDamageMagnitudeMultiplier);
+                             + m_Player.abilityProperty.meleeAttackDamageMagnitudeAddition);
 
         public float attackDelay =>
             m_Player.abilityProperty.meleeAttackDelay;
@@ -90,20 +90,22 @@ namespace MyProject
         #region Sword
 
         public float projectileSpeed =>
-            m_Player.abilityProperty.projectileSpeed * m_Player.abilityProperty.projectileSpeedMultiplier;
+            m_Player.abilityProperty.projectileSpeed + m_Player.abilityProperty.projectileSpeedAddition;
 
-        public float projectileScaleMultiplier =>
-            m_Player.abilityProperty.projectileSizeMultiplier;
+        public float projectileScaleAddition =>
+            1.0f + m_Player.abilityProperty.projectileSizeAddition;
 
         public int projectileCountPerShot =>
-            m_Player.abilityProperty.projectileCountPerShot;
+            m_Player.abilityProperty.projectileCountPerShot
+            + m_Player.abilityProperty.projectileCountPerShotAddition;
 
         public float projectileShotAngleRange =>
-            m_Player.abilityProperty.projectileShotAngleRange;
+            m_Player.abilityProperty.projectileShotAngleRange
+            + m_Player.abilityProperty.projectileShotAngleRangeAddition;
 
         public int projectileDamageMagnitude =>
             Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage
-                             * m_Player.abilityProperty.projectileDamageMultiplier);
+                             + m_Player.abilityProperty.projectileDamageAddition);
 
         public int swordProjectileRequiredStack =>
             m_Player.abilityProperty.swordProjectileRequiredStack;
@@ -433,7 +435,7 @@ namespace MyProject
             _projectile.m_StartTime = Time.time;
             _projectile.m_Speed = projectileSpeed;
             _projectile.m_DamageMagnitude = projectileDamageMagnitude;
-            _projectile.scaleMultiplier = projectileScaleMultiplier;
+            _projectile.scaleMultiplier = projectileScaleAddition;
 
             return _projectile;
         }

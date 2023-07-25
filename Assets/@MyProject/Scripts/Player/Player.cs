@@ -225,30 +225,34 @@ namespace MyProject
         {
             /* gun attack */
 
-            _abilityProperty.reloadDurationMultiplier =
-                _abilityProperty.reloadDurationMultiplier * _modifierDefinition.reloadDurationMultiplier;
-            _abilityProperty.fireDelayMultiplier =
-                _abilityProperty.fireDelayMultiplier * _modifierDefinition.fireDelayMultiplier;
-            _abilityProperty.maxMagazineMultiplier =
-                _abilityProperty.maxMagazineMultiplier * _modifierDefinition.maxMagazineMultiplier;
-            _abilityProperty.projectileSpeedMultiplier =
-                _abilityProperty.projectileSpeedMultiplier * _modifierDefinition.projectileSpeedMultiplier;
-            _abilityProperty.projectileDamageMultiplier =
-                _abilityProperty.projectileDamageMultiplier * _modifierDefinition.projectileDamageMultiplier;
-            _abilityProperty.projectileSizeMultiplier =
-                _abilityProperty.projectileSizeMultiplier * _modifierDefinition.projectileSizeMultiplier;
-            _abilityProperty.projectileCountPerShot =
-                _abilityProperty.projectileCountPerShot + _modifierDefinition.projectileCountPerShotAdditional;
-            _abilityProperty.projectileShotAngleRange =
-                _abilityProperty.projectileShotAngleRange + _modifierDefinition.projectileSpreadAngleMultiplier;
+            _abilityProperty.reloadDurationAddition +=
+                _modifierDefinition.reloadDurationAddition;
+            _abilityProperty.fireDelayAddition +=
+                _modifierDefinition.fireDelayAddition;
+            _abilityProperty.maxMagazineAddition +=
+                _modifierDefinition.maxMagazineAddition;
+            _abilityProperty.projectileSpeedAddition +=
+                _modifierDefinition.projectileSpeedAddition;
+            _abilityProperty.projectileDamageAddition +=
+                _modifierDefinition.projectileDamageAddition;
+            _abilityProperty.projectileSizeAddition +=
+                _modifierDefinition.projectileSizeAddition;
+            _abilityProperty.projectileCountPerShotAddition +=
+                _modifierDefinition.projectileCountPerShotAddition;
+            _abilityProperty.projectileShotAngleRangeAddition +=
+                _modifierDefinition.projectileSpreadAngleAddition;
 
             /* melee attack */
 
-            _abilityProperty.meleeAttackDelayMultiplier =
-                _abilityProperty.meleeAttackDelayMultiplier * _modifierDefinition.meleeAttackDelayMultiplier;
-            _abilityProperty.meleeAttackDamageMagnitudeMultiplier =
-                _abilityProperty.meleeAttackDamageMagnitudeMultiplier
-                * _modifierDefinition.meleeAttackDamageMagnitudeMultiplier;
+            _abilityProperty.meleeAttackDelayAddition +=
+                _modifierDefinition.meleeAttackDelayAddition;
+            _abilityProperty.meleeAttackDamageMagnitudeAddition +=
+                _modifierDefinition.meleeAttackDamageMagnitudeAddition;
+
+            /* sword */
+
+            _abilityProperty.swordProjectileRequiredStackAddition +=
+                _modifierDefinition.swordProjectileRequiredStackAddition;
         }
 
         #region Events

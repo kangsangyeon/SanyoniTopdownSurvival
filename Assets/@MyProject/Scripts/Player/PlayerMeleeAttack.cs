@@ -42,10 +42,11 @@ namespace MyProject
 
         public int attackDamageMagnitude => Mathf.RoundToInt(
             player.abilityProperty.meleeAttackDamageMagnitude
-            * player.abilityProperty.meleeAttackDamageMagnitudeMultiplier);
+            + player.abilityProperty.meleeAttackDamageMagnitudeAddition);
 
         public float attackDelay =>
-            player.abilityProperty.meleeAttackDelay * player.abilityProperty.meleeAttackDelayMultiplier;
+            player.abilityProperty.meleeAttackDelay
+            + player.abilityProperty.meleeAttackDelayAddition;
 
         public event Action<IWeapon_OnAttack_EventParam> onAttack;
         public event Action<IMeleeWeapon_OnAttackHit_EventParam> onAttackHit;

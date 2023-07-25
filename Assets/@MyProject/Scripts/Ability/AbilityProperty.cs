@@ -6,36 +6,39 @@ namespace MyProject
         /* gun attack */
 
         public readonly float reloadDuration = 3.0f;
-        public float reloadDurationMultiplier = 1.0f;
+        public float reloadDurationAddition;
 
         public readonly float fireDelay = 0.2f;
-        public float fireDelayMultiplier = 1.0f;
+        public float fireDelayAddition;
 
         public readonly int maxMagazine = 20;
-        public float maxMagazineMultiplier = 1.0f;
+        public int maxMagazineAddition;
 
         public readonly float projectileSpeed = 10.0f;
-        public float projectileSpeedMultiplier = 1.0f;
+        public float projectileSpeedAddition;
 
         public readonly int projectileDamage = -15;
-        public float projectileDamageMultiplier = 1.0f;
+        public int projectileDamageAddition;
 
-        public float projectileSizeMultiplier = 1.0f;
+        public float projectileSizeAddition;
 
-        public int projectileCountPerShot = 1;
+        public readonly int projectileCountPerShot = 1;
+        public int projectileCountPerShotAddition;
 
-        public float projectileShotAngleRange = 20.0f;
+        public readonly float projectileShotAngleRange = 20.0f;
+        public float projectileShotAngleRangeAddition;
 
         /* melee attack */
 
         public readonly float meleeAttackDelay = 0.5f;
-        public float meleeAttackDelayMultiplier = 1.0f;
+        public float meleeAttackDelayAddition;
 
         public readonly int meleeAttackDamageMagnitude = -40;
-        public float meleeAttackDamageMagnitudeMultiplier = 1.0f;
+        public int meleeAttackDamageMagnitudeAddition;
 
         /* sword */
 
-        public int swordProjectileRequiredStack = 3;
+        public readonly int swordProjectileRequiredStack = 3;
+        public int swordProjectileRequiredStackAddition;
     }
 }
