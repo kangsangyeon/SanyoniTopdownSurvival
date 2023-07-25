@@ -48,14 +48,14 @@ public class UI_HealthBar : MonoBehaviour
             else
                 m_FillImage.color = m_Color3;
         };
-        m_Health.onHealthChanged_OnSync += m_OnHealthChangedAction;
+        m_Health.onHealthChanged_OnClient += m_OnHealthChangedAction;
     }
 
     private void OnDestroy()
     {
         if (m_OnHealthChangedAction != null)
         {
-            m_Health.onHealthChanged_OnSync -= m_OnHealthChangedAction;
+            m_Health.onHealthChanged_OnClient -= m_OnHealthChangedAction;
             m_OnHealthChangedAction = null;
         }
     }

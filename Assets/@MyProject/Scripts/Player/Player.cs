@@ -57,18 +57,6 @@ namespace MyProject
         public event System.Action onStopClient;
         public event System.Action onInitializedOnClient; // server only
 
-        private bool m_OnStartServerCalled;
-        public bool onStartServerCalled => m_OnStartServerCalled;
-
-        private bool m_OnStopServerCalled;
-        public bool onStopServerCalled => m_OnStopServerCalled;
-
-        private bool m_OnStartClientCalled;
-        public bool onStartClientCalled => m_OnStartClientCalled;
-
-        private bool m_OnStopClientCalled;
-        public bool onStopClientCalled => m_OnStopClientCalled;
-
         private bool m_InitializedOnClient; // server only
 
         [ServerRpc]
@@ -441,7 +429,6 @@ namespace MyProject
                     { magnitude = health.maxHealth, source = this, time = Time.time }); // source: respawn
             };
 
-            m_OnStartServerCalled = true;
             onStartServer?.Invoke();
         }
 
@@ -450,7 +437,6 @@ namespace MyProject
             base.OnStopServer();
             Scene_Game.Instance.Server_RemovePlayer(this);
 
-            m_OnStopServerCalled = true;
             onStopServer?.Invoke();
         }
 
@@ -477,16 +463,18 @@ namespace MyProject
                 }
             }
 
-            m_OnStartClientCalled = true;
             onStartClient?.Invoke();
-            ServerRpc_InitializedOnClient();
+
+            if (base.IsOwner)
+            {
+                ServerRpc_InitializedOnClient();
+            }
         }
 
         public override void OnStopClient()
         {
             base.OnStopClient();
 
-            m_OnStopClientCalled = true;
             onStopClient?.Invoke();
         }
 
@@ -499,7 +487,7 @@ namespace MyProject
                 OfflineGameplayDependencies.gameScene.myPlayer = this;
             }
 
-            health.onHealthIsZero_OnSync += () =>
+            health.onHealthIsZero_OnClient += () =>
             {
                 if (m_HealthBar)
                     m_HealthBar.enabled = false;

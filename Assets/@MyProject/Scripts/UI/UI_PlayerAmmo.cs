@@ -173,9 +173,9 @@ namespace MyProject
                     InitializeGunWeaponEvents(_gunWeapon);
             };
 
-            m_Player.health.onHealthIsZero_OnSync += () => { m_ShouldDraw = false; };
+            m_Player.health.onHealthIsZero_OnClient += () => { m_ShouldDraw = false; };
 
-            m_Player.health.onHealthChanged_OnSync += _i =>
+            m_Player.health.onHealthChanged_OnClient += _i =>
             {
                 if (m_Player.health.health > 0)
                     m_ShouldDraw = true;
