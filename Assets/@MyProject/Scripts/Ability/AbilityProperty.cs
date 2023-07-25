@@ -3,6 +3,13 @@ namespace MyProject
     [System.Serializable]
     public class AbilityProperty
     {
+        /* character */
+        public readonly int maxHealth = 200;
+        public int maxHealthAddition;
+
+        public readonly float moveSpeed = 10.0f;
+        public float moveSpeedAddition;
+
         /* gun attack */
 
         public readonly float reloadDuration = 3.0f;
@@ -33,8 +40,13 @@ namespace MyProject
         public readonly float meleeAttackDelay = 0.5f;
         public float meleeAttackDelayAddition;
 
+        public readonly float meleeAttackInterval = 1.5f;
+        public float meleeAttackIntervalAddition;
+        
         public readonly int meleeAttackDamageMagnitude = -40;
         public int meleeAttackDamageMagnitudeAddition;
+
+        public float meleeAttackSizeAddition;
 
         /* sword */
 

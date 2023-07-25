@@ -4,6 +4,7 @@ using FishNet.Object;
 using MyProject.Event;
 using MyProject.Struct;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MyProject
 {
@@ -13,8 +14,6 @@ namespace MyProject
         /// 발사체가 가질 수 있는 최대 경과 시간입니다.
         /// </summary>
         private const float MAX_PASSED_TIME = 0.3f;
-
-        [SerializeField] private Collider m_AttackRangeCollider;
 
         [SerializeField] private LayerMask m_CharacterLayer;
         [SerializeField] private LayerMask m_IgnoreCollisionCharacterLayer;
@@ -47,6 +46,16 @@ namespace MyProject
         public float attackDelay =>
             player.abilityProperty.meleeAttackDelay
             + player.abilityProperty.meleeAttackDelayAddition;
+
+        public float meleeAttackDelay =>
+            attackDelay;
+
+        public float meleeAttackInterval =>
+            m_Player.abilityProperty.meleeAttackInterval
+            + m_Player.abilityProperty.meleeAttackIntervalAddition;
+
+        [SerializeField] private Collider m_MeleeAttackRange;
+        public Collider meleeAttackRange => m_MeleeAttackRange;
 
         public event Action<IWeapon_OnAttack_EventParam> onAttack;
         public event Action<IMeleeWeapon_OnAttackHit_EventParam> onAttackHit;
@@ -93,30 +102,33 @@ namespace MyProject
         {
             m_AttackQueue = false;
 
-            float _elapsedTimeSinceLastFire = Time.time - m_LastAttackTime;
+            float _elapsedTimeSinceLastAttack = Time.time - m_LastAttackTime;
 
             // 가장 마지막으로 발사한 뒤 일정 시간 뒤에 다시 발사할 수 있습니다.
-            bool _canShoot = _elapsedTimeSinceLastFire >= attackDelay;
+            bool _canShoot = _elapsedTimeSinceLastAttack >= meleeAttackInterval;
 
             if (_canShoot)
             {
-                m_LastAttackTime = Time.time;
-                onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
+                this.Invoke(() =>
                 {
-                    tick = base.TimeManager.Tick,
-                    ownerConnectionId = base.OwnerId,
-                    position = m_AttackQueuePosition,
-                    rotationY = m_AttackQueueRotationY
-                });
+                    m_LastAttackTime = Time.time;
+                    onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
+                    {
+                        tick = base.TimeManager.Tick,
+                        ownerConnectionId = base.OwnerId,
+                        position = m_AttackQueuePosition,
+                        rotationY = m_AttackQueueRotationY
+                    });
 
-                // 서버에게 공격 사실을 알립니다.
-                ServerRpc_Attack(new PlayerMeleeAttack_Attack_EventParam()
-                {
-                    tick = base.TimeManager.Tick,
-                    ownerConnectionId = base.LocalConnection.ClientId,
-                    position = m_AttackQueuePosition,
-                    rotationY = m_AttackQueueRotationY
-                });
+                    // 서버에게 공격 사실을 알립니다.
+                    ServerRpc_Attack(new PlayerMeleeAttack_Attack_EventParam()
+                    {
+                        tick = base.TimeManager.Tick,
+                        ownerConnectionId = base.LocalConnection.ClientId,
+                        position = m_AttackQueuePosition,
+                        rotationY = m_AttackQueueRotationY
+                    });
+                }, meleeAttackDelay);
             }
         }
 
@@ -161,7 +173,7 @@ namespace MyProject
 
             var _others = Physics.OverlapBox(
                 _param.position,
-                m_AttackRangeCollider.bounds.extents,
+                m_MeleeAttackRange.bounds.extents,
                 Quaternion.Euler(0, _param.rotationY, 0),
                 m_DamageableLayer);
 

@@ -20,8 +20,6 @@ namespace MyProject
         /// </summary>
         [SerializeField] private Projectile m_Prefab_Projectile;
 
-        [SerializeField] private Collider m_AttackRangeCollider;
-
         [SerializeField] private LayerMask m_CharacterLayer;
         [SerializeField] private LayerMask m_IgnoreCollisionCharacterLayer;
         [SerializeField] private LayerMask m_DamageableLayer;
@@ -51,6 +49,17 @@ namespace MyProject
 
         public float attackDelay =>
             m_Player.abilityProperty.meleeAttackDelay;
+
+        public float meleeAttackDelay =>
+            m_Player.abilityProperty.meleeAttackDelay
+            + m_Player.abilityProperty.meleeAttackDelayAddition;
+
+        public float meleeAttackInterval =>
+            m_Player.abilityProperty.meleeAttackInterval
+            + m_Player.abilityProperty.meleeAttackIntervalAddition;
+
+        [SerializeField] private Collider m_AttackRange;
+        public Collider meleeAttackRange => m_AttackRange;
 
         public event Action<IWeapon_OnAttack_EventParam> onAttack;
         public event Action<IMeleeWeapon_OnAttackHit_EventParam> onAttackHit;
@@ -108,7 +117,8 @@ namespace MyProject
                              + m_Player.abilityProperty.projectileDamageAddition);
 
         public int swordProjectileRequiredStack =>
-            m_Player.abilityProperty.swordProjectileRequiredStack;
+            m_Player.abilityProperty.swordProjectileRequiredStack
+            + m_Player.abilityProperty.swordProjectileRequiredStackAddition;
 
         public event Action<Weapon_MagicSword_OnProjectileHit_EventParam> onProjectileHit;
 
@@ -301,7 +311,7 @@ namespace MyProject
 
             var _others = Physics.OverlapBox(
                 _param.position,
-                m_AttackRangeCollider.bounds.extents,
+                m_AttackRange.bounds.extents,
                 Quaternion.Euler(0, _param.rotationY, 0),
                 m_DamageableLayer);
 

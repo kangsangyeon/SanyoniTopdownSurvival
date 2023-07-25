@@ -52,7 +52,21 @@ namespace MyProject
         [SerializeField] private float m_GravityMultiplier = 3f;
 
 
-        [SerializeField] private float m_MoveSpeed = 4f;
+        private float m_MoveSpeed = 4f;
+
+        public float moveSpeed
+        {
+            get => m_MoveSpeed;
+            set
+            {
+                if (m_MoveSpeed != value)
+                {
+                    m_MoveSpeed = value;
+                    onMoveSpeedChanged_OnClient?.Invoke(value);
+                }
+            }
+        }
+
         [SerializeField] private float m_JumpVelocity = 7f;
 
         [SerializeField] private Player m_Player;
@@ -60,6 +74,8 @@ namespace MyProject
 
         private CharacterController m_CharacterController;
         public CharacterController characterController => m_CharacterController;
+
+        public event System.Action<float> onMoveSpeedChanged_OnClient;
 
         private Vector3 m_Movement;
         private float m_VerticalVelocity;

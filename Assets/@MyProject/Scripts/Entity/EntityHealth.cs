@@ -8,7 +8,19 @@ using UnityEngine;
 public class EntityHealth : NetworkBehaviour
 {
     [SerializeField] private int m_MaxHealth = 100;
-    public int MaxHealth => m_MaxHealth;
+
+    public int maxHealth
+    {
+        get => m_MaxHealth;
+        set
+        {
+            if (m_MaxHealth != value)
+            {
+                m_MaxHealth = value;
+                onMaxHealthChanged_OnClient?.Invoke(value);
+            }
+        }
+    }
 
     [SyncVar(OnChange = nameof(SyncVar_OnHealthChanged), WritePermissions = WritePermission.ServerOnly)]
     private int m_Health;
@@ -22,6 +34,7 @@ public class EntityHealth : NetworkBehaviour
     public event System.Action onHealthIsZero_OnSync;
     public event System.Action<int> onHealthChanged_OnServer;
     public event System.Action<int> onHealthChanged_OnSync;
+    public event System.Action<int> onMaxHealthChanged_OnClient;
 
     public void SyncVar_OnHealthChanged(int _prev, int _next, bool _asServer)
     {

@@ -6,6 +6,14 @@ namespace MyProject
     [CreateAssetMenu(menuName = "MyProject/AbilityPropertyModifierDefinition")]
     public class AbilityPropertyModifierDefinition : ScriptableObject
     {
+        /* character */
+
+        [SerializeField] private int m_MaxHealthAddition;
+        public int maxHealthAddition => m_MaxHealthAddition;
+
+        [SerializeField] private float m_MoveSpeedAddition;
+        public float moveSpeedAddition => m_MoveSpeedAddition;
+
         /* gun attack */
 
         [SerializeField] private float m_ReloadDurationAddition;
@@ -37,8 +45,14 @@ namespace MyProject
         [SerializeField] private float m_MeleeAttackDelayAddition;
         public float meleeAttackDelayAddition => m_MeleeAttackDelayAddition;
 
+        [SerializeField] private float m_MeleeAttackIntervalAddition;
+        public float meleeAttackIntervalAddition => m_MeleeAttackIntervalAddition;
+
         [SerializeField] private int m_MeleeAttackDamageMagnitudeAddition;
         public int meleeAttackDamageMagnitudeAddition => m_MeleeAttackDamageMagnitudeAddition;
+
+        [SerializeField] private float m_MeleeAttackSizeAddition;
+        public float meleeAttackSizeAddition => m_MeleeAttackSizeAddition;
 
         /* sword */
 

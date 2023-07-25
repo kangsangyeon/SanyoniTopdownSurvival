@@ -28,7 +28,7 @@ public class UI_HealthBar : MonoBehaviour
 
     private void Start()
     {
-        float _ratio = (float)m_Health.health / m_Health.MaxHealth;
+        float _ratio = (float)m_Health.health / m_Health.maxHealth;
 
         if (_ratio >= m_Threshold1)
             m_FillImage.color = m_Color1;
@@ -39,7 +39,7 @@ public class UI_HealthBar : MonoBehaviour
 
         m_OnHealthChangedAction = _current =>
         {
-            float _ratio = (float)_current / m_Health.MaxHealth;
+            float _ratio = (float)_current / m_Health.maxHealth;
 
             if (_ratio >= m_Threshold1)
                 m_FillImage.color = m_Color1;

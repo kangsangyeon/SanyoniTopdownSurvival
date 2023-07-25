@@ -117,38 +117,9 @@ namespace MyProject
 
         #region Ability Events
 
-        public event System.Action<Player_OnAbilityAdded_EventParam> onAbilityAdded_OnClient;
-        public event System.Action<Player_OnAbilityRemoved_EventParam> onAbilityRemoved_OnClient;
-
-        [Server]
-        private void Server_OnAbilityAdded(Player _player, AbilityDefinition _abilityDefinition)
-        {
-            onAbilityAdded_OnClient?.Invoke(new Player_OnAbilityAdded_EventParam()
-                { player = new PlayerInfo(_player), abilityId = _abilityDefinition.abilityId });
-            ObserversRpc_OnAbilityAdded(new Player_OnAbilityAdded_EventParam()
-                { player = new PlayerInfo(_player), abilityId = _abilityDefinition.abilityId });
-        }
-
-        [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_OnAbilityAdded(Player_OnAbilityAdded_EventParam _param)
-        {
-            onAbilityAdded_OnClient?.Invoke(_param);
-        }
-
-        [Server]
-        private void Server_OnAbilityRemoved(Player _player, AbilityDefinition _abilityDefinition)
-        {
-            onAbilityRemoved_OnClient?.Invoke(new Player_OnAbilityRemoved_EventParam()
-                { player = new PlayerInfo(_player), abilityId = _abilityDefinition.abilityId });
-            ObserversRpc_OnAbilityRemoved(new Player_OnAbilityRemoved_EventParam()
-                { player = new PlayerInfo(_player), abilityId = _abilityDefinition.abilityId });
-        }
-
-        [ObserversRpc(ExcludeServer = true)]
-        private void ObserversRpc_OnAbilityRemoved(Player_OnAbilityRemoved_EventParam _param)
-        {
-            onAbilityRemoved_OnClient?.Invoke(_param);
-        }
+        public event System.Action<AbilityDefinition> onAbilityAdded_OnClient;
+        public event System.Action<AbilityDefinition> onAbilityRemoved_OnClient;
+        public event System.Action onAbilityPropertyRefreshed_OnClient;
 
         #endregion
 
@@ -165,11 +136,10 @@ namespace MyProject
             m_AbilityList.Add(_definition);
             foreach (var m in _definition.abilityPropertyModifierDefinitionList) m_AbilityPropertyModifierList.Add(m);
             RefreshAbilityProperty();
+            onAbilityAdded_OnClient?.Invoke(_definition);
 
             ObserversRpc_AddAbility(new Player_ObserversRpc_AddAbility_EventParam()
                 { player = new PlayerInfo(this), abilityId = _definition.abilityId });
-
-            Server_OnAbilityAdded(this, _definition);
         }
 
         [ObserversRpc(ExcludeServer = true)]
@@ -182,6 +152,7 @@ namespace MyProject
             foreach (var m in _abilityDefinition.abilityPropertyModifierDefinitionList)
                 m_AbilityPropertyModifierList.Add(m);
             RefreshAbilityProperty();
+            onAbilityAdded_OnClient?.Invoke(_abilityDefinition);
         }
 
         [Server]
@@ -191,11 +162,10 @@ namespace MyProject
             foreach (var m in _definition.abilityPropertyModifierDefinitionList)
                 m_AbilityPropertyModifierList.Remove(m);
             RefreshAbilityProperty();
+            onAbilityRemoved_OnClient?.Invoke(_definition);
 
             ObserversRpc_RemoveAbility(new Player_ObserversRpc_RemoveAbility_EventParam()
                 { player = new PlayerInfo(this), abilityId = _definition.abilityId });
-
-            Server_OnAbilityRemoved(this, _definition);
         }
 
         [ObserversRpc]
@@ -208,6 +178,7 @@ namespace MyProject
             foreach (var m in _abilityDefinition.abilityPropertyModifierDefinitionList)
                 m_AbilityPropertyModifierList.Remove(m);
             RefreshAbilityProperty();
+            onAbilityRemoved_OnClient?.Invoke(_abilityDefinition);
         }
 
         #endregion
@@ -217,28 +188,45 @@ namespace MyProject
             AbilityProperty _newAbilityProperty = new AbilityProperty();
             m_AbilityPropertyModifierList.ForEach(m => ApplyAbilityPropertyModifier(_newAbilityProperty, m));
             m_AbilityProperty = _newAbilityProperty;
+
+            onAbilityPropertyRefreshed_OnClient?.Invoke();
         }
 
         private void ApplyAbilityPropertyModifier(
             AbilityProperty _abilityProperty,
             AbilityPropertyModifierDefinition _modifierDefinition)
         {
+            /* character */
+
+            _abilityProperty.maxHealthAddition +=
+                _modifierDefinition.maxHealthAddition;
+
+            _abilityProperty.moveSpeedAddition +=
+                _modifierDefinition.moveSpeedAddition;
+
             /* gun attack */
 
             _abilityProperty.reloadDurationAddition +=
                 _modifierDefinition.reloadDurationAddition;
+
             _abilityProperty.fireDelayAddition +=
                 _modifierDefinition.fireDelayAddition;
+
             _abilityProperty.maxMagazineAddition +=
                 _modifierDefinition.maxMagazineAddition;
+
             _abilityProperty.projectileSpeedAddition +=
                 _modifierDefinition.projectileSpeedAddition;
+
             _abilityProperty.projectileDamageAddition +=
                 _modifierDefinition.projectileDamageAddition;
+
             _abilityProperty.projectileSizeAddition +=
                 _modifierDefinition.projectileSizeAddition;
+
             _abilityProperty.projectileCountPerShotAddition +=
                 _modifierDefinition.projectileCountPerShotAddition;
+
             _abilityProperty.projectileShotAngleRangeAddition +=
                 _modifierDefinition.projectileSpreadAngleAddition;
 
@@ -246,8 +234,15 @@ namespace MyProject
 
             _abilityProperty.meleeAttackDelayAddition +=
                 _modifierDefinition.meleeAttackDelayAddition;
+
+            _abilityProperty.meleeAttackIntervalAddition +=
+                _modifierDefinition.meleeAttackIntervalAddition;
+
             _abilityProperty.meleeAttackDamageMagnitudeAddition +=
                 _modifierDefinition.meleeAttackDamageMagnitudeAddition;
+
+            _abilityProperty.meleeAttackSizeAddition +=
+                _modifierDefinition.meleeAttackSizeAddition;
 
             /* sword */
 
@@ -466,7 +461,7 @@ namespace MyProject
             onRespawn_OnServer += () =>
             {
                 health.ApplyModifier(new HealthModifier()
-                    { magnitude = health.MaxHealth, source = this, time = Time.time }); // source: respawn
+                    { magnitude = health.maxHealth, source = this, time = Time.time }); // source: respawn
             };
 
             m_OnStartServerCalled = true;
