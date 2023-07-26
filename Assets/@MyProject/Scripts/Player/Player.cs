@@ -19,7 +19,7 @@ namespace MyProject
 
         [SerializeField] private UI_HealthBar m_HealthBar;
 
-        [SyncVar(WritePermissions = WritePermission.ServerOnly, OnChange = nameof(SyncVar_WeaponNetworkObjectId))]
+        [SyncVar(WritePermissions = WritePermission.ServerOnly)]
         private int? m_WeaponNetworkObjectId;
 
         private IWeapon m_Weapon;
@@ -35,7 +35,7 @@ namespace MyProject
                     m_Weapon = value;
                     m_WeaponNetworkObjectId =
                         (m_Weapon as NetworkBehaviour)?.ObjectId;
-                    Server_OnWeaponChanged(_prevWeapon, m_Weapon);
+                    Server_OnWeaponChanged(_prevWeapon, value);
                 }
             }
         }
@@ -374,29 +374,6 @@ namespace MyProject
 
         #endregion
 
-        private void SyncVar_WeaponNetworkObjectId(int? _prevWeaponId, int? _nextWeaponId, bool _asServer)
-        {
-            IWeapon _prevWeapon = null;
-            IWeapon _newWeapon = null;
-
-            if (_prevWeaponId.HasValue)
-            {
-                if (base.ClientManager.Objects.Spawned.ContainsKey(_prevWeaponId.Value))
-                    _prevWeapon = base.ClientManager.Objects.Spawned[_prevWeaponId.Value]
-                        .GetComponent<IWeapon>();
-            }
-
-            if (_nextWeaponId.HasValue)
-            {
-                if (base.ClientManager.Objects.Spawned.ContainsKey(_nextWeaponId.Value))
-                    _newWeapon = base.ClientManager.Objects.Spawned[_nextWeaponId.Value]
-                        .GetComponent<IWeapon>();
-            }
-
-            m_Weapon = _newWeapon;
-            onWeaponChanged_OnClient?.Invoke(_prevWeapon, _newWeapon);
-        }
-
         [Server]
         public void Server_Respawn(Vector3 _position)
         {
@@ -480,6 +457,25 @@ namespace MyProject
         public override void OnStartClient()
         {
             base.OnStartClient();
+
+            if (m_WeaponNetworkObjectId.HasValue)
+            {
+                // 서버에서 전파받은 무기 id가 있다면,
+                // 무기를 초기화합니다.
+                // 이는 이미 무기를 가진 플레이어가 있는 세션에 다른 플레이어가 들어왔을 때
+                // 그의 클라이언트에서 무기를 가진 플레이어가 스폰될 때 실행됩니다.
+
+                IWeapon _weapon = null;
+                if (base.ClientManager.Objects.Spawned.ContainsKey(m_WeaponNetworkObjectId.Value))
+                    _weapon = base.ClientManager.Objects.Spawned[m_WeaponNetworkObjectId.Value]
+                        .GetComponent<IWeapon>();
+
+                if (_weapon != null)
+                {
+                    m_Weapon = _weapon;
+                    onWeaponChanged_OnClient?.Invoke(null, _weapon);
+                }
+            }
 
             m_OnStartClientCalled = true;
             onStartClient?.Invoke();
