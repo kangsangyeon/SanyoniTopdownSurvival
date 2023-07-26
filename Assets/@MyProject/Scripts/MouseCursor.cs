@@ -3,10 +3,24 @@ using UnityEngine;
 
 namespace MyProject
 {
-    public class MouseCursorVisibility : MonoBehaviour
+    public class MouseCursor : MonoBehaviour
     {
         private bool m_Playing = false;
         private Action<Player> m_OnSetMyPlayerAction;
+
+        private void SetCursorVisibleAndLockMode(bool _visibleAndUnlock)
+        {
+            if (_visibleAndUnlock)
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Confined;
+            }
+        }
 
         private void Awake()
         {
@@ -14,12 +28,12 @@ namespace MyProject
             {
                 if (_player != null)
                 {
-                    Cursor.visible = false;
+                    SetCursorVisibleAndLockMode(false);
                     m_Playing = true;
                 }
                 else
                 {
-                    Cursor.visible = true;
+                    SetCursorVisibleAndLockMode(true);
                     m_Playing = false;
                 }
             };
@@ -33,13 +47,13 @@ namespace MyProject
 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Cursor.visible = !Cursor.visible;
+                SetCursorVisibleAndLockMode(!Cursor.visible);
             }
         }
 
         private void OnDestroy()
         {
-            Cursor.visible = true;
+            SetCursorVisibleAndLockMode(true);
 
             if (m_OnSetMyPlayerAction != null)
             {
