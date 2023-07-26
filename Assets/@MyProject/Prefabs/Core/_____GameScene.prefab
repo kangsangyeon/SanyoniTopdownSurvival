@@ -881,7 +881,7 @@ GameObject:
   - component: {fileID: 6843122942167791388}
   - component: {fileID: 9209582982917666555}
   m_Layer: 0
-  m_Name: DropExperienceOnTimeFlows
+  m_Name: GainExperienceOnTimeFlows
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
