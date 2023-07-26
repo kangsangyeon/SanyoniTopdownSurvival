@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using FishNet.Managing.Timing;
 using FishNet.Object;
+using FishNet.Serializing.Helping;
 using MyProject.Event;
 using MyProject.Struct;
 using UnityEngine;
@@ -183,6 +185,7 @@ namespace MyProject
                     ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
                     {
                         tick = base.TimeManager.Tick,
+                        preciseTick = base.TimeManager.GetPreciseTick(TickType.Tick),
                         ownerConnectionId = base.OwnerId,
                         position = m_AttackQueuePosition,
                         rotationY = m_AttackQueueRotationY,
@@ -209,6 +212,7 @@ namespace MyProject
                         ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
                         {
                             tick = base.TimeManager.Tick,
+                            preciseTick = base.TimeManager.GetPreciseTick(TickType.Tick),
                             ownerConnectionId = base.LocalConnection.ClientId,
                             position = m_AttackQueuePosition,
                             rotationY = m_AttackQueueRotationY,
@@ -312,6 +316,12 @@ namespace MyProject
 
             SetCharacterLayer(true);
 
+            // Rollback only if a rollback time.
+            bool rollingBack = Comparers.IsDefault(_param.preciseTick) == false;
+            //If a rollbackTime exist then rollback colliders before firing.
+            if (rollingBack)
+                RollbackManager.Rollback(_param.preciseTick, FishNet.Component.ColliderRollback.RollbackManager.PhysicsType.ThreeDimensional);
+
             var _others = Physics.OverlapBox(
                 _param.position,
                 m_AttackRange.bounds.extents,
@@ -374,6 +384,9 @@ namespace MyProject
                         _damageParam, _param.tick);
                 }
             }
+
+            if (rollingBack)
+                RollbackManager.Return();
 
             SetCharacterLayer(false);
         }
