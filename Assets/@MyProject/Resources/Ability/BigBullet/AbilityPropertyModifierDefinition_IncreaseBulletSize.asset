@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d24b2f0c65cfd48afbc61125a9fe71, type: 3}
   m_Name: AbilityPropertyModifierDefinition_IncreaseBulletSize
   m_EditorClassIdentifier: 
+  m_MaxHealthAddition: 100
+  m_MoveSpeedAddition: 0
   m_ReloadDurationAddition: 0
   m_FireDelayAddition: 0
   m_MaxMagazineAddition: 0
   m_ProjectileSpeedAddition: 0
-  m_ProjectileDamageAddition: 0
-  m_ProjectileSizeAddition: 0.5
+  m_ProjectileDamageAddition: -10
+  m_ProjectileSizeAddition: 0.75
   m_ProjectileCountPerShotAddition: 0
   m_ProjectileSpreadAngleAddition: 0
   m_MeleeAttackDelayAddition: 0
-  m_MeleeAttackDamageMagnitudeAddition: 0
+  m_MeleeAttackIntervalAddition: 0
+  m_MeleeAttackDamageMagnitudeAddition: -5
+  m_MeleeAttackSizeAddition: 0
   m_SwordProjectileRequiredStackAddition: 0

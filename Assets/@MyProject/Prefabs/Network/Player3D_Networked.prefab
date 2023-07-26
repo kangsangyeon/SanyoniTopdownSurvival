@@ -944,6 +944,7 @@ MonoBehaviour:
   m_Health: {fileID: 4941231546294391343}
   m_Movement: {fileID: 2338780143283138286}
   m_HealthBar: {fileID: 8866016524169640324}
+  m_FootPoint: {fileID: 4385215808673567912}
 --- !u!114 &5459516650891071884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1726,7 +1727,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.1523186, y: 0.5, z: 1.77}
+  m_Size: {x: 1.1523186, y: 1.1, z: 1.77}
   m_Center: {x: -0.15793806, y: 0, z: 0}
 --- !u!1 &7625550790293430657
 GameObject:

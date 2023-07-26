@@ -31,6 +31,7 @@ namespace MyProject
         private float m_LastAttackTime;
         private bool m_AttackQueue;
         private Vector3 m_AttackQueuePosition;
+        private Vector3 m_AttackQueueFootPosition;
         private float m_AttackQueueRotationY;
         private int m_MeleeAttackStack;
 
@@ -70,6 +71,7 @@ namespace MyProject
         {
             m_AttackQueue = true;
             m_AttackQueuePosition = transform.position;
+            m_AttackQueueFootPosition = m_Player.footPoint.position;
             m_AttackQueueRotationY = transform.eulerAngles.y;
         }
 
@@ -177,7 +179,7 @@ namespace MyProject
                             // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
                             var _projectile = SpawnProjectile(
                                 base.OwnerId, 0.0f,
-                                m_AttackQueuePosition, _direction);
+                                m_AttackQueueFootPosition, _direction);
                         });
                     }
 
@@ -187,7 +189,7 @@ namespace MyProject
                         tick = base.TimeManager.Tick,
                         preciseTick = base.TimeManager.GetPreciseTick(TickType.Tick),
                         ownerConnectionId = base.OwnerId,
-                        position = m_AttackQueuePosition,
+                        position = m_AttackQueueFootPosition,
                         rotationY = m_AttackQueueRotationY,
                         isProjectileAttack = true
                     });
@@ -320,7 +322,8 @@ namespace MyProject
             bool rollingBack = Comparers.IsDefault(_param.preciseTick) == false;
             //If a rollbackTime exist then rollback colliders before firing.
             if (rollingBack)
-                RollbackManager.Rollback(_param.preciseTick, FishNet.Component.ColliderRollback.RollbackManager.PhysicsType.ThreeDimensional);
+                RollbackManager.Rollback(_param.preciseTick,
+                    FishNet.Component.ColliderRollback.RollbackManager.PhysicsType.ThreeDimensional);
 
             var _others = Physics.OverlapBox(
                 _param.position,

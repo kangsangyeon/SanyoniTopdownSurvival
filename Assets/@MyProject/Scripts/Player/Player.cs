@@ -19,6 +19,9 @@ namespace MyProject
 
         [SerializeField] private UI_HealthBar m_HealthBar;
 
+        [SerializeField] private Transform m_FootPoint;
+        public Transform footPoint => m_FootPoint;
+
         [SyncVar(WritePermissions = WritePermission.ServerOnly)]
         private int? m_WeaponNetworkObjectId;
 

@@ -23,7 +23,7 @@ MonoBehaviour:
   m_ProjectileCountPerShotAddition: 0
   m_ProjectileSpreadAngleAddition: 0
   m_MeleeAttackDelayAddition: 0
-  m_MeleeAttackIntervalAddition: 0
+  m_MeleeAttackIntervalAddition: -0.05
   m_MeleeAttackDamageMagnitudeAddition: 0
   m_MeleeAttackSizeAddition: 0
   m_SwordProjectileRequiredStackAddition: 0
