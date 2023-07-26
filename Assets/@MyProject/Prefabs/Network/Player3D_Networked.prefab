@@ -839,6 +839,7 @@ Transform:
   - {fileID: 4191946588711638428}
   - {fileID: 6189340653674207022}
   - {fileID: 5603214288989146653}
+  - {fileID: 43070299309096821}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &6546739644535089527
@@ -1170,6 +1171,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c979e77bf0729bf48afdc98d4a61c4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4404214196170688854
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4852808131619592626}
+  m_Layer: 0
+  m_Name: DamagePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4852808131619592626
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4404214196170688854}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.339, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8679007712400554575}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4428294069483029439
 GameObject:
   m_ObjectHideFlags: 0
@@ -1422,12 +1454,60 @@ Transform:
   m_Children:
   - {fileID: 3287507559341191434}
   - {fileID: 4385215808673567912}
+  - {fileID: 4852808131619592626}
   - {fileID: 4114600367878032573}
   - {fileID: 8866016524169640325}
   - {fileID: 5851901156016549432}
   - {fileID: 8356265696638224631}
   m_Father: {fileID: 1274966205073429014}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5959337546504591556
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 43070299309096821}
+  - component: {fileID: 8862586358276033105}
+  m_Layer: 0
+  m_Name: PlayerHealth_Vfx
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &43070299309096821
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5959337546504591556}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1274966205073429014}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8862586358276033105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5959337546504591556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07ebc4d10dd7d2346935aba09ffa8400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Health: {fileID: 4941231546294391343}
+  m_Prefab_Damage: {fileID: 5220313820880779547, guid: c49a1264c1a4e5549841ecc2a3fc01c3, type: 3}
+  m_DamagePoint: {fileID: 4852808131619592626}
 --- !u!1 &6423049153846387818
 GameObject:
   m_ObjectHideFlags: 0
