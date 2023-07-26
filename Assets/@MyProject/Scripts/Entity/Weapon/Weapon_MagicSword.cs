@@ -345,20 +345,6 @@ namespace MyProject
 
                     _alreadyDamagedList.Add(_damageableEntity);
 
-                    Vector3 _directionToOther = (_collider.transform.position - _param.position).normalized;
-                    RaycastHit _hit;
-                    if (Physics.Raycast(
-                            _param.position, _directionToOther, out _hit, 10.0f,
-                            m_DamageableLayer | m_BlockMovementLayer))
-                    {
-                        // 무기와 피격 대상 사이에 다른 무언가 있다면,
-                        // 피격 처리를 하지 않습니다.
-                        if (_hit.collider != _collider)
-                        {
-                            continue;
-                        }
-                    }
-
                     Vector3 _attackDirection = GetDirectionsByRotationY(_param.rotationY, 1, 0)[0];
                     var _damageParam = new DamageParam()
                     {
