@@ -22,6 +22,12 @@ namespace MyProject
         [SerializeField] private Transform m_FootPoint;
         public Transform footPoint => m_FootPoint;
 
+        [SyncVar(WritePermissions = WritePermission.ClientUnsynchronized,
+            OnChange = nameof(SyncVar_OnChangePlayerName))]
+        private string m_PlayerName;
+
+        public string playerName => m_PlayerName;
+
         [SyncVar(WritePermissions = WritePermission.ServerOnly)]
         private int? m_WeaponNetworkObjectId;
 
@@ -363,6 +369,41 @@ namespace MyProject
             onWeaponChanged_OnClient?.Invoke(_prevWeapon, _newWeapon);
         }
 
+        public event System.Action<string> onSetPlayerName_OnClient;
+
+        [Client]
+        private void Client_RequestSetPlayerName(string _name)
+        {
+            m_PlayerName = _name;
+            gameObject.name = m_PlayerName;
+            onSetPlayerName_OnClient?.Invoke(_name);
+            ServerRpc_SetPlayerName(_name);
+        }
+
+        [ServerRpc]
+        private void ServerRpc_SetPlayerName(string _name)
+        {
+            m_PlayerName = _name;
+            gameObject.name = m_PlayerName;
+            onSetPlayerName_OnClient?.Invoke(_name);
+
+            // m_PlayerName은 SyncVar이기 때문에 자동으로 전파됩니다.
+        }
+
+        // [ObserversRpc(ExcludeServer = true, ExcludeOwner = true)]
+        // private void ObserversRpc_SetPlayerName(string _name)
+        // {
+        //     m_PlayerName = _name;
+        //     gameObject.name = m_PlayerName;
+        //     onSetPlayerName_OnClient?.Invoke(_name);
+        // }
+
+        private void SyncVar_OnChangePlayerName(string _prevName, string _newName, bool _asServer)
+        {
+            gameObject.name = _newName;
+            onSetPlayerName_OnClient?.Invoke(_newName);
+        }
+
         #endregion
 
         [Server]
@@ -470,6 +511,10 @@ namespace MyProject
 
             if (base.IsOwner)
             {
+                Client_RequestSetPlayerName(
+                    OfflineGameplayDependencies.ui_InputField_PlayerName.text);
+                OfflineGameplayDependencies.ui_InputField_PlayerName.gameObject.SetActive(false);
+
                 ServerRpc_InitializedOnClient();
             }
         }
