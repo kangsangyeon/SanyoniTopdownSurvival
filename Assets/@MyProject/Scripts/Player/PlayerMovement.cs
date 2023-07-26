@@ -278,7 +278,9 @@ namespace MyProject
         [TargetRpc(RunLocally = true)]
         public void Teleport(NetworkConnection _conn, Vector3 _position)
         {
+            characterController.enabled = false;
             transform.position = _position;
+            characterController.enabled = true;
         }
 
         [Replicate]
