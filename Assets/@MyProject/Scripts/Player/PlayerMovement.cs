@@ -379,6 +379,7 @@ namespace MyProject
                 {
                     SetCharacterLayer(false);
                     m_CharacterController.enabled = true;
+                    m_CanMove = true;
                 }
             };
         }
