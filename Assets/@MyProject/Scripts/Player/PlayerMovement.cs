@@ -278,7 +278,9 @@ namespace MyProject
         [TargetRpc(RunLocally = true)]
         public void Teleport(NetworkConnection _conn, Vector3 _position)
         {
+            characterController.enabled = false;
             transform.position = _position;
+            characterController.enabled = true;
         }
 
         [Replicate]
@@ -286,6 +288,9 @@ namespace MyProject
             MoveData _moveData,
             bool _asServer, Channel _channel = Channel.Unreliable, bool _replaying = false)
         {
+            if (m_CharacterController.enabled == false)
+                return;
+
             // reconcile이 수행된 후 이전에 캐시된 input이 replay됩니다. (이는 오직 클라이언트에서만 일어납니다.)
             // 지연 시간으로 인해 input이 캐시되지만, 이는 클라이언트가 서버와 동기화 상태를 유지하는 방법이기도 합니다.
             // 클라이언트가 매 틱마다 움직이고, 10, 11, 12, 13 등의 틱에 입력을 전송한다고 가정해 봅시다.
@@ -361,12 +366,19 @@ namespace MyProject
             m_CanMove = true;
             m_DefaultStepOffset = m_CharacterController.stepOffset;
 
-            m_Player.health.onHealthIsZero_OnSync += () => { m_CanMove = false; };
+            m_Player.health.onHealthIsZero_OnClient += () =>
+            {
+                m_CharacterController.enabled = false;
+                SetCharacterLayer(true);
+                m_CanMove = false;
+            };
 
-            m_Player.health.onHealthChanged_OnSync += _amount =>
+            m_Player.health.onHealthChanged_OnClient += _amount =>
             {
                 if (m_Player.health.health > 0)
                 {
+                    SetCharacterLayer(false);
+                    m_CharacterController.enabled = true;
                     m_CanMove = true;
                 }
             };
@@ -438,7 +450,8 @@ namespace MyProject
             if (base.IsOwner == false)
                 return;
 
-            if (m_CanMove)
+            if (m_CharacterController.enabled
+                && m_CanMove)
             {
                 Transform _camTransform = Camera.main.transform;
                 Vector3 _camForwardXZ = new Vector3(_camTransform.forward.x, 0, _camTransform.forward.z).normalized;

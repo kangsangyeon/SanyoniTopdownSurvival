@@ -19,6 +19,15 @@ namespace MyProject
 
         [SerializeField] private UI_HealthBar m_HealthBar;
 
+        [SerializeField] private Transform m_FootPoint;
+        public Transform footPoint => m_FootPoint;
+
+        [SyncVar(WritePermissions = WritePermission.ClientUnsynchronized,
+            OnChange = nameof(SyncVar_OnChangePlayerName))]
+        private string m_PlayerName;
+
+        public string playerName => m_PlayerName;
+
         [SyncVar(WritePermissions = WritePermission.ServerOnly)]
         private int? m_WeaponNetworkObjectId;
 
@@ -56,18 +65,6 @@ namespace MyProject
         public event System.Action onStartClient;
         public event System.Action onStopClient;
         public event System.Action onInitializedOnClient; // server only
-
-        private bool m_OnStartServerCalled;
-        public bool onStartServerCalled => m_OnStartServerCalled;
-
-        private bool m_OnStopServerCalled;
-        public bool onStopServerCalled => m_OnStopServerCalled;
-
-        private bool m_OnStartClientCalled;
-        public bool onStartClientCalled => m_OnStartClientCalled;
-
-        private bool m_OnStopClientCalled;
-        public bool onStopClientCalled => m_OnStopClientCalled;
 
         private bool m_InitializedOnClient; // server only
 
@@ -372,6 +369,41 @@ namespace MyProject
             onWeaponChanged_OnClient?.Invoke(_prevWeapon, _newWeapon);
         }
 
+        public event System.Action<string> onSetPlayerName_OnClient;
+
+        [Client]
+        private void Client_RequestSetPlayerName(string _name)
+        {
+            m_PlayerName = _name;
+            gameObject.name = m_PlayerName;
+            onSetPlayerName_OnClient?.Invoke(_name);
+            ServerRpc_SetPlayerName(_name);
+        }
+
+        [ServerRpc]
+        private void ServerRpc_SetPlayerName(string _name)
+        {
+            m_PlayerName = _name;
+            gameObject.name = m_PlayerName;
+            onSetPlayerName_OnClient?.Invoke(_name);
+
+            // m_PlayerName은 SyncVar이기 때문에 자동으로 전파됩니다.
+        }
+
+        // [ObserversRpc(ExcludeServer = true, ExcludeOwner = true)]
+        // private void ObserversRpc_SetPlayerName(string _name)
+        // {
+        //     m_PlayerName = _name;
+        //     gameObject.name = m_PlayerName;
+        //     onSetPlayerName_OnClient?.Invoke(_name);
+        // }
+
+        private void SyncVar_OnChangePlayerName(string _prevName, string _newName, bool _asServer)
+        {
+            gameObject.name = _newName;
+            onSetPlayerName_OnClient?.Invoke(_newName);
+        }
+
         #endregion
 
         [Server]
@@ -441,7 +473,6 @@ namespace MyProject
                     { magnitude = health.maxHealth, source = this, time = Time.time }); // source: respawn
             };
 
-            m_OnStartServerCalled = true;
             onStartServer?.Invoke();
         }
 
@@ -450,7 +481,6 @@ namespace MyProject
             base.OnStopServer();
             Scene_Game.Instance.Server_RemovePlayer(this);
 
-            m_OnStopServerCalled = true;
             onStopServer?.Invoke();
         }
 
@@ -477,16 +507,22 @@ namespace MyProject
                 }
             }
 
-            m_OnStartClientCalled = true;
             onStartClient?.Invoke();
-            ServerRpc_InitializedOnClient();
+
+            if (base.IsOwner)
+            {
+                Client_RequestSetPlayerName(
+                    OfflineGameplayDependencies.ui_InputField_PlayerName.text);
+                OfflineGameplayDependencies.ui_InputField_PlayerName.gameObject.SetActive(false);
+
+                ServerRpc_InitializedOnClient();
+            }
         }
 
         public override void OnStopClient()
         {
             base.OnStopClient();
 
-            m_OnStopClientCalled = true;
             onStopClient?.Invoke();
         }
 
@@ -499,7 +535,7 @@ namespace MyProject
                 OfflineGameplayDependencies.gameScene.myPlayer = this;
             }
 
-            health.onHealthIsZero_OnSync += () =>
+            health.onHealthIsZero_OnClient += () =>
             {
                 if (m_HealthBar)
                     m_HealthBar.enabled = false;

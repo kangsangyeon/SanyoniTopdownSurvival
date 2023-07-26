@@ -12,14 +12,6 @@ namespace MyProject
                 m_Player.abilityProperty.maxHealth
                 + m_Player.abilityProperty.maxHealthAddition;
 
-            m_Player.health.ApplyModifier(new HealthModifier()
-            {
-                magnitude = m_Player.health.maxHealth,
-                source = this,
-                sourceOwnerObject = m_Player,
-                time = Time.time
-            });
-
             m_Player.movement.moveSpeed =
                 m_Player.abilityProperty.moveSpeed
                 + m_Player.abilityProperty.moveSpeedAddition;

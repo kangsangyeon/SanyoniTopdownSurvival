@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using FishNet.Managing.Timing;
 using FishNet.Object;
+using FishNet.Serializing.Helping;
 using MyProject.Event;
 using MyProject.Struct;
 using UnityEngine;
@@ -29,6 +31,7 @@ namespace MyProject
         private float m_LastAttackTime;
         private bool m_AttackQueue;
         private Vector3 m_AttackQueuePosition;
+        private Vector3 m_AttackQueueFootPosition;
         private float m_AttackQueueRotationY;
         private int m_MeleeAttackStack;
 
@@ -68,6 +71,7 @@ namespace MyProject
         {
             m_AttackQueue = true;
             m_AttackQueuePosition = transform.position;
+            m_AttackQueueFootPosition = m_Player.footPoint.position;
             m_AttackQueueRotationY = transform.eulerAngles.y;
         }
 
@@ -175,7 +179,7 @@ namespace MyProject
                             // 따라서 총알을 실제 위치까지 따라잡기 위해 가속할 필요가 없습니다.
                             var _projectile = SpawnProjectile(
                                 base.OwnerId, 0.0f,
-                                m_AttackQueuePosition, _direction);
+                                m_AttackQueueFootPosition, _direction);
                         });
                     }
 
@@ -183,8 +187,9 @@ namespace MyProject
                     ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
                     {
                         tick = base.TimeManager.Tick,
+                        preciseTick = base.TimeManager.GetPreciseTick(TickType.Tick),
                         ownerConnectionId = base.OwnerId,
-                        position = m_AttackQueuePosition,
+                        position = m_AttackQueueFootPosition,
                         rotationY = m_AttackQueueRotationY,
                         isProjectileAttack = true
                     });
@@ -209,6 +214,7 @@ namespace MyProject
                         ServerRpc_Attack(new Weapon_MagicSword_Attack_EventParam()
                         {
                             tick = base.TimeManager.Tick,
+                            preciseTick = base.TimeManager.GetPreciseTick(TickType.Tick),
                             ownerConnectionId = base.LocalConnection.ClientId,
                             position = m_AttackQueuePosition,
                             rotationY = m_AttackQueueRotationY,
@@ -312,6 +318,13 @@ namespace MyProject
 
             SetCharacterLayer(true);
 
+            // Rollback only if a rollback time.
+            bool rollingBack = Comparers.IsDefault(_param.preciseTick) == false;
+            //If a rollbackTime exist then rollback colliders before firing.
+            if (rollingBack)
+                RollbackManager.Rollback(_param.preciseTick,
+                    FishNet.Component.ColliderRollback.RollbackManager.PhysicsType.ThreeDimensional);
+
             var _others = Physics.OverlapBox(
                 _param.position,
                 m_AttackRange.bounds.extents,
@@ -331,20 +344,6 @@ namespace MyProject
                     }
 
                     _alreadyDamagedList.Add(_damageableEntity);
-
-                    Vector3 _directionToOther = (_collider.transform.position - _param.position).normalized;
-                    RaycastHit _hit;
-                    if (Physics.Raycast(
-                            _param.position, _directionToOther, out _hit, 10.0f,
-                            m_DamageableLayer | m_BlockMovementLayer))
-                    {
-                        // 무기와 피격 대상 사이에 다른 무언가 있다면,
-                        // 피격 처리를 하지 않습니다.
-                        if (_hit.collider != _collider)
-                        {
-                            continue;
-                        }
-                    }
 
                     Vector3 _attackDirection = GetDirectionsByRotationY(_param.rotationY, 1, 0)[0];
                     var _damageParam = new DamageParam()
@@ -374,6 +373,9 @@ namespace MyProject
                         _damageParam, _param.tick);
                 }
             }
+
+            if (rollingBack)
+                RollbackManager.Return();
 
             SetCharacterLayer(false);
         }
@@ -497,7 +499,7 @@ namespace MyProject
             m_LastAttackTime = -9999;
             m_CanAttack = true;
 
-            player.health.onHealthChanged_OnSync += _amount =>
+            player.health.onHealthChanged_OnClient += _amount =>
             {
                 if (player.health.health > 0)
                     m_CanAttack = true;

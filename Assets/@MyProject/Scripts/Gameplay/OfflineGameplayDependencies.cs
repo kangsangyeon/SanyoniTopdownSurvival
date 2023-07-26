@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace MyProject
@@ -17,6 +18,9 @@ namespace MyProject
 
         [SerializeField] private Scene_Game m_GameScene;
         public static Scene_Game gameScene => s_Instance.m_GameScene;
+        
+        [SerializeField] private TMP_InputField m_UI_InputField_PlayerName;
+        public static TMP_InputField ui_InputField_PlayerName => s_Instance.m_UI_InputField_PlayerName;
 
         // [SerializeField] private GameplayCanvases m_GameplayCanvases;
         // public static GameplayCanvases gameplayCanvases => s_Instance.m_GameplayCanvases;

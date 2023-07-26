@@ -40,7 +40,7 @@ namespace MyProject
         public readonly float meleeAttackDelay = 0.1f;
         public float meleeAttackDelayAddition;
 
-        public readonly float meleeAttackInterval = 1.5f;
+        public readonly float meleeAttackInterval = 0.5f;
         public float meleeAttackIntervalAddition;
         
         public readonly int meleeAttackDamageMagnitude = -40;

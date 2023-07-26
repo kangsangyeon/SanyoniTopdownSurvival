@@ -273,7 +273,7 @@ namespace MyProject
             m_LastAttackTime = -9999;
             m_CanAttack = true;
 
-            player.health.onHealthChanged_OnSync += _amount =>
+            player.health.onHealthChanged_OnClient += _amount =>
             {
                 if (player.health.health > 0)
                     m_CanAttack = true;
