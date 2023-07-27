@@ -13,17 +13,17 @@ MonoBehaviour:
   m_Name: AbilityPropertyModifierDefinition_IncreaseBulletSpeed
   m_EditorClassIdentifier: 
   m_MaxHealthAddition: 0
-  m_MoveSpeedAddition: 2
+  m_MoveSpeedAddition: 0
   m_ReloadDurationAddition: 0
   m_FireDelayAddition: 0
   m_MaxMagazineAddition: 0
-  m_ProjectileSpeedAddition: 2
+  m_ProjectileSpeedAddition: 1
   m_ProjectileDamageAddition: 0
   m_ProjectileSizeAddition: 0
   m_ProjectileCountPerShotAddition: 0
   m_ProjectileSpreadAngleAddition: 0
   m_MeleeAttackDelayAddition: 0
-  m_MeleeAttackIntervalAddition: -0.05
+  m_MeleeAttackIntervalAddition: -0.14
   m_MeleeAttackDamageMagnitudeAddition: 0
   m_MeleeAttackSizeAddition: 0
   m_SwordProjectileRequiredStackAddition: -1

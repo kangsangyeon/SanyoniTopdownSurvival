@@ -13,17 +13,17 @@ MonoBehaviour:
   m_Name: AbilityPropertyModifierDefinition_IncreaseBulletDamage
   m_EditorClassIdentifier: 
   m_MaxHealthAddition: 0
-  m_MoveSpeedAddition: 0
+  m_MoveSpeedAddition: -0.8
   m_ReloadDurationAddition: 0
   m_FireDelayAddition: 0
   m_MaxMagazineAddition: 0
   m_ProjectileSpeedAddition: 0
-  m_ProjectileDamageAddition: -30
+  m_ProjectileDamageAddition: -4
   m_ProjectileSizeAddition: 0
   m_ProjectileCountPerShotAddition: 0
   m_ProjectileSpreadAngleAddition: 0
   m_MeleeAttackDelayAddition: 0
   m_MeleeAttackIntervalAddition: 0
-  m_MeleeAttackDamageMagnitudeAddition: -20
-  m_MeleeAttackSizeAddition: 0
-  m_SwordProjectileRequiredStackAddition: 0
+  m_MeleeAttackDamageMagnitudeAddition: -8
+  m_MeleeAttackSizeAddition: 0.2
+  m_SwordProjectileRequiredStackAddition: 1
