@@ -7,7 +7,7 @@ namespace MyProject.Event
     public struct PlayerInfo
     {
         public int connectionId;
-        public string name;
+        public string playerName;
         public Vector2 position;
         public int killCount;
         public int power;
@@ -15,7 +15,7 @@ namespace MyProject.Event
         public PlayerInfo(Player _player)
         {
             connectionId = _player.OwnerId;
-            name = _player.gameObject.name;
+            playerName = _player.playerName;
             position = new Vector2(_player.transform.position.x, _player.transform.position.y);
             killCount = _player.killCount;
             power = _player.power;

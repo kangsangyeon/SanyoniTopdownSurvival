@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3031658034018097697}
   - component: {fileID: 1464351976855129848}
   - component: {fileID: 3192386936137865339}
+  - component: {fileID: 3236082240428318349}
   m_Layer: 9
   m_Name: InvincibleWallObject
   m_TagString: Untagged
@@ -210,3 +211,18 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3031658034018097697}
   _networkObjectCache: {fileID: 3031658034018097697}
+--- !u!114 &3236082240428318349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4246790209888788843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99052797b77191d4eb4804494e5d6bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3031658034018097697}
+  _networkObjectCache: {fileID: 0}

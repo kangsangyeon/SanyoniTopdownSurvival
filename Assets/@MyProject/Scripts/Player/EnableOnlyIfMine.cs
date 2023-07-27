@@ -8,7 +8,7 @@ namespace MyProject
 
         private void Start()
         {
-            if (m_Player.onStartClientCalled)
+            if (m_Player.OnStartClientCalled)
             {
                 if (m_Player.IsOwner)
                 {

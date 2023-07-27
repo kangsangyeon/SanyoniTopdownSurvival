@@ -271,9 +271,9 @@ namespace MyProject
             m_LastReloadStartTime = -9999;
             m_CanShoot = true;
 
-            player.health.onHealthIsZero_OnSync += () => { m_CanShoot = false; };
+            player.health.onHealthIsZero_OnClient += () => { m_CanShoot = false; };
 
-            player.health.onHealthChanged_OnSync += _amount =>
+            player.health.onHealthChanged_OnClient += _amount =>
             {
                 if (player.health.health > 0)
                     m_CanShoot = true;

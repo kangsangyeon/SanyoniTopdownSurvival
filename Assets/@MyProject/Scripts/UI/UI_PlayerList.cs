@@ -107,7 +107,7 @@ public class UI_PlayerList : MonoBehaviour
             m_GameScene.playerRankDict.ContainsKey(_connectionId)
                 ? $"# {m_GameScene.playerRankDict[_connectionId]}"
                 : $"# ";
-        _playerNameLabel.text = m_GameScene.playerInfoDict[_connectionId].name;
+        _playerNameLabel.text = m_GameScene.playerInfoDict[_connectionId].playerName;
         _playerKillLabel.text = m_GameScene.playerInfoDict[_connectionId].killCount.ToString();
         _playerPowerLabel.text = m_GameScene.playerInfoDict[_connectionId].power.ToString();
     }

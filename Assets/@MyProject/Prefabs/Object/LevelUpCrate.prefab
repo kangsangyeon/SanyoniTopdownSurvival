@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2796682569399692443
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3057651703012651388}
+  m_Layer: 9
+  m_Name: DamagePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3057651703012651388
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2796682569399692443}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6513758655005126044}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3110139756875903670
 GameObject:
   m_ObjectHideFlags: 0
@@ -14,6 +45,8 @@ GameObject:
   - component: {fileID: 3129036835889721823}
   - component: {fileID: 3507479990681712002}
   - component: {fileID: 4768692270887583731}
+  - component: {fileID: 6025057997966366770}
+  - component: {fileID: 2285830343725680477}
   m_Layer: 9
   m_Name: LevelUpCrate
   m_TagString: Untagged
@@ -36,6 +69,7 @@ Transform:
   m_Children:
   - {fileID: 1521272073066635751}
   - {fileID: 915862058810748227}
+  - {fileID: 3057651703012651388}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &5961157813600325640
@@ -102,7 +136,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4768692270887583731}
   _networkObjectCache: {fileID: 4768692270887583731}
   m_MaxHealth: 5
-  m_Health: 0
+  m_HealthSynced: 0
 --- !u!114 &3507479990681712002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +206,36 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+--- !u!114 &6025057997966366770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3110139756875903670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07ebc4d10dd7d2346935aba09ffa8400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Health: {fileID: 3129036835889721823}
+  m_Prefab_Damage: {fileID: 5220313820880779547, guid: c49a1264c1a4e5549841ecc2a3fc01c3, type: 3}
+  m_DamagePoint: {fileID: 3057651703012651388}
+--- !u!114 &2285830343725680477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3110139756875903670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99052797b77191d4eb4804494e5d6bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 4768692270887583731}
+  _networkObjectCache: {fileID: 0}
 --- !u!1 &4498015275989513284
 GameObject:
   m_ObjectHideFlags: 0
