@@ -224,9 +224,6 @@ namespace MyProject
             _abilityProperty.projectileCountPerShotAddition +=
                 _modifierDefinition.projectileCountPerShotAddition;
 
-            _abilityProperty.projectileShotAngleRangeAddition +=
-                _modifierDefinition.projectileSpreadAngleAddition;
-
             /* melee attack */
 
             _abilityProperty.meleeAttackDelayAddition +=

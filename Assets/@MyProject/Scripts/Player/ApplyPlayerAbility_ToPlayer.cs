@@ -9,22 +9,30 @@ namespace MyProject
         private void Awake()
         {
             m_Player.health.maxHealth =
-                m_Player.abilityProperty.maxHealth
-                + m_Player.abilityProperty.maxHealthAddition;
+                Mathf.Clamp(m_Player.abilityProperty.maxHealth
+                            + m_Player.abilityProperty.maxHealthAddition,
+                    m_Player.abilityProperty.maximumMaxHealth,
+                    m_Player.abilityProperty.minimumMaxHealth);
 
             m_Player.movement.moveSpeed =
-                m_Player.abilityProperty.moveSpeed
-                + m_Player.abilityProperty.moveSpeedAddition;
+                Mathf.Clamp(m_Player.abilityProperty.moveSpeed
+                            + m_Player.abilityProperty.moveSpeedAddition,
+                    m_Player.abilityProperty.maximumMoveSpeed,
+                    m_Player.abilityProperty.minimumMoveSpeed);
 
             m_Player.onAbilityPropertyRefreshed_OnClient += () =>
             {
                 m_Player.health.maxHealth =
-                    m_Player.abilityProperty.maxHealth
-                    + m_Player.abilityProperty.maxHealthAddition;
+                    Mathf.Clamp(m_Player.abilityProperty.maxHealth
+                                + m_Player.abilityProperty.maxHealthAddition,
+                        m_Player.abilityProperty.maximumMaxHealth,
+                        m_Player.abilityProperty.minimumMaxHealth);
 
                 m_Player.movement.moveSpeed =
-                    m_Player.abilityProperty.moveSpeed
-                    + m_Player.abilityProperty.moveSpeedAddition;
+                    Mathf.Clamp(m_Player.abilityProperty.moveSpeed
+                                + m_Player.abilityProperty.moveSpeedAddition,
+                        m_Player.abilityProperty.maximumMoveSpeed,
+                        m_Player.abilityProperty.minimumMoveSpeed);
             };
         }
     }

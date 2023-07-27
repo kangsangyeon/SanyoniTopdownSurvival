@@ -41,11 +41,18 @@ namespace MyProject
         public int ownerConnectionId => player.OwnerId;
 
         public int attackDamageMagnitude =>
-            Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage +
-                             m_Player.abilityProperty.projectileDamageAddition);
+            Mathf.RoundToInt(
+                Mathf.Clamp(m_Player.abilityProperty.projectileDamage
+                            + m_Player.abilityProperty.projectileDamageAddition,
+                    m_Player.abilityProperty.minimumProjectileDamage,
+                    m_Player.abilityProperty.maximumProjectileDamage)
+            );
 
         public float attackDelay =>
-            m_Player.abilityProperty.fireDelay + m_Player.abilityProperty.fireDelayAddition;
+            Mathf.Clamp(m_Player.abilityProperty.fireDelay
+                        + m_Player.abilityProperty.fireDelayAddition,
+                m_Player.abilityProperty.minimumFireDelay,
+                m_Player.abilityProperty.maximumFireDelay);
 
         public int currentMagazineCount
         {
@@ -70,7 +77,10 @@ namespace MyProject
             m_Player.abilityProperty.fireDelay + m_Player.abilityProperty.fireDelayAddition;
 
         public float projectileSpeed =>
-            m_Player.abilityProperty.projectileSpeed + m_Player.abilityProperty.projectileSpeedAddition;
+            Mathf.Clamp(m_Player.abilityProperty.fireDelay
+                        + m_Player.abilityProperty.fireDelayAddition,
+                m_Player.abilityProperty.minimumFireDelay,
+                m_Player.abilityProperty.maximumFireDelay);
 
         public float projectileScaleMultiplier =>
             1.0f + m_Player.abilityProperty.projectileSizeAddition;
@@ -80,8 +90,7 @@ namespace MyProject
             + m_Player.abilityProperty.projectileCountPerShotAddition;
 
         public float projectileShotAngleRange =>
-            m_Player.abilityProperty.projectileShotAngleRange
-            + m_Player.abilityProperty.projectileShotAngleRangeAddition;
+            m_Player.abilityProperty.projectileShotAngleRange;
 
         public event System.Action onCurrentMagazineCountChanged;
         public event Action<IWeapon_OnAttack_EventParam> onAttack;
