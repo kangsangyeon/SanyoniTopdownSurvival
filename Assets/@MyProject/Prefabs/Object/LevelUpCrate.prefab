@@ -154,7 +154,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 4768692270887583731}
   m_Prefab_AbilityItem: {fileID: 5710849345423677905, guid: f7f588e9caedd28428f1631546b47c72, type: 3}
   m_SpawnItemDistance: 1.2
-  m_SpawnItemCount: 3
+  m_SpawnItemCount: 2
   m_MaxTakableDamage: 2147483647
   m_UseConstantDamage: 1
   m_ConstantDamage: -1
@@ -176,6 +176,7 @@ MonoBehaviour:
   _networkBehaviours:
   - {fileID: 3129036835889721823}
   - {fileID: 3507479990681712002}
+  - {fileID: 2285830343725680477}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -233,9 +234,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99052797b77191d4eb4804494e5d6bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 4768692270887583731}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 4768692270887583731}
 --- !u!1 &4498015275989513284
 GameObject:
   m_ObjectHideFlags: 0

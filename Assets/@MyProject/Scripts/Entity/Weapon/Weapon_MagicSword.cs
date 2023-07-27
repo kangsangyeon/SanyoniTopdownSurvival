@@ -47,8 +47,12 @@ namespace MyProject
         public int ownerConnectionId => m_Player.OwnerId;
 
         public int attackDamageMagnitude =>
-            Mathf.RoundToInt(m_Player.abilityProperty.meleeAttackDamageMagnitude
-                             + m_Player.abilityProperty.meleeAttackDamageMagnitudeAddition);
+            Mathf.RoundToInt(
+                Mathf.Clamp(m_Player.abilityProperty.meleeAttackDamageMagnitude
+                            + m_Player.abilityProperty.meleeAttackDamageMagnitudeAddition,
+                    m_Player.abilityProperty.minimumMeleeAttackDamageMagnitude,
+                    m_Player.abilityProperty.maximumMeleeAttackDamageMagnitude)
+            );
 
         public float attackDelay =>
             m_Player.abilityProperty.meleeAttackDelay;
@@ -58,8 +62,10 @@ namespace MyProject
             + m_Player.abilityProperty.meleeAttackDelayAddition;
 
         public float meleeAttackInterval =>
-            m_Player.abilityProperty.meleeAttackInterval
-            + m_Player.abilityProperty.meleeAttackIntervalAddition;
+            Mathf.Clamp(m_Player.abilityProperty.meleeAttackInterval
+                        + m_Player.abilityProperty.meleeAttackIntervalAddition,
+                m_Player.abilityProperty.minimumMeleeAttackInterval,
+                m_Player.abilityProperty.maximumMeleeAttackInterval);
 
         [SerializeField] private Collider m_AttackRange;
         public Collider meleeAttackRange => m_AttackRange;
@@ -103,26 +109,36 @@ namespace MyProject
         #region Sword
 
         public float projectileSpeed =>
-            m_Player.abilityProperty.projectileSpeed + m_Player.abilityProperty.projectileSpeedAddition;
+            Mathf.Clamp(m_Player.abilityProperty.projectileSpeed
+                        + m_Player.abilityProperty.projectileSpeedAddition,
+                m_Player.abilityProperty.minimumProjectileSpeed,
+                m_Player.abilityProperty.maximumProjectileSpeed);
 
         public float projectileScaleAddition =>
             1.0f + m_Player.abilityProperty.projectileSizeAddition;
 
         public int projectileCountPerShot =>
-            m_Player.abilityProperty.projectileCountPerShot
-            + m_Player.abilityProperty.projectileCountPerShotAddition;
+            Mathf.Clamp(m_Player.abilityProperty.projectileCountPerShot
+                        + m_Player.abilityProperty.projectileCountPerShotAddition,
+                m_Player.abilityProperty.minimumProjectileCountPerShot,
+                m_Player.abilityProperty.maximumProjectileCountPerShot);
 
         public float projectileShotAngleRange =>
-            m_Player.abilityProperty.projectileShotAngleRange
-            + m_Player.abilityProperty.projectileShotAngleRangeAddition;
+            m_Player.abilityProperty.projectileShotAngleRange;
 
         public int projectileDamageMagnitude =>
-            Mathf.RoundToInt(m_Player.abilityProperty.projectileDamage
-                             + m_Player.abilityProperty.projectileDamageAddition);
+            Mathf.RoundToInt(
+                Mathf.Clamp(m_Player.abilityProperty.projectileDamage
+                            + m_Player.abilityProperty.projectileDamageAddition,
+                    m_Player.abilityProperty.minimumProjectileDamage,
+                    m_Player.abilityProperty.maximumProjectileDamage)
+            );
 
         public int swordProjectileRequiredStack =>
-            m_Player.abilityProperty.swordProjectileRequiredStack
-            + m_Player.abilityProperty.swordProjectileRequiredStackAddition;
+            Mathf.Clamp(m_Player.abilityProperty.swordProjectileRequiredStack
+                        + m_Player.abilityProperty.swordProjectileRequiredStackAddition,
+                m_Player.abilityProperty.minimumSwordProjectileRequiredStack,
+                m_Player.abilityProperty.maximumSwordProjectileRequiredStack);
 
         public event Action<Weapon_MagicSword_OnProjectileHit_EventParam> onProjectileHit;
 
