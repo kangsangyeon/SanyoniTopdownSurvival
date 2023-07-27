@@ -1079,6 +1079,7 @@ MonoBehaviour:
   m_Movement: {fileID: 2338780143283138286}
   m_HealthBar: {fileID: 8866016524169640324}
   m_FootPoint: {fileID: 4385215808673567912}
+  m_PlayerName: 
 --- !u!114 &5459516650891071884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1265,7 +1266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Player: {fileID: 4764942256557422283}
-  m_ExperienceAmount: 50
+  m_ExperienceAmount: 100
 --- !u!114 &9102785744386135055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1293,7 +1294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Player: {fileID: 4764942256557422283}
-  m_ExperienceAmount: 30
+  m_ExperienceAmount: 50
 --- !u!114 &6837770475966816916
 MonoBehaviour:
   m_ObjectHideFlags: 0
