@@ -51,7 +51,7 @@ namespace MyProject
         public readonly int minimumProjectileCountPerShot = 1;
 
         public float projectileShotAngleRange =>
-            projectileCountPerShotAddition * 45.0f;
+            projectileCountPerShotAddition * 36.0f;
 
         /* melee attack */
 
