@@ -21,10 +21,10 @@ namespace MyProject
         public readonly int maxMagazine = 20;
         public int maxMagazineAddition;
 
-        public readonly float projectileSpeed = 10.0f;
+        public readonly float projectileSpeed = 3.0f;
         public float projectileSpeedAddition;
 
-        public readonly int projectileDamage = -15;
+        public readonly int projectileDamage = -20;
         public int projectileDamageAddition;
 
         public float projectileSizeAddition;
@@ -32,17 +32,17 @@ namespace MyProject
         public readonly int projectileCountPerShot = 1;
         public int projectileCountPerShotAddition;
 
-        public readonly float projectileShotAngleRange = 20.0f;
-        public float projectileShotAngleRangeAddition;
+        public float projectileShotAngleRange =>
+            projectileCountPerShotAddition * 45.0f;
 
         /* melee attack */
 
-        public readonly float meleeAttackDelay = 0.1f;
+        public readonly float meleeAttackDelay = 0.2f;
         public float meleeAttackDelayAddition;
 
-        public readonly float meleeAttackInterval = 0.5f;
+        public readonly float meleeAttackInterval = 0.7f;
         public float meleeAttackIntervalAddition;
-        
+
         public readonly int meleeAttackDamageMagnitude = -40;
         public int meleeAttackDamageMagnitudeAddition;
 
@@ -50,7 +50,7 @@ namespace MyProject
 
         /* sword */
 
-        public readonly int swordProjectileRequiredStack = 3;
+        public readonly int swordProjectileRequiredStack = 5;
         public int swordProjectileRequiredStackAddition;
     }
 }
