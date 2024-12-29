@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LightningTornado Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 1423868958100500, guid: 345e3d10eb67cec4e9a68ec905e24c36, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4866679249410370, guid: 345e3d10eb67cec4e9a68ec905e24c36, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

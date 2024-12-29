@@ -140,19 +140,6 @@ namespace MyProject
             float _passedTime = (float)base.TimeManager.TimePassed(_param.tick, false);
             _passedTime = Mathf.Min(MAX_PASSED_TIME, _passedTime);
 
-            // 공격한 자신이 서버이기도 한 경우,
-            // 이미 pred 이벤트를 클라이언트 코드 내에서 실행했기 때문에 중복으로 실행하지 않습니다.
-            if (base.IsOwner == false)
-            {
-                onAttack?.Invoke(new IWeapon_OnAttack_EventParam()
-                {
-                    tick = _param.tick,
-                    ownerConnectionId = _param.ownerConnectionId,
-                    position = _param.position,
-                    rotationY = _param.rotationY
-                });
-            }
-
             Server_Attack(_param, attackDamageMagnitude);
 
             // 다른 클라이언트들에게 발사 사실을 알립니다.
@@ -223,7 +210,7 @@ namespace MyProject
             SetCharacterLayer(false);
         }
 
-        [ObserversRpc(ExcludeOwner = true, ExcludeServer = true)]
+        [ObserversRpc(ExcludeOwner = true)]
         private void ObserversRpc_Attack(PlayerMeleeAttack_Attack_EventParam _param)
         {
             // 총을 발사한 클라이언트가 총알을 발사한 tick으로부터
